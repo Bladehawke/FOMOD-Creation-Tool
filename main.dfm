@@ -10,6 +10,7 @@ object MainForm: TMainForm
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  Menu = MainMenu1
   OldCreateOrder = False
   Position = poDesigned
   OnCreate = FormCreate
@@ -20,7 +21,7 @@ object MainForm: TMainForm
     Top = 0
     Width = 1087
     Height = 756
-    ActivePage = StepsTabSheet
+    ActivePage = ModInfoTabSheet
     Align = alClient
     TabOrder = 0
     object ModInfoTabSheet: TTabSheet
@@ -193,9 +194,9 @@ object MainForm: TMainForm
         Align = alBottom
         TabOrder = 0
         object Panel2: TPanel
-          Left = 584
+          Left = 664
           Top = 1
-          Width = 494
+          Width = 414
           Height = 39
           Align = alRight
           BevelOuter = bvNone
@@ -219,15 +220,6 @@ object MainForm: TMainForm
             TabOrder = 1
             OnClick = NewStepButtonClick
           end
-          object DoneButton: TButton
-            Left = 414
-            Top = 5
-            Width = 75
-            Height = 25
-            Caption = 'Done'
-            TabOrder = 2
-            OnClick = DoneButtonClick
-          end
           object MoveLeftButton: TButton
             Left = 5
             Top = 5
@@ -235,7 +227,7 @@ object MainForm: TMainForm
             Height = 25
             Caption = 'Move left'
             Enabled = False
-            TabOrder = 3
+            TabOrder = 2
             OnClick = MoveLeftButtonClick
           end
           object MoveRightButton: TButton
@@ -245,7 +237,7 @@ object MainForm: TMainForm
             Height = 25
             Caption = 'Move right'
             Enabled = False
-            TabOrder = 4
+            TabOrder = 3
             OnClick = MoveRightButtonClick
           end
         end
@@ -424,7 +416,8 @@ object MainForm: TMainForm
                   'SelectExactlyOne'
                   'SelectAny'
                   'SelectAtMostOne'
-                  'SelectAtLeastOne')
+                  'SelectAtLeastOne'
+                  'SelectAll')
               end
               object AddGroupButton: TButton
                 Left = 223
@@ -540,11 +533,12 @@ object MainForm: TMainForm
                   Columns = <
                     item
                       Caption = 'Variable'
-                      Width = 100
+                      Width = 130
                     end
                     item
                     end
                     item
+                      AutoSize = True
                       Caption = 'Value'
                     end>
                   ColumnClick = False
@@ -621,8 +615,8 @@ object MainForm: TMainForm
                     Width = 100
                   end
                   item
+                    AutoSize = True
                     Caption = 'Type'
-                    Width = 90
                   end>
                 ColumnClick = False
                 GridLines = True
@@ -701,10 +695,6 @@ object MainForm: TMainForm
         object ConditionsTabSheet: TTabSheet
           Caption = 'Conditions'
           ImageIndex = 1
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           object ScrollBox: TScrollBox
             Left = 0
             Top = 0
@@ -750,7 +740,7 @@ object MainForm: TMainForm
                 Width = 225
                 Height = 21
                 Style = csDropDownList
-                ItemHeight = 0
+                ItemHeight = 13
                 TabOrder = 0
               end
               object ConditionValueComboBox: TComboBox
@@ -759,7 +749,7 @@ object MainForm: TMainForm
                 Width = 50
                 Height = 21
                 Style = csDropDownList
-                ItemHeight = 0
+                ItemHeight = 13
                 ItemIndex = 0
                 TabOrder = 1
                 Text = 'On'
@@ -830,10 +820,6 @@ object MainForm: TMainForm
     object InfoTabSheet: TTabSheet
       Caption = 'Info'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Memo1: TMemo
         Left = 0
         Top = 0
@@ -982,10 +968,10 @@ object MainForm: TMainForm
             'on setted then all of them should be fulfilled at the same time.'
           '3. Finalization.'
           
-            'Press '#39'Done'#39' button when you set everithing you wnated. '#39'info.xm' +
-            'l'#39' and '#39'ModuleConfig.xml'#39' files will be created in '#39'fomod'#39' direc' +
-            'tory. Now you can pack you mod in archive and test it before upl' +
-            'oading anywhere.')
+            'Choose FOMOD->Save menu when you set everithing you wnated. '#39'inf' +
+            'o.xml'#39' and '#39'ModuleConfig.xml'#39' files will be created in '#39'fomod'#39' d' +
+            'irectory. Now you can pack you mod in archive and test it before' +
+            ' uploading anywhere.')
         ReadOnly = True
         ScrollBars = ssVertical
         TabOrder = 0
@@ -1003,5 +989,44 @@ object MainForm: TMainForm
     Options = [fdoPickFolders, fdoPathMustExist]
     Left = 872
     Top = 24
+  end
+  object MainMenu1: TMainMenu
+    Left = 712
+    Top = 24
+    object File1: TMenuItem
+      Caption = 'FOMOD'
+      object NewMenu: TMenuItem
+        Caption = 'New'
+        OnClick = NewMenuClick
+      end
+      object OpenMenu: TMenuItem
+        Caption = 'Open'
+        ShortCut = 16463
+        OnClick = OpenMenuClick
+      end
+      object SaveMenu: TMenuItem
+        Caption = 'Save'
+        Enabled = False
+        ShortCut = 16467
+        OnClick = SaveMenuClick
+      end
+      object N1: TMenuItem
+        Caption = '-'
+      end
+      object ExitMenu: TMenuItem
+        Caption = 'Exit'
+      end
+    end
+    object Script1: TMenuItem
+      Caption = 'Script'
+      object RunBeforeSaveMenu: TMenuItem
+        Caption = 'Run before save'
+        OnClick = RunBeforeSaveMenuClick
+      end
+      object RunAfterSaveMenu: TMenuItem
+        Caption = 'Run after save'
+        OnClick = RunAfterSaveMenuClick
+      end
+    end
   end
 end

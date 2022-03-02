@@ -9,6 +9,7 @@
 #include <ExtCtrls.hpp>
 #include <Forms.hpp>
 #include <StdCtrls.hpp>
+#include <Menus.hpp>
 //---------------------------------------------------------------------------
 class TMainForm : public TForm
 {
@@ -66,7 +67,6 @@ __published:	// IDE-managed Components
     TButton *RemoveFileFolderButton;
     TButton *DeleteStepButton;
     TButton *NewStepButton;
-    TButton *DoneButton;
     TPanel *Panel2;
     TPanel *Panel3;
     TPanel *Panel4;
@@ -95,6 +95,16 @@ __published:	// IDE-managed Components
     TLabeledEdit *ModCategoryEdit;
     TButton *MoveLeftButton;
     TButton *MoveRightButton;
+    TMainMenu *MainMenu1;
+    TMenuItem *File1;
+    TMenuItem *NewMenu;
+    TMenuItem *OpenMenu;
+    TMenuItem *SaveMenu;
+    TMenuItem *ExitMenu;
+    TMenuItem *N1;
+    TMenuItem *Script1;
+    TMenuItem *RunBeforeSaveMenu;
+    TMenuItem *RunAfterSaveMenu;
     void __fastcall FormCreate(TObject *Sender);
     void __fastcall OpenRootDirButtonClick(TObject *Sender);
     void __fastcall RootDirEditChange(TObject *Sender);
@@ -133,9 +143,13 @@ __published:	// IDE-managed Components
     void __fastcall StepsTabControlChange(TObject *Sender);
     void __fastcall DeleteStepButtonClick(TObject *Sender);
     void __fastcall DstFilesListViewEdited(TObject *Sender, TListItem *Item, UnicodeString &S);
-    void __fastcall DoneButtonClick(TObject *Sender);
     void __fastcall MoveLeftButtonClick(TObject *Sender);
     void __fastcall MoveRightButtonClick(TObject *Sender);
+    void __fastcall SaveMenuClick(TObject *Sender);
+    void __fastcall OpenMenuClick(TObject *Sender);
+    void __fastcall NewMenuClick(TObject *Sender);
+    void __fastcall RunBeforeSaveMenuClick(TObject *Sender);
+    void __fastcall RunAfterSaveMenuClick(TObject *Sender);
 
 
 

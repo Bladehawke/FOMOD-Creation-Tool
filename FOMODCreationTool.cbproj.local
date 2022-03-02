@@ -7,5 +7,8 @@
     <Transaction>2015.12.22 09:30:32.027.cbproj,C:\Users\Alexander\Documents\RAD Studio\Projects\Project1.cbproj=D:\Куски кода\FOMOD Creation Tool\FOMODCreationTool.cbproj</Transaction>
     <Transaction>2015.12.22 11:25:47.593.cpp,D:\Куски кода\FOMOD Creation Tool\Unit1.cpp=D:\Куски кода\FOMOD Creation Tool\DataClasses.cpp</Transaction>
     <Transaction>2015.12.22 11:25:47.593.h,D:\Куски кода\FOMOD Creation Tool\Unit1.h=D:\Куски кода\FOMOD Creation Tool\DataClasses.h</Transaction>
+    <Transaction>2015.12.28 12:13:04.481.cpp,D:\Куски кода\FOMOD Creation Tool\Unit1.cpp=D:\Куски кода\FOMOD Creation Tool\ScriptForm.cpp</Transaction>
+    <Transaction>2015.12.28 12:13:04.491.h,D:\Куски кода\FOMOD Creation Tool\Unit1.h=D:\Куски кода\FOMOD Creation Tool\ScriptForm.h</Transaction>
+    <Transaction>2015.12.28 12:13:04.491.dfm,D:\Куски кода\FOMOD Creation Tool\Unit1.dfm=D:\Куски кода\FOMOD Creation Tool\ScriptForm.dfm</Transaction>
   </Transactions>
 </BorlandProject>

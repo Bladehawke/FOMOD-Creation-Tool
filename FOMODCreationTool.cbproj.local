@@ -12,5 +12,26 @@
     <Transaction>2015.12.28 12:13:04.491.dfm,D:\Куски кода\FOMOD Creation Tool\Unit1.dfm=D:\Куски кода\FOMOD Creation Tool\ScriptForm.dfm</Transaction>
     <Transaction>2016.01.19 11:18:20.675.cpp,D:\Куски кода\FOMOD Creation Tool\DataClasses.cpp=D:\Куски кода\FOMOD Creation Tool\FOMODClass.cpp</Transaction>
     <Transaction>2016.01.19 11:18:20.693.h,D:\Куски кода\FOMOD Creation Tool\DataClasses.h=D:\Куски кода\FOMOD Creation Tool\FOMODClass.h</Transaction>
+    <Transaction>2016.01.25 09:46:10.690.cpp,D:\Куски кода\FOMOD Creation Tool\Unit1.cpp=D:\Куски кода\FOMOD Creation Tool\SettingsForm_.cpp</Transaction>
+    <Transaction>2016.01.25 09:46:10.699.h,D:\Куски кода\FOMOD Creation Tool\Unit1.h=D:\Куски кода\FOMOD Creation Tool\SettingsForm_.h</Transaction>
+    <Transaction>2016.01.25 09:46:10.699.dfm,D:\Куски кода\FOMOD Creation Tool\Unit1.dfm=D:\Куски кода\FOMOD Creation Tool\SettingsForm_.dfm</Transaction>
+    <Transaction>2016.01.25 09:52:35.550.cpp,D:\Куски кода\FOMOD Creation Tool\SettingsForm_.cpp=</Transaction>
+    <Transaction>2016.01.25 09:52:35.550.dfm,D:\Куски кода\FOMOD Creation Tool\SettingsForm_.dfm=</Transaction>
+    <Transaction>2016.01.25 09:52:49.481.cpp,D:\Куски кода\FOMOD Creation Tool\Unit1.cpp=D:\Куски кода\FOMOD Creation Tool\SettingsForm.cpp</Transaction>
+    <Transaction>2016.01.25 09:52:49.481.h,D:\Куски кода\FOMOD Creation Tool\Unit1.h=D:\Куски кода\FOMOD Creation Tool\SettingsForm.h</Transaction>
+    <Transaction>2016.01.25 09:52:49.481.dfm,D:\Куски кода\FOMOD Creation Tool\Unit1.dfm=D:\Куски кода\FOMOD Creation Tool\SettingsForm.dfm</Transaction>
+    <Transaction>2016.01.25 09:53:38.367.cpp,D:\Куски кода\FOMOD Creation Tool\SettingsForm.cpp=</Transaction>
+    <Transaction>2016.01.25 09:53:38.367.dfm,D:\Куски кода\FOMOD Creation Tool\SettingsForm.dfm=</Transaction>
+    <Transaction>2016.01.25 09:54:05.529.cpp,D:\Куски кода\FOMOD Creation Tool\Unit1.cpp=D:\Куски кода\FOMOD Creation Tool\SettingsForm.cpp</Transaction>
+    <Transaction>2016.01.25 09:54:05.529.h,D:\Куски кода\FOMOD Creation Tool\Unit1.h=D:\Куски кода\FOMOD Creation Tool\SettingsForm.h</Transaction>
+    <Transaction>2016.01.25 09:54:05.529.dfm,D:\Куски кода\FOMOD Creation Tool\Unit1.dfm=D:\Куски кода\FOMOD Creation Tool\SettingsForm.dfm</Transaction>
+    <Transaction>2016.01.25 09:57:22.233.cpp,D:\Куски кода\FOMOD Creation Tool\SettingsForm.cpp=</Transaction>
+    <Transaction>2016.01.25 09:57:22.233.dfm,D:\Куски кода\FOMOD Creation Tool\SettingsForm.dfm=</Transaction>
+    <Transaction>2016.01.25 09:57:40.537.cpp,D:\Куски кода\FOMOD Creation Tool\Unit1.cpp=D:\Куски кода\FOMOD Creation Tool\SettingsForm.cpp</Transaction>
+    <Transaction>2016.01.25 09:57:40.537.h,D:\Куски кода\FOMOD Creation Tool\Unit1.h=D:\Куски кода\FOMOD Creation Tool\SettingsForm.h</Transaction>
+    <Transaction>2016.01.25 09:57:40.537.dfm,D:\Куски кода\FOMOD Creation Tool\Unit1.dfm=D:\Куски кода\FOMOD Creation Tool\SettingsForm.dfm</Transaction>
+    <Transaction>2016.01.26 10:02:03.882.cpp,D:\Куски кода\FOMOD Creation Tool\Unit1.cpp=D:\Куски кода\FOMOD Creation Tool\SplashScreen.cpp</Transaction>
+    <Transaction>2016.01.26 10:02:03.882.h,D:\Куски кода\FOMOD Creation Tool\Unit1.h=D:\Куски кода\FOMOD Creation Tool\SplashScreen.h</Transaction>
+    <Transaction>2016.01.26 10:02:03.882.dfm,D:\Куски кода\FOMOD Creation Tool\Unit1.dfm=D:\Куски кода\FOMOD Creation Tool\SplashScreen.dfm</Transaction>
   </Transactions>
 </BorlandProject>

@@ -59,6 +59,11 @@
 			<TASM_Debugging>None</TASM_Debugging>
 		</PropertyGroup>
 		<ItemGroup>
+			<CppCompile Include="ScriptForm.cpp">
+				<Form>ScriptForm1</Form>
+				<DependentOn>ScriptForm.h</DependentOn>
+				<BuildOrder>4</BuildOrder>
+			</CppCompile>
 			<CppCompile Include="FOMODCreationTool.cpp">
 				<BuildOrder>0</BuildOrder>
 			</CppCompile>
@@ -74,13 +79,20 @@
 				<DependentOn>FOMODClass.h</DependentOn>
 				<BuildOrder>3</BuildOrder>
 			</CppCompile>
-			<CppCompile Include="ScriptForm.cpp">
-				<Form>ScriptForm1</Form>
-				<DependentOn>ScriptForm.h</DependentOn>
-				<BuildOrder>4</BuildOrder>
+			<CppCompile Include="SettingsForm.cpp">
+				<Form>SettingsForm</Form>
+				<DependentOn>SettingsForm.h</DependentOn>
+				<BuildOrder>5</BuildOrder>
 			</CppCompile>
-			<FormResources Include="main.dfm"/>
+			<CppCompile Include="SplashScreen.cpp">
+				<Form>SplashForm</Form>
+				<DependentOn>SplashScreen.h</DependentOn>
+				<BuildOrder>6</BuildOrder>
+			</CppCompile>
 			<FormResources Include="ScriptForm.dfm"/>
+			<FormResources Include="main.dfm"/>
+			<FormResources Include="SettingsForm.dfm"/>
+			<FormResources Include="SplashScreen.dfm"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
@@ -103,9 +115,9 @@
 						<VersionInfo Name="IncludeVerInfo">True</VersionInfo>
 						<VersionInfo Name="AutoIncBuild">True</VersionInfo>
 						<VersionInfo Name="MajorVer">1</VersionInfo>
-						<VersionInfo Name="MinorVer">4</VersionInfo>
+						<VersionInfo Name="MinorVer">5</VersionInfo>
 						<VersionInfo Name="Release">0</VersionInfo>
-						<VersionInfo Name="Build">14</VersionInfo>
+						<VersionInfo Name="Build">17</VersionInfo>
 						<VersionInfo Name="Debug">False</VersionInfo>
 						<VersionInfo Name="PreRelease">False</VersionInfo>
 						<VersionInfo Name="Special">False</VersionInfo>
@@ -117,7 +129,7 @@
 					<VersionInfoKeys>
 						<VersionInfoKeys Name="CompanyName"/>
 						<VersionInfoKeys Name="FileDescription"/>
-						<VersionInfoKeys Name="FileVersion">1.4.0.14</VersionInfoKeys>
+						<VersionInfoKeys Name="FileVersion">1.5.0.17</VersionInfoKeys>
 						<VersionInfoKeys Name="InternalName"/>
 						<VersionInfoKeys Name="LegalCopyright"/>
 						<VersionInfoKeys Name="LegalTrademarks"/>

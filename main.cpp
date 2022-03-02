@@ -10,11 +10,11 @@
 
 #include <Commctrl.h>
 
-
 #pragma hdrstop
 
 #include "main.h"
 #include "ScriptForm.h"
+#include "SettingsForm.h"
 #include "FOMODClass.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -44,6 +44,11 @@ TMainForm *MainForm;
 
 CFOMOD FOMOD;
 UnicodeString RootDirectory;
+UnicodeString AppPath;
+
+
+TSettings Settings;
+vector <TLanguagePair> LanguageTable;
 
 int StepCount       = 0;
 int CurrentStepIndx = 0;
@@ -80,9 +85,9 @@ UnicodeString GetFileVersionOfApplication(LPTSTR lpszFilePath)
 
    delete [] lpVersionInfo;
 
-   printf( "Higher: %x\n" , dwFileVersionMS );
-
-   printf( "Lower: %x\n" , dwFileVersionLS );
+//   printf( "Higher: %x\n" , dwFileVersionMS );
+//
+//   printf( "Lower: %x\n" , dwFileVersionLS );
 
    DWORD dwLeftMost     = HIWORD(dwFileVersionMS);
    DWORD dwSecondLeft   = LOWORD(dwFileVersionMS);
@@ -91,7 +96,7 @@ UnicodeString GetFileVersionOfApplication(LPTSTR lpszFilePath)
 
    _TCHAR str[128];
 
-   _stprintf(str, _T("%d.%d.%d.%d\n") , dwLeftMost, dwSecondLeft,
+   _stprintf(str, _T("%d.%d.%d.%d") , dwLeftMost, dwSecondLeft,
       dwSecondRight, dwRightMost);
 
    return UnicodeString(str);
@@ -650,6 +655,280 @@ bool LoadFOMODInfoFromXML(_TCHAR *filename, CFOMOD &fomod)
     return result;
 }
 
+void SaveConfig(TSettings Settings)
+{
+    FILE *fp = _tfopen( (AppPath+"\\config.ini").c_str(), _T("w"));
+    if(fp)
+    {
+        fprintf(fp, "[General]\n");
+        fprintf(fp, "bHideOpenFolder = %d\n", (int)Settings.hideOpenFolder);
+        fprintf(fp, "bHideOpenFile = %d\n", (int)Settings.hideOpenFile);
+        fprintf(fp, "iInterfaceTextSize = %d\n", Settings.interfaceTextSize);
+        fprintf(fp, "iSplashScreenSec = %d\n", Settings.splashScreenSeconds);
+        fprintf(fp, "sLanguage = %s\n", Settings.langFile.c_str());
+
+        fprintf(fp, "\n[RecentFiles]\n");
+        fprintf(fp, "iMaxRecentFiles = %d\n", Settings.MaxRecentFiles);
+        fprintf(fp, "iRecentFilesNum = %d\n", Settings.RecentFiles.size());
+        fprintf(fp, "sRecentFiles = \n");
+        for(int i = 0; i < Settings.RecentFiles.size(); i++)
+            fprintf(fp, "%s\n", Settings.RecentFiles[i].c_str());
+
+        fclose(fp);
+    }
+}
+
+bool LoadSettings(TSettings &settings)
+{
+    bool result = false;
+    FILE *fp = fopen("config.ini", "r");
+    if(fp)
+    {
+        char cstr[256];
+        int slen, i;
+        AnsiString token1;
+
+        while(!feof(fp))
+        {
+            fgets(cstr, 256, fp);
+            slen = strlen(cstr);
+            if(cstr[slen-1] == '\n')
+                cstr[slen-1] = '\0';
+            token1 = "";
+            for(i = 0; i < slen; i++)
+                if(cstr[i] != ' ' && cstr[i] != '=')
+                    token1 = token1 + cstr[i];
+                else
+                    break;
+
+            if(token1.LowerCase() == "slanguage")
+            {
+                while(cstr[i] == ' ' || cstr[i] == '=')
+                    i++;
+                settings.langFile = &cstr[i];
+            }
+            else if(token1.LowerCase() == "bhideopenfolder")
+            {
+                while(cstr[i] == ' ' || cstr[i] == '=')
+                    i++;
+                settings.hideOpenFolder = bool(atoi(&cstr[i]));
+            }
+            else if(token1.LowerCase() == "bhideopenfile")
+            {
+                while(cstr[i] == ' ' || cstr[i] == '=')
+                    i++;
+                settings.hideOpenFile = bool(atoi(&cstr[i]));
+            }
+            else if(token1.LowerCase() == "iinterfacetextsize")
+            {
+                while(cstr[i] == ' ' || cstr[i] == '=')
+                    i++;
+                settings.interfaceTextSize = atoi(&cstr[i]);
+            }
+            else if(token1.LowerCase() == "isplashscreensec")
+            {
+                while(cstr[i] == ' ' || cstr[i] == '=')
+                    i++;
+                settings.splashScreenSeconds = atoi(&cstr[i]);
+            }
+            else if(token1.LowerCase() == "imaxrecentfiles")
+            {
+                while(cstr[i] == ' ' || cstr[i] == '=')
+                    i++;
+                settings.MaxRecentFiles = atoi(&cstr[i]);
+            }
+            else if(token1.LowerCase() == "irecentfilesnum")
+            {
+                while(cstr[i] == ' ' || cstr[i] == '=')
+                    i++;
+                settings.RecentFilesNum = atoi(&cstr[i]);
+            }
+            else if(token1.LowerCase() == "srecentfiles")
+            {
+                settings.RecentFiles.clear();
+                for(int j = 0; j < settings.RecentFilesNum && !feof(fp); j++)
+                {
+                    fgets(cstr, 256, fp);
+                    if(cstr[strlen(cstr)-1] == '\n')
+                        cstr[strlen(cstr)-1] = '\0';
+                    token1 = cstr;
+                    settings.RecentFiles.push_back(token1);
+                }
+
+            }
+        }
+
+        fclose(fp);
+        result = true;
+    }
+
+    return result;
+}
+
+void LoadLangugeFile(UnicodeString filename, vector <TLanguagePair> &table)
+{
+
+    unsigned int
+        fsize,
+        tnum;
+    int state;
+    _TCHAR
+        *t_str;
+    TLanguagePair new_pair;
+
+    FILE *fp = _tfopen(filename.c_str(), _T("rb"));
+    if(fp)
+    {
+        fseek(fp, 0, SEEK_END);
+        fsize = ftell (fp);
+        rewind(fp);
+        tnum = fsize/sizeof(_TCHAR);
+        t_str = new _TCHAR [tnum+1];
+        fread(t_str, sizeof(_TCHAR), tnum, fp);
+        t_str[tnum] = _T('\0');
+
+        new_pair.Name = new_pair.Text = "";
+        state = 0;
+        table.clear();
+        for(unsigned int i = 1; i < tnum; i++)
+        {
+            if(state == 0)
+            {
+                if(t_str[i] != _T(' ') && t_str[i] != _T('='))
+                {
+                    if(t_str[i] != _T('\r') && t_str[i] != _T('\n'))
+                        new_pair.Name = new_pair.Name + t_str[i];
+                }
+                else
+                {
+                    state = 1;
+                    while( (t_str[i] == _T(' ') || t_str[i] == _T('=')) && i < tnum )
+                        i++;
+                }
+            }
+            else if(state == 1)
+            {
+                if(t_str[i] != _T('\r') && t_str[i] != _T('\n') && t_str[i] != _T('\0'))
+                {
+                    if(t_str[i] != _T('\"'))
+                        new_pair.Text = new_pair.Text + t_str[i];
+                }
+                else
+                {
+                    table.push_back(new_pair);
+                    new_pair.Name = new_pair.Text = "";
+                    state = 0;
+                }
+            }
+        }
+        if(new_pair.Name != "" && new_pair.Text != "")
+            table.push_back(new_pair);
+
+
+        fclose(fp);
+    }
+}
+
+UnicodeString GetLangText(UnicodeString key, vector <TLanguagePair> &table)
+{
+    UnicodeString result = key;
+
+    vector <TLanguagePair> :: iterator it;
+    for(it = table.begin(); it != table.end(); it++)
+        if(it->Name.UpperCase() == key.UpperCase())
+        {
+            result = it->Text;
+            break;
+        }
+
+    return result;
+}
+
+void ApplyLanguage(TWinControl *container, vector <TLanguagePair> &table)
+{
+    for(int i = 0; i < container->ControlCount; i++)
+    {
+        TControl *control = container->Controls[i];
+
+        TLabel *label = dynamic_cast<TLabel *>(control);
+        if(label)
+            if(label->Caption != "")
+                label->Caption = GetLangText(label->Name, table);
+
+        TButton *button = dynamic_cast<TButton *>(control);
+        if(button)
+            button->Caption = GetLangText(button->Name, table);
+
+        TLabeledEdit *labelededit = dynamic_cast<TLabeledEdit *>(control);
+        if(labelededit)
+            labelededit->EditLabel->Caption = GetLangText(labelededit->Name, table);
+
+        TCheckBox *checkbox = dynamic_cast<TCheckBox *>(control);
+        if(checkbox)
+            checkbox->Caption = GetLangText(checkbox->Name, table);
+
+        TGroupBox *groupbox = dynamic_cast<TGroupBox *>(control);
+        if(groupbox)
+        {
+            groupbox->Caption = GetLangText(groupbox->Name, table);
+            ApplyLanguage(groupbox, table);
+        }
+
+        TTabSheet *sheet = dynamic_cast<TTabSheet *>(control);
+        if(sheet)
+        {
+            sheet->Caption = GetLangText(sheet->Name, table);
+            ApplyLanguage(sheet, table);
+        }
+
+        TPanel *panel = dynamic_cast<TPanel *>(control);
+        if(panel)
+            ApplyLanguage(panel, table);
+
+        TPageControl *pagecontrol = dynamic_cast<TPageControl *>(control);
+        if(pagecontrol)
+        {
+            if(    pagecontrol->Name != "StepsTabControl"
+                && pagecontrol->Name != "pdPatternsPageControl"
+                && pagecontrol->Name != "ConiditionalFilesPageControl")
+                ApplyLanguage(pagecontrol, table);
+        }
+
+        TScrollBox *scrollbox = dynamic_cast<TScrollBox *>(control);
+        if(scrollbox)
+            ApplyLanguage(scrollbox, table);
+
+    }
+}
+
+void ManageRecentFiles(UnicodeString path)
+{
+    deque<AnsiString>::iterator it;
+
+    if(path != NULL)
+    {
+        for(it = Settings.RecentFiles.begin(); it != Settings.RecentFiles.end(); it++)
+            if(path == *it)
+            {
+                Settings.RecentFiles.erase(it);
+                break;
+            }
+        while(Settings.RecentFiles.size() >= Settings.MaxRecentFiles)
+            Settings.RecentFiles.pop_back();
+        Settings.RecentFiles.push_front(path);
+        SaveConfig(Settings);
+    }
+    while(MainForm->RecentMenu->Count > 1)
+        if(MainForm->RecentMenu->Items[0]->Name != "RecentFileTemplate")
+            MainForm->RecentMenu->Remove(MainForm->RecentMenu->Items[0]);
+    for(int i = 0; i < Settings.RecentFiles.size(); i++)
+    {
+        TMenuItem *new_recent = new TMenuItem(MainForm->RecentMenu);
+        new_recent->Caption = Settings.RecentFiles[i];
+        new_recent->OnClick = MainForm->RecentFileTemplate->OnClick;
+        MainForm->RecentMenu->Insert(i, new_recent);
+    }
+}
 //---------------------------------------------------------------------------
 __fastcall TMainForm::TMainForm(TComponent* Owner)
     : TForm(Owner)
@@ -660,7 +939,23 @@ __fastcall TMainForm::TMainForm(TComponent* Owner)
 void __fastcall TMainForm::FormCreate(TObject *Sender)
 {
     PageControl->ActivePage = ModInfoTabSheet;
-    MainForm->Caption = "FOMOD Creation Tool " + GetFileVersionOfApplication(Application->ExeName.c_str());
+    Caption = "FOMOD Creation Tool " + GetFileVersionOfApplication(Application->ExeName.c_str());
+
+    _TCHAR temp[256];
+    _tcscpy(temp, Application->ExeName.c_str());
+    for(int i = _tcslen(temp); i > 0; i--)
+        if(temp[i] == _T('\\'))
+        {
+            temp[i] = _T('\0');
+            break;
+        }
+    AppPath = &temp[0];
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::FormClose(TObject *Sender, TCloseAction &Action)
+{
+    exit(0);
 }
 //---------------------------------------------------------------------------
 
@@ -714,7 +1009,7 @@ void __fastcall TMainForm::ModVersionEditChange(TObject *Sender)
 
 void __fastcall TMainForm::ModCategoryEditChange(TObject *Sender)
 {
-    FOMOD.ModCategory = ModCategoryEdit->Text;
+    FOMOD.ModCategory = ModCategoryComboBox->Text;
 }
 //---------------------------------------------------------------------------
 
@@ -736,8 +1031,8 @@ void __fastcall TMainForm::ProceedButtonClick(TObject *Sender)
     FOMOD.Steps.push_back(new_step);
     StepCount = FOMOD.Steps.size();
     StepsTabSheet->Enabled = true;
-    RequiredInstalsTabSheet->Enabled = true;
-    ConditionalInstalsTabSheet->Enabled = true;
+    RequiredInstallsTabSheet->Enabled = true;
+    ConditionalInstallsTabSheet->Enabled = true;
     StepsTabSheet->Show();
     ProceedButton->Enabled = false;
     OpenRootDirButton->Enabled = false;
@@ -849,6 +1144,7 @@ void __fastcall TMainForm::StepsTabControlChange(TObject *Sender)
 
             ConditionComboBox->Items->Add(TotalConditionSet[i]);
             CondFileDependNameComboBox->Items->Add(TotalConditionSet[i]);
+            pdFileFlagNameComboBox->Items->Add(TotalConditionSet[i]);
         }
         ConditionComboBox->ItemIndex = 0;
     }
@@ -907,7 +1203,8 @@ void __fastcall TMainForm::AddConditionButtonClick(TObject *Sender)
     if(ConditionComboBox->Items->Count > 0 && ConditionComboBox->ItemIndex > -1)
     {
         TListItem *item = ConditionListView->Items->Add();
-        item->Caption = ConditionComboBox->Text;
+        item->Caption = VisibilityTypeComboBox->Text;
+        item->SubItems->Add(ConditionComboBox->Text);
         item->SubItems->Add("==");
         item->SubItems->Add(ConditionValueComboBox->Text);
         item->SubItems->Add("AND");
@@ -928,6 +1225,16 @@ void __fastcall TMainForm::DeleteConditionButtonClick(TObject *Sender)
         FOMOD.Steps[CurrentStepIndx].VisibilityDependencies.erase(FOMOD.Steps[CurrentStepIndx].VisibilityDependencies.begin()+ConditionListView->ItemIndex);
         ConditionListView->Items->Delete(ConditionListView->ItemIndex);
     }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::ConditionListViewSelectItem(TObject *Sender, TListItem *Item,
+          bool Selected)
+{
+    if(ConditionListView->ItemIndex > -1)
+        DeleteConditionButton->Enabled = true;
+    else
+        DeleteConditionButton->Enabled = false;
 }
 //---------------------------------------------------------------------------
 
@@ -1540,7 +1847,7 @@ void __fastcall TMainForm::SaveMenuClick(TObject *Sender)
         if(sizeof(_TCHAR) > 1)
             fwrite(&BOM, sizeof(_TCHAR), 1, fpModuleConfigxml);
 
-        _ftprintf(fpModuleConfigxml, _T("<!-- Created with FOMOD Creation Tool [%s] --> \n"), _T("http://www.nexusmods.com/fallout4/mods/6821"));
+        _ftprintf(fpModuleConfigxml, _T("<!-- Powered by FOMOD Creation Tool %s [%s] --> \n"), GetFileVersionOfApplication(Application->ExeName.c_str()), _T("http://www.nexusmods.com/fallout4/mods/6821"));
 
         _ftprintf(fpModuleConfigxml, _T("<config xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"http://qconsulting.ca/fo3/ModConfig5.0.xsd\"> \n"));
         _ftprintf(fpModuleConfigxml, _T("\t<moduleName>%s</moduleName> \n"), temp_fomod.Name.c_str());
@@ -1718,6 +2025,8 @@ void __fastcall TMainForm::SaveMenuClick(TObject *Sender)
         RunBatFile(t_path, temp_fomod);
 
         mdlconfXMLStateLabel->Caption = "OK";
+
+        ManageRecentFiles(RootDirectory);
     }
     else
     {
@@ -1749,8 +2058,8 @@ void __fastcall TMainForm::NewMenuClick(TObject *Sender)
     CurrentStepIndx = 0;
 
     StepsTabSheet->Enabled = false;
-    RequiredInstalsTabSheet->Enabled = false;
-    ConditionalInstalsTabSheet->Enabled = false;
+    RequiredInstallsTabSheet->Enabled = false;
+    ConditionalInstallsTabSheet->Enabled = false;
     ModInfoTabSheet->Show();
     while(StepsTabControl->PageCount > 1)
         StepsTabControl->Pages[1]->Free();
@@ -1760,7 +2069,7 @@ void __fastcall TMainForm::NewMenuClick(TObject *Sender)
     ModAuthorEdit->Text = "";
     ModVersionEdit->Text = "";
     ModURLEdit->Text = "";
-    ModCategoryEdit->Text = "";
+    ModCategoryComboBox->Text = "";
     ModDesccriptionMemo->Text = "";
     ProceedButton->Enabled = true;
     OpenRootDirButton->Enabled = true;
@@ -1803,7 +2112,7 @@ void __fastcall TMainForm::OpenMenuClick(TObject *Sender)
                 ModVersionEdit->Text = FOMOD.Version;
                 ModURLEdit->Text = FOMOD.URL;
                 ModDesccriptionMemo->Lines->Text = FOMOD.Description;
-                ModCategoryEdit->Text = FOMOD.ModCategory;
+                ModCategoryComboBox->Text = FOMOD.ModCategory;
             }
             if(module_config_xml_loaded)
             {
@@ -1830,6 +2139,8 @@ void __fastcall TMainForm::OpenMenuClick(TObject *Sender)
                 StepsTabControl->Pages[0]->Caption = FOMOD.Steps[0].Name;
                 StepsTabControl->ActivePage = StepsTabControl->Pages[0];
                 ConiditionalFilesPageControlChange(Sender);
+
+                ManageRecentFiles(RootDirectory);
             }
 
 
@@ -1838,8 +2149,8 @@ void __fastcall TMainForm::OpenMenuClick(TObject *Sender)
             StepsTabControlChange(Sender);
 
             StepsTabSheet->Enabled = true;
-            RequiredInstalsTabSheet->Enabled = true;
-            ConditionalInstalsTabSheet->Enabled = true;
+            RequiredInstallsTabSheet->Enabled = true;
+            ConditionalInstallsTabSheet->Enabled = true;
             StepsTabSheet->Show();
             ProceedButton->Enabled = false;
             OpenRootDirButton->Enabled = false;
@@ -1918,7 +2229,7 @@ void __fastcall TMainForm::OpenfileMenuClick(TObject *Sender)
             ModVersionEdit->Text = FOMOD.Version;
             ModURLEdit->Text = FOMOD.URL;
             ModDesccriptionMemo->Lines->Text = FOMOD.Description;
-            ModCategoryEdit->Text = FOMOD.ModCategory;
+            ModCategoryComboBox->Text = FOMOD.ModCategory;
         }
         if(module_config_xml_loaded)
         {
@@ -1945,6 +2256,8 @@ void __fastcall TMainForm::OpenfileMenuClick(TObject *Sender)
             StepsTabControl->Pages[0]->Caption = FOMOD.Steps[0].Name;
             StepsTabControl->ActivePage = StepsTabControl->Pages[0];
             ConiditionalFilesPageControlChange(Sender);
+
+            ManageRecentFiles(RootDirectory);
         }
 
 
@@ -1953,8 +2266,8 @@ void __fastcall TMainForm::OpenfileMenuClick(TObject *Sender)
         StepsTabControlChange(Sender);
 
         StepsTabSheet->Enabled = true;
-        RequiredInstalsTabSheet->Enabled = true;
-        ConditionalInstalsTabSheet->Enabled = true;
+        RequiredInstallsTabSheet->Enabled = true;
+        ConditionalInstallsTabSheet->Enabled = true;
         StepsTabSheet->Show();
         ProceedButton->Enabled = false;
         OpenRootDirButton->Enabled = false;
@@ -2042,7 +2355,7 @@ void __fastcall TMainForm::RunBeforeSaveMenuClick(TObject *Sender)
     }
     else
         ScriptForm1->ScriptMemo->Clear();
-    ScriptForm1->Caption = "Run commands before save";
+    ScriptForm1->Caption = GetLangText(RunBeforeSaveMenu->Name, LanguageTable);
     ScriptForm1->ShowModal();
     if(ScriptForm1->ModalResult == mrOk)
     {
@@ -2071,7 +2384,7 @@ void __fastcall TMainForm::RunAfterSaveMenuClick(TObject *Sender)
     }
     else
         ScriptForm1->ScriptMemo->Clear();
-    ScriptForm1->Caption = "Run commands after save";
+    ScriptForm1->Caption = GetLangText(RunAfterSaveMenu->Name, LanguageTable);
     ScriptForm1->ShowModal();
     if(ScriptForm1->ModalResult == mrOk)
     {
@@ -2098,10 +2411,7 @@ void __fastcall TMainForm::pdDefTypeComboBoxChange(TObject *Sender)
 
 void __fastcall TMainForm::pdDependencyTypeComboBoxChange(TObject *Sender)
 {
-    if(pdDependencyTypeComboBox->Text == "file")
-        Label12->Caption = "State";
-    else if(pdDependencyTypeComboBox->Text == "flag")
-        Label12->Caption = "Value";
+    pdValueLabel->Caption = GetLangText(pdValueLabel->Name + pdDependencyTypeComboBox->Text, LanguageTable);
 }
 //---------------------------------------------------------------------------
 
@@ -2148,9 +2458,24 @@ void __fastcall TMainForm::pdAddButtonClick(TObject *Sender)
             item->SubItems->Add(pdStateValueComboBox->Text);
             item->SubItems->Add(pdOperatorComboBox->Text);
 
-            bool exist = false;
-            for(int i = 0; i < pdFileFlagNameComboBox->Items->Count; i++)
-                if(pdFileFlagNameComboBox->Items[i].Text == pdFileFlagNameComboBox->Text)
+
+
+            _TCHAR tstr[512];
+            vector<UnicodeString> itemslist;
+            UnicodeString token1;
+            bool exist;
+            _tcscpy(tstr, pdFileFlagNameComboBox->Items[0].Text.c_str());
+            for(int i = 0; i < _tcslen(tstr); i++)
+                if(tstr[i] != _T('\r') && tstr[i] != _T('\n'))
+                    token1 = token1 + tstr[i];
+                else
+                    if(token1 != "")
+                    {
+                        itemslist.push_back(token1);
+                        token1 = "";
+                    }
+            for(int i = 0; i < itemslist.size(); i++)
+                if(itemslist[i] == pdFileFlagNameComboBox->Text)
                 {
                     exist = true;
                     break;
@@ -2303,10 +2628,7 @@ void __fastcall TMainForm::FormResize(TObject *Sender)
 
 void __fastcall TMainForm::VisibilityTypeComboBoxChange(TObject *Sender)
 {
-    if( VisibilityTypeComboBox->Text == "file")
-        Label3->Caption = "state";
-    else if( VisibilityTypeComboBox->Text == "flag")
-        Label3->Caption = "equals";
+    equalsLabel->Caption = GetLangText(equalsLabel->Name + VisibilityTypeComboBox->Text, LanguageTable);
 }
 //---------------------------------------------------------------------------
 
@@ -2448,10 +2770,7 @@ void __fastcall TMainForm::RequiredFilesDstListViewEdited(TObject *Sender, TList
 
 void __fastcall TMainForm::CondFileDependTypeComboBoxChange(TObject *Sender)
 {
-    if(CondFileDependTypeComboBox->Text == "file")
-        Label27->Caption = "State";
-    else if(CondFileDependTypeComboBox->Text == "flag")
-        Label27->Caption = "Value";
+    ciValueLabel->Caption = GetLangText(ciValueLabel->Name + CondFileDependTypeComboBox->Text, LanguageTable);
 }
 //---------------------------------------------------------------------------
 
@@ -2759,6 +3078,159 @@ void __fastcall TMainForm::RemoveCondFileConditionButtonClick(TObject *Sender)
             FOMOD.ConditionalFiles[ConiditionalFilesPageControl->ActivePageIndex].Dependencies.begin()+CondFilePatternListView->ItemIndex);
         CondFilePatternListView->Items->Delete(CondFilePatternListView->ItemIndex);
     }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::SettingsMenuClick(TObject *Sender)
+{
+    if(LoadSettings(Settings))
+    {
+        char search_path[200];
+
+        SettingsForm->HideOpenFolderCheckBox->Checked = Settings.hideOpenFolder;
+        SettingsForm->HideOpenFileCheckBox->Checked = Settings.hideOpenFile;
+        SettingsForm->IntTextSizeComboBox->Text = Settings.interfaceTextSize;
+        SettingsForm->MaxRecentEdit->Text = Settings.MaxRecentFiles;
+
+        SettingsForm->LanguagesComboBox->Clear();
+        WIN32_FIND_DATA fd;
+        HANDLE hFind = ::FindFirstFile((AppPath + "\\Language\\*.txt").c_str(), &fd);
+        if(hFind != INVALID_HANDLE_VALUE)
+        {
+            do
+            {
+                if(! (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
+                {
+                    SettingsForm->LanguagesComboBox->Items->Add(fd.cFileName);
+                }
+            }while(::FindNextFile(hFind, &fd));
+            ::FindClose(hFind);
+            SettingsForm->LanguagesComboBox->Text = Settings.langFile;
+        }
+
+        SettingsForm->RecentListView->Clear();
+        for(int i = 0; i < Settings.RecentFiles.size(); i++)
+        {
+            TListItem *item = SettingsForm->RecentListView->Items->Add();
+            item->Caption = Settings.RecentFiles[i];
+        }
+        SettingsForm->recentFiles = Settings.RecentFiles;
+    }
+    SettingsForm->ShowModal();
+    if(SettingsForm->ModalResult == mrOk)
+    {
+        Settings.hideOpenFolder = SettingsForm->HideOpenFolderCheckBox->Checked;
+        Settings.hideOpenFile = SettingsForm->HideOpenFileCheckBox->Checked;
+        Settings.interfaceTextSize = SettingsForm->IntTextSizeComboBox->Text.ToInt();
+        Settings.langFile = SettingsForm->LanguagesComboBox->Text;
+        Settings.MaxRecentFiles = SettingsForm->MaxRecentEdit->Text.ToInt();
+        Settings.RecentFiles = SettingsForm->recentFiles;
+        ManageRecentFiles(NULL);
+
+        SaveConfig(Settings);
+
+        OpenMenu->Visible = !Settings.hideOpenFolder;
+        OpenfileMenu->Visible = !Settings.hideOpenFile;
+        MainForm->Font->Size = Settings.interfaceTextSize;
+        SettingsForm->Font->Size = Settings.interfaceTextSize;
+        ScriptForm1->Font->Size = Settings.interfaceTextSize;
+        LoadLangugeFile(AppPath + "\\language\\" + Settings.langFile, LanguageTable);
+        ApplyLanguage(MainForm, LanguageTable);
+        ApplyLanguage(SettingsForm, LanguageTable);
+        ApplyLanguage(ScriptForm1, LanguageTable);
+        SettingsForm->Caption = GetLangText(SettingsMenu->Name, LanguageTable);
+
+        NewMenu->Caption = GetLangText(MainForm->NewMenu->Name, LanguageTable);
+        OpenMenu->Caption = GetLangText(OpenMenu->Name, LanguageTable);
+        OpenfileMenu->Caption = GetLangText(OpenfileMenu->Name, LanguageTable);
+        SaveMenu->Caption = GetLangText(SaveMenu->Name, LanguageTable);
+        MergeFOMODMenu->Caption = GetLangText(MergeFOMODMenu->Name, LanguageTable);
+        MainForm->RecentMenu->Caption = GetLangText(MainForm->RecentMenu->Name, LanguageTable);
+        ExitMenu->Caption = GetLangText(ExitMenu->Name, LanguageTable);
+        OptionsMenu->Caption = GetLangText(OptionsMenu->Name, LanguageTable);
+        SettingsMenu->Caption = GetLangText(SettingsMenu->Name, LanguageTable);
+        RunBeforeSaveMenu->Caption = GetLangText(RunBeforeSaveMenu->Name, LanguageTable);
+        RunAfterSaveMenu->Caption = GetLangText(RunAfterSaveMenu->Name, LanguageTable);
+        EditListElementCMenu->Caption = GetLangText(EditListElementCMenu->Name, LanguageTable);
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::RecentFileTemplateClick(TObject *Sender)
+{
+    TMenuItem *menu_item = dynamic_cast<TMenuItem *>(Sender);
+    UnicodeString temp;
+
+    bool
+        module_config_xml_loaded = false,
+        info_xml_loaded = false;
+
+    NewMenuClick(Sender);
+
+    RootDirectory = Settings.RecentFiles[menu_item->MenuIndex];
+    RootDirEdit->Text = RootDirectory;
+
+    try{
+        info_xml_loaded = LoadFOMODInfoFromXML((RootDirectory+"\\fomod\\info.xml").c_str(), FOMOD);
+    }
+    catch(...){}
+    try{
+        module_config_xml_loaded = LoadFOMODFromXML((RootDirectory+"\\fomod\\ModuleConfig.xml").c_str(), FOMOD);
+    }
+    catch(...){}
+
+    if(info_xml_loaded)
+    {
+        ModNameEdit->Text = FOMOD.Name;
+        ModAuthorEdit->Text = FOMOD.AuthorName;
+        ModVersionEdit->Text = FOMOD.Version;
+        ModURLEdit->Text = FOMOD.URL;
+        ModDesccriptionMemo->Lines->Text = FOMOD.Description;
+        ModCategoryComboBox->Text = FOMOD.ModCategory;
+    }
+    if(module_config_xml_loaded)
+    {
+        for(int i = 1; i < FOMOD.Steps.size(); i++)
+        {
+            TTabSheet *new_tab = new TTabSheet(StepsTabControl);
+            new_tab->Caption = FOMOD.Steps[i].Name;
+            new_tab->PageControl = StepsTabControl;
+        }
+        for(int i = 0; i < FOMOD.RequiredFiles.size(); i++)
+        {
+            TListItem *item = RequiredFilesSrcListView->Items->Add();
+            item->Caption = FOMOD.RequiredFiles[i].Type;
+            item->SubItems->Add(FOMOD.RequiredFiles[i].SrcPath);
+            item = RequiredFilesDstListView->Items->Add();
+            item->Caption = FOMOD.RequiredFiles[i].DstPath;
+        }
+        for(int i = 0; i < FOMOD.ConditionalFiles.size(); i++)
+        {
+            TTabSheet *new_tab = new TTabSheet(ConiditionalFilesPageControl);
+            new_tab->Caption = "Pattern[" + IntToStr(i) + "]";
+            new_tab->PageControl = ConiditionalFilesPageControl;
+        }
+        StepsTabControl->Pages[0]->Caption = FOMOD.Steps[0].Name;
+        StepsTabControl->ActivePage = StepsTabControl->Pages[0];
+        ConiditionalFilesPageControlChange(Sender);
+
+        ManageRecentFiles(RootDirectory);
+    }
+
+
+    StepCount = FOMOD.Steps.size();
+    CurrentStepIndx = StepCount-1;
+    StepsTabControlChange(Sender);
+
+    StepsTabSheet->Enabled = true;
+    RequiredInstallsTabSheet->Enabled = true;
+    ConditionalInstallsTabSheet->Enabled = true;
+    StepsTabSheet->Show();
+    ProceedButton->Enabled = false;
+    OpenRootDirButton->Enabled = false;
+    RootDirEdit->Enabled = false;
+    SaveMenu->Enabled = true;
+    MergeFOMODMenu->Enabled = true;
 }
 //---------------------------------------------------------------------------
 

@@ -10,35 +10,50 @@
 #include <Forms.hpp>
 #include <StdCtrls.hpp>
 #include <Menus.hpp>
+
+#include <deque.h>
 //---------------------------------------------------------------------------
+
+typedef struct SSettings
+{
+    AnsiString langFile;
+    bool hideOpenFolder;
+    bool hideOpenFile;
+    int interfaceTextSize;
+    int splashScreenSeconds;
+    int MaxRecentFiles;
+    int RecentFilesNum;
+    deque <AnsiString> RecentFiles;
+} TSettings;
+
+typedef struct SLanguagePair
+{
+    UnicodeString Name;
+    UnicodeString Text;
+} TLanguagePair;
+
 class TMainForm : public TForm
 {
 __published:	// IDE-managed Components
     TPageControl *PageControl;
     TTabSheet *ModInfoTabSheet;
     TTabSheet *StepsTabSheet;
-    TGroupBox *GroupBox1;
-    TLabeledEdit *ModNameEdit;
-    TLabeledEdit *ModAuthorEdit;
-    TLabeledEdit *ModVersionEdit;
-    TLabeledEdit *ModURLEdit;
+    TGroupBox *ModInfoGroupBox;
     TGroupBox *WorkSpaceGroupBox;
-    TLabeledEdit *RootDirEdit;
     TButton *OpenRootDirButton;
     TButton *ProceedButton;
     TGroupBox *StepSettingsGroupBox;
-    TLabeledEdit *StepNameEdit;
-    TGroupBox *GroupBox4;
-    TLabel *Label1;
+    TGroupBox *ConditionSetGroupBox;
+    TLabel *IfLabel;
     TComboBox *ConditionComboBox;
-    TLabel *Label3;
+    TLabel *equalsLabel;
     TComboBox *ConditionValueComboBox;
     TListView *ConditionListView;
     TButton *AddConditionButton;
     TButton *DeleteConditionButton;
     TGroupBox *GroupsGroupBox;
     TLabeledEdit *GroupNameEdit;
-    TLabel *Label4;
+    TLabel *GTypeLabel;
     TComboBox *GroupTypeComboBox;
     TButton *AddGroupButton;
     TButton *RemoveGroupButton;
@@ -46,18 +61,18 @@ __published:	// IDE-managed Components
     TButton *RemovePluginButton;
     TButton *AddPluginButton;
     TPanel *Panel1;
-    TLabel *Label5;
+    TLabel *PluginDescLabel;
     TMemo *PluginDescriptionMemo;
     TComboBox *VaribleComboBox;
-    TLabel *Label6;
-    TLabel *Label7;
+    TLabel *FNameLabel;
+    TLabel *FSetLabel;
     TComboBox *VaribleValueComboBox;
     TListView *FlagSetListView;
     TButton *AddVaribleButton;
     TButton *DeleteVaribleButton;
     TGroupBox *FilesGroupBox;
     TListView *SrcFilesListView;
-    TLabel *Label8;
+    TLabel *CpyLabel;
     TButton *AddFileButton;
     TButton *AddFolderButton;
     TButton *RemoveFileFolderButton;
@@ -80,29 +95,28 @@ __published:	// IDE-managed Components
     TScrollBox *ScrollBox1;
     TTabSheet *InfoTabSheet;
     TPageControl *StepsTabControl;
-    TTabSheet *TabSheet1;
+    TTabSheet *Step1;
     TMemo *Memo1;
     TListView *DstFilesListView;
-    TLabel *Label9;
+    TLabel *DataLabel;
     TButton *GroupUpButton;
     TButton *GroupDownButton;
     TButton *PluginUpButton;
     TButton *PluginDownButton;
-    TLabeledEdit *ModCategoryEdit;
     TButton *MoveLeftButton;
     TButton *MoveRightButton;
     TMainMenu *MainMenu;
-    TMenuItem *File1;
+    TMenuItem *FOMODMenu;
     TMenuItem *NewMenu;
     TMenuItem *OpenMenu;
     TMenuItem *SaveMenu;
     TMenuItem *ExitMenu;
     TMenuItem *N1;
-    TMenuItem *Script1;
+    TMenuItem *OptionsMenu;
     TMenuItem *RunBeforeSaveMenu;
     TMenuItem *RunAfterSaveMenu;
     TMemo *ModDesccriptionMemo;
-    TLabel *Label10;
+    TLabel *ModDescriptionLabel;
     TListView *PluginListView;
     TPanel *Panel5;
     TPanel *Panel6;
@@ -110,29 +124,29 @@ __published:	// IDE-managed Components
     TTabSheet *FlagSetTabSheet;
     TTabSheet *PluginDependenciesTabSheet;
     TListView *PluginDependenciesListView;
-    TLabel *Label12;
+    TLabel *pdValueLabel;
     TComboBox *pdStateValueComboBox;
     TButton *pdAddButton;
     TButton *pdDeleteButton;
     TComboBox *pdDependencyTypeComboBox;
-    TLabel *Label13;
-    TLabel *Label11;
-    TLabel *Label14;
+    TLabel *pdDepTypeLabel;
+    TLabel *pdNameLabel;
+    TLabel *pdOperatorLabel;
     TComboBox *pdOperatorComboBox;
-    TLabel *Label15;
+    TLabel *pdDefTypeNameLabel;
     TComboBox *pdDefTypeComboBox;
     TShape *Shape1;
     TShape *Shape2;
     TComboBox *pdTypeNameComboBox;
-    TLabel *Label17;
+    TLabel *pdTypeNameLabel;
     TPanel *SaveConfirmationPanel;
-    TLabel *Label18;
-    TLabel *Label19;
+    TLabel *SavingInfoLabel;
+    TLabel *SavingConfigLabel;
     TLabel *mdlconfXMLStateLabel;
     TLabel *infoXMLStateLabel;
     TTimer *ShowConfirmationTimer;
     TShape *Shape3;
-    TLabel *Label20;
+    TLabel *NoImageLabel;
     TPageControl *pdPatternsPageControl;
     TButton *pdDeletePatternButton;
     TButton *pdNewPatternButton;
@@ -143,13 +157,13 @@ __published:	// IDE-managed Components
     TPanel *Panel8;
     TPanel *Panel9;
     TPanel *Panel10;
-    TLabel *Label16;
+    TLabel *typeLabel;
     TComboBox *VisibilityTypeComboBox;
-    TTabSheet *RequiredInstalsTabSheet;
-    TTabSheet *ConditionalInstalsTabSheet;
+    TTabSheet *RequiredInstallsTabSheet;
+    TTabSheet *ConditionalInstallsTabSheet;
     TPanel *Panel11;
-    TLabel *Label2;
-    TLabel *Label21;
+    TLabel *CpyLabel2;
+    TLabel *DataLabel2;
     TButton *AddRequiredFileButton;
     TButton *AddRequiredFolderButton;
     TListView *RequiredFilesDstListView;
@@ -164,19 +178,19 @@ __published:	// IDE-managed Components
     TButton *MoveRightCondFilePatternButton;
     TPanel *Panel14;
     TPanel *Panel15;
-    TLabel *Label22;
+    TLabel *DataLabel3;
     TListView *CondFilesDstListView;
     TListView *CondFilesSrcListView;
-    TLabel *Label23;
+    TLabel *CpyLabel3;
     TButton *CondFileAddFileButton;
     TButton *CondFileAddFolderButton;
     TButton *CondFileRemoveFileFolderButton;
-    TLabel *Label24;
+    TLabel *ciOperatorLabel;
     TComboBox *CondFilePatternOperatorComboBox;
     TComboBox *CondFileDependTypeComboBox;
-    TLabel *Label25;
-    TLabel *Label26;
-    TLabel *Label27;
+    TLabel *ciDepTypeLabel;
+    TLabel *ciNameLabel;
+    TLabel *ciValueLabel;
     TComboBox *CondFileDependValueComboBox;
     TListView *CondFilePatternListView;
     TButton *AddCondFileConditionButton;
@@ -188,7 +202,26 @@ __published:	// IDE-managed Components
     TPanel *Panel18;
     TMenuItem *OpenfileMenu;
     TMenuItem *MergeFOMODMenu;
+    TComboBox *ModCategoryComboBox;
+    TLabel *ModCategoryLabel;
+    TEdit *ModNameEdit;
+    TEdit *ModAuthorEdit;
+    TEdit *ModVersionEdit;
+    TEdit *ModURLEdit;
+    TLabel *ModNameLabel;
+    TLabel *ModAuthorLabel;
+    TLabel *ModVersionLabel;
+    TLabel *ModURLLabel;
+    TEdit *RootDirEdit;
+    TLabel *RootDirLabel;
+    TMenuItem *N2;
+    TMenuItem *SettingsMenu;
+    TEdit *StepNameEdit;
+    TLabel *StepNameLabel;
+    TMenuItem *RecentMenu;
+    TMenuItem *RecentFileTemplate;
     void __fastcall FormCreate(TObject *Sender);
+    void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
     void __fastcall OpenRootDirButtonClick(TObject *Sender);
     void __fastcall RootDirEditChange(TObject *Sender);
     void __fastcall ModNameEditChange(TObject *Sender);
@@ -201,6 +234,8 @@ __published:	// IDE-managed Components
     void __fastcall StepNameEditChange(TObject *Sender);
     void __fastcall AddConditionButtonClick(TObject *Sender);
     void __fastcall DeleteConditionButtonClick(TObject *Sender);
+    void __fastcall ConditionListViewSelectItem(TObject *Sender, TListItem *Item,
+          bool Selected);
     void __fastcall AddGroupButtonClick(TObject *Sender);
     void __fastcall RemoveGroupButtonClick(TObject *Sender);
     void __fastcall GroupListViewEdited(TObject *Sender, TListItem *Item, UnicodeString &S);
@@ -286,9 +321,8 @@ __published:	// IDE-managed Components
           bool Selected);
     void __fastcall AddCondFileConditionButtonClick(TObject *Sender);
     void __fastcall RemoveCondFileConditionButtonClick(TObject *Sender);
-
-
-
+    void __fastcall SettingsMenuClick(TObject *Sender);
+    void __fastcall RecentFileTemplateClick(TObject *Sender);
 
 private:	// User declarations
 public:		// User declarations

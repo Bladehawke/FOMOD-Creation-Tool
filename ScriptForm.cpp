@@ -14,9 +14,7 @@ __fastcall TScriptForm1::TScriptForm1(TComponent* Owner)
 {
 }
 //---------------------------------------------------------------------------
-void __fastcall TScriptForm1::FormCreate(TObject *Sender)
-{
-    Label1->Caption =
+/*
 "Type there window console commands (cmd). Those will be executed befor/after project save. You can use macro defined in FMOD Creation Tool like:\n \
 $MODNAME$ - will be replaced with your mod name\n \
 $MODAUTHOR$ - will be replaced with mod author name\n \
@@ -26,6 +24,4 @@ $DATE$ - will be replaced with current date\n \
 $TIME$ - will be replaced with current time\n \
 $RANDOM$ - will be replaced with random number from 0 to 32767\n \
 Don't forget about quotes as you likely will need them so cmd will understand commands in right way. " ;
-}
-//---------------------------------------------------------------------------
-
+*/

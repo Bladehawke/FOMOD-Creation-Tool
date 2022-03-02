@@ -49,7 +49,6 @@ __published:	// IDE-managed Components
     TPanel *Panel1;
     TLabel *Label5;
     TMemo *PluginDescriptionMemo;
-    TGroupBox *VaribleSetGroupBox;
     TComboBox *VaribleComboBox;
     TLabel *Label6;
     TLabel *Label7;
@@ -93,7 +92,7 @@ __published:	// IDE-managed Components
     TLabeledEdit *ModCategoryEdit;
     TButton *MoveLeftButton;
     TButton *MoveRightButton;
-    TMainMenu *MainMenu1;
+    TMainMenu *MainMenu;
     TMenuItem *File1;
     TMenuItem *NewMenu;
     TMenuItem *OpenMenu;
@@ -108,6 +107,39 @@ __published:	// IDE-managed Components
     TListView *PluginListView;
     TPanel *Panel5;
     TPanel *Panel6;
+    TPageControl *PageControl2;
+    TTabSheet *VariableSetTabSheet;
+    TTabSheet *PluginDependenciesTabSheet;
+    TListView *PluginDependenciesListView;
+    TLabel *Label12;
+    TComboBox *pdStateValueComboBox;
+    TButton *pdAddButton;
+    TButton *pdDeleteButton;
+    TComboBox *pdDependencyTypeComboBox;
+    TLabel *Label13;
+    TLabel *Label11;
+    TEdit *pdFileFlagNameEdit;
+    TLabel *Label14;
+    TComboBox *pdOperatorComboBox;
+    TLabel *Label15;
+    TComboBox *pdDefTypeComboBox;
+    TShape *Shape1;
+    TShape *Shape2;
+    TComboBox *pdTypeNameComboBox;
+    TLabel *Label17;
+    TPanel *SaveConfirmationPanel;
+    TLabel *Label18;
+    TLabel *Label19;
+    TLabel *mdlconfXMLStateLabel;
+    TLabel *infoXMLStateLabel;
+    TTimer *ShowConfirmationTimer;
+    TShape *Shape3;
+    TLabel *Label20;
+    TPageControl *pdPatternsPageControl;
+    TButton *pdDeletePatternButton;
+    TButton *pdNewPatternButton;
+    TPopupMenu *PopupMenu;
+    TMenuItem *EditListElementCMenu;
     void __fastcall FormCreate(TObject *Sender);
     void __fastcall OpenRootDirButtonClick(TObject *Sender);
     void __fastcall RootDirEditChange(TObject *Sender);
@@ -126,21 +158,26 @@ __published:	// IDE-managed Components
     void __fastcall GroupListViewEdited(TObject *Sender, TListItem *Item, UnicodeString &S);
     void __fastcall GroupUpButtonClick(TObject *Sender);
     void __fastcall GroupDownButtonClick(TObject *Sender);
+    void __fastcall GroupListViewChange(TObject *Sender, TListItem *Item, TItemChange Change);
     void __fastcall GroupListViewClick(TObject *Sender);
     void __fastcall AddPluginButtonClick(TObject *Sender);
     void __fastcall RemovePluginButtonClick(TObject *Sender);
     void __fastcall PluginUpButtonClick(TObject *Sender);
     void __fastcall PluginDownButtonClick(TObject *Sender);
+    void __fastcall PluginListViewChange(TObject *Sender, TListItem *Item, TItemChange Change);
     void __fastcall PluginListViewClick(TObject *Sender);
     void __fastcall PluginListViewEdited(TObject *Sender, TListItem *Item, UnicodeString &S);
     void __fastcall AddVaribleButtonClick(TObject *Sender);
     void __fastcall DeleteVaribleButtonClick(TObject *Sender);
+    void __fastcall VaribleSetListViewChange(TObject *Sender, TListItem *Item, TItemChange Change);
     void __fastcall VaribleSetListViewClick(TObject *Sender);
     void __fastcall PluginDescriptionMemoChange(TObject *Sender);
     void __fastcall AddFileButtonClick(TObject *Sender);
     void __fastcall AddFolderButtonClick(TObject *Sender);
     void __fastcall RemoveFileFolderButtonClick(TObject *Sender);
+    void __fastcall SrcFilesListViewChange(TObject *Sender, TListItem *Item, TItemChange Change);
     void __fastcall SrcFilesListViewClick(TObject *Sender);
+    void __fastcall DstFilesListViewChange(TObject *Sender, TListItem *Item, TItemChange Change);
     void __fastcall DstFilesListViewClick(TObject *Sender);
     void __fastcall ChoosePluginImageButtonClick(TObject *Sender);
     void __fastcall ClearPluginImageButtonClick(TObject *Sender);
@@ -151,15 +188,26 @@ __published:	// IDE-managed Components
     void __fastcall MoveLeftButtonClick(TObject *Sender);
     void __fastcall MoveRightButtonClick(TObject *Sender);
     void __fastcall SaveMenuClick(TObject *Sender);
+    void __fastcall ShowConfirmationTimerTimer(TObject *Sender);
     void __fastcall OpenMenuClick(TObject *Sender);
     void __fastcall NewMenuClick(TObject *Sender);
     void __fastcall RunBeforeSaveMenuClick(TObject *Sender);
     void __fastcall RunAfterSaveMenuClick(TObject *Sender);
     void __fastcall ExitMenuClick(TObject *Sender);
-
-
-
-
+    void __fastcall pdDefTypeComboBoxChange(TObject *Sender);
+    void __fastcall pdDependencyTypeComboBoxChange(TObject *Sender);
+    void __fastcall pdOperatorComboBoxChange(TObject *Sender);
+    void __fastcall pdTypeNameComboBoxChange(TObject *Sender);
+    void __fastcall pdAddButtonClick(TObject *Sender);
+    void __fastcall pdNewPatternButtonClick(TObject *Sender);
+    void __fastcall pdPatternsPageControlChange(TObject *Sender);
+    void __fastcall pdDeletePatternButtonClick(TObject *Sender);
+    void __fastcall pdDeleteButtonClick(TObject *Sender);
+    void __fastcall PluginDependenciesListViewChange(TObject *Sender, TListItem *Item,
+          TItemChange Change);
+    void __fastcall PluginDependenciesListViewClick(TObject *Sender);
+    void __fastcall EditListElementCMenuClick(TObject *Sender);
+    void __fastcall PopupMenuPopup(TObject *Sender);
 
 
 private:	// User declarations

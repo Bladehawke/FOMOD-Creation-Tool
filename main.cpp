@@ -8,6 +8,9 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include <Commctrl.h>
+
+
 #pragma hdrstop
 
 #include "main.h"
@@ -23,6 +26,11 @@
 #define TEG_WAITCLOSE   0x04
 #define TEG_INNERTEXT   0x08
 #define TEG_READY       0x10
+
+#define AMB_UNDEFINED   -1
+#define AMB_VISIBILITY  0
+#define AMB_DIRECTTYPE  1
+#define AMB_PATTERN     2
 
 const wchar_t BOM = 0xFEFF;
 
@@ -543,6 +551,13 @@ void __fastcall TMainForm::GroupDownButtonClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TMainForm::GroupListViewChange(TObject *Sender, TListItem *Item,
+          TItemChange Change)
+{
+    GroupListViewClick(Sender);
+}
+//---------------------------------------------------------------------------
+
 void __fastcall TMainForm::GroupListViewClick(TObject *Sender)
 {
     PluginListView->Clear();
@@ -578,7 +593,7 @@ void __fastcall TMainForm::GroupListViewClick(TObject *Sender)
 
     PluginListViewClick(Sender);
 }
-//---------------------------------------------------------------------------  
+//---------------------------------------------------------------------------
 
 void __fastcall TMainForm::AddPluginButtonClick(TObject *Sender)
 {
@@ -631,11 +646,19 @@ void __fastcall TMainForm::PluginDownButtonClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TMainForm::PluginListViewChange(TObject *Sender, TListItem *Item,
+          TItemChange Change)
+{
+    PluginListViewClick(Sender);
+}
+//---------------------------------------------------------------------------
+
 void __fastcall TMainForm::PluginListViewClick(TObject *Sender)
 {
     RemovePluginButton->Enabled = false;
     PluginDescriptionMemo->Enabled = false;
     AddVaribleButton->Enabled = false;
+    DeleteVaribleButton->Enabled = false;
     ChoosePluginImageButton->Enabled = false;
     ClearPluginImageButton->Enabled = false;
     PluginImageEdit->Enabled = false;
@@ -643,40 +666,64 @@ void __fastcall TMainForm::PluginListViewClick(TObject *Sender)
     AddFolderButton->Enabled = false;
     PluginUpButton->Enabled = false;
     PluginDownButton->Enabled = false;
+    pdDefTypeComboBox->Enabled = false;
+    pdNewPatternButton->Enabled = false;
+    pdDeletePatternButton->Enabled = false;
+    pdOperatorComboBox->Enabled = false;
+    pdTypeNameComboBox->Enabled = false;
+    for(int i = pdPatternsPageControl->PageCount-1; i >= 0; i--)
+        pdPatternsPageControl->Pages[i]->Free();
     VaribleSetListView->Clear();
     SrcFilesListView->Clear();
     DstFilesListView->Clear();
+    PluginDependenciesListView->Clear();
     PluginDescriptionMemo->Clear();
     PluginImageEdit->Text = "";
     PluginImage->Picture->Bitmap = NULL;
 
-    if(PluginListView->ItemIndex > -1)
+    int plugin_indx = PluginListView->ItemIndex;
+    if(plugin_indx > -1)
     {
-        if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].ConditionSet.size() > 0)
+        if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[plugin_indx].ConditionSet.size() > 0)
         {
-            for(int i = 0; i < FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].ConditionSet.size(); i++)
+            for(int i = 0; i < FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[plugin_indx].ConditionSet.size(); i++)
             {
                 TListItem *item = VaribleSetListView->Items->Add();
-                item->Caption = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].ConditionSet[i].Name;
+                item->Caption = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[plugin_indx].ConditionSet[i].Name;
                 item->SubItems->Add(" =");
-                item->SubItems->Add(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].ConditionSet[i].Value);
+                item->SubItems->Add(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[plugin_indx].ConditionSet[i].Value);
             }
         }
-        if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].Files.size() > 0)
+        if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[plugin_indx].Files.size() > 0)
         {
-            for(int i = 0; i < FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].Files.size(); i++)
+            for(int i = 0; i < FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[plugin_indx].Files.size(); i++)
             {
                 TListItem *item = SrcFilesListView->Items->Add();
-                item->Caption = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].Files[i].Type;
-                item->SubItems->Add(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].Files[i].SrcPath);
+                item->Caption = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[plugin_indx].Files[i].Type;
+                item->SubItems->Add(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[plugin_indx].Files[i].SrcPath);
                 item = DstFilesListView->Items->Add();
-                item->Caption = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].Files[i].DstPath;
+                item->Caption = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[plugin_indx].Files[i].DstPath;
             }
         }
-        PluginDescriptionMemo->Lines->Text = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].Description;
-        PluginImageEdit->Text = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].ImagePath;
+        PluginDescriptionMemo->Lines->Text = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[plugin_indx].Description;
+        PluginImageEdit->Text = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[plugin_indx].ImagePath;
         if(PluginImageEdit->Text != "")
-            PluginImage->Picture->LoadFromFile(RootDirectory + "\\" + PluginImageEdit->Text);
+        {
+            FILE *tfp = _tfopen( (RootDirectory + "\\" + PluginImageEdit->Text).c_str(), _T("r") );
+            if(tfp)
+            {
+                fclose(tfp);
+                PluginImage->Picture->LoadFromFile(RootDirectory + "\\" + PluginImageEdit->Text);
+            }
+            else
+            {
+                MessageBox(NULL, _T("Image file not found. Image field for this plugin will be cleared."), _T("FOMOD Creation Tool"),  MB_OK);
+                FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[plugin_indx].ImagePath = "";
+                PluginImageEdit->Text = "";
+            }
+        }
+
+        pdDefTypeComboBox->Text = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[plugin_indx].DefaultType;
 
         RemovePluginButton->Enabled = true;
         PluginDescriptionMemo->Enabled = true;
@@ -686,9 +733,24 @@ void __fastcall TMainForm::PluginListViewClick(TObject *Sender)
         PluginImageEdit->Enabled = true;
         AddFileButton->Enabled = true;
         AddFolderButton->Enabled = true;
-        if(PluginListView->ItemIndex > 0)
+        pdDefTypeComboBox->Enabled = true;
+        pdNewPatternButton->Enabled = true;
+        for(int i = 0; i < FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[plugin_indx].DependencyPatterns.size(); i++)
+        {
+            TTabSheet *new_tab = new TTabSheet(pdPatternsPageControl);
+            new_tab->Caption = "Pattern[" + IntToStr(i) + "]";
+            new_tab->PageControl = pdPatternsPageControl;
+        }
+        if(pdPatternsPageControl->PageCount == 0)
+            pdDeletePatternButton->Enabled = false;
+        else
+            pdDeletePatternButton->Enabled = true;
+        pdOperatorComboBox->Enabled = true;
+        pdTypeNameComboBox->Enabled = true;
+        pdPatternsPageControlChange(Sender);
+        if(plugin_indx > 0)
             PluginUpButton->Enabled = true;
-        if(PluginListView->ItemIndex < PluginListView->Items->Count-1)
+        if(plugin_indx < PluginListView->Items->Count-1)
             PluginDownButton->Enabled = true;
 
     }
@@ -726,6 +788,13 @@ void __fastcall TMainForm::DeleteVaribleButtonClick(TObject *Sender)
         VaribleSetListView->Items->Delete(VaribleSetListView->ItemIndex);
         VaribleSetListViewClick(Sender);
     }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::VaribleSetListViewChange(TObject *Sender, TListItem *Item,
+          TItemChange Change)
+{
+    VaribleSetListViewClick(Sender);
 }
 //---------------------------------------------------------------------------
 
@@ -879,6 +948,13 @@ void __fastcall TMainForm::RemoveFileFolderButtonClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TMainForm::SrcFilesListViewChange(TObject *Sender, TListItem *Item,
+          TItemChange Change)
+{
+    SrcFilesListViewClick(Sender);
+}
+//---------------------------------------------------------------------------
+
 void __fastcall TMainForm::SrcFilesListViewClick(TObject *Sender)
 {
     if(SrcFilesListView->ItemIndex > -1)
@@ -886,6 +962,13 @@ void __fastcall TMainForm::SrcFilesListViewClick(TObject *Sender)
     else
         RemoveFileFolderButton->Enabled = false;
     DstFilesListView->ItemIndex = SrcFilesListView->ItemIndex;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::DstFilesListViewChange(TObject *Sender, TListItem *Item,
+          TItemChange Change)
+{
+    DstFilesListViewClick(Sender);
 }
 //---------------------------------------------------------------------------
 
@@ -973,7 +1056,7 @@ void __fastcall TMainForm::NewStepButtonClick(TObject *Sender)
 void __fastcall TMainForm::DeleteStepButtonClick(TObject *Sender)
 {
     FOMOD.Steps.erase(FOMOD.Steps.begin()+CurrentStepIndx);
-    StepsTabControl->Pages[CurrentStepIndx]->~TTabSheet();
+    StepsTabControl->Pages[CurrentStepIndx]->Free();
     StepCount = FOMOD.Steps.size();
     StepsTabControlChange(Sender);
     if(StepsTabControl->PageCount == 1)
@@ -1014,6 +1097,13 @@ void __fastcall TMainForm::SaveMenuClick(TObject *Sender)
     CFOMOD temp_fomod = FOMOD;
     _TCHAR t_path[256];
 
+    SaveConfirmationPanel->Left = (MainForm->ClientWidth - SaveConfirmationPanel->Width) / 2;
+    SaveConfirmationPanel->Top = (MainForm->ClientHeight - SaveConfirmationPanel->Height) / 2;
+    infoXMLStateLabel->Caption = "";
+    mdlconfXMLStateLabel->Caption = "";
+    SaveConfirmationPanel->Visible = true;
+    ShowConfirmationTimer->Enabled = true;
+
     _tcscpy(t_path, Application->ExeName.c_str());
     for(int i = _tcslen(t_path); i > 0; i--)
         if( t_path[i] == _T('\\') )
@@ -1041,9 +1131,14 @@ void __fastcall TMainForm::SaveMenuClick(TObject *Sender)
         _ftprintf(fpinfoxml, _T("</fomod> \n"));
 
         fclose(fpinfoxml);
+
+        infoXMLStateLabel->Caption = "OK";
     }
     else
+    {
         MessageBox(NULL, _T("Can't open 'fomod\\info.xml' for write"), _T("temp_fomod Creation Tool"),  MB_OK);
+        infoXMLStateLabel->Caption = "Error";
+    }
 
 
     FILE *fpModuleConfigxml = _tfopen((RootDirectory+"\\fomod\\ModuleConfig.xml").c_str(), _T("wb"));
@@ -1108,7 +1203,45 @@ void __fastcall TMainForm::SaveMenuClick(TObject *Sender)
                                 temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].Files[i].DstPath.c_str());
                         _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t</files> \n"));
                     }
-                    _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t<typeDescriptor>\n\t\t\t\t\t\t\t\t<type name=\"Optional\"/>\n\t\t\t\t\t\t\t</typeDescriptor> \n"));
+                    _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t<typeDescriptor> \n"));
+                    if(temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].DependencyPatterns.size() == 0)
+                    {
+                        _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t\t<type name=\"%s\"/> \n"),
+                            temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].DefaultType.c_str());
+                    }
+                    else
+                    {
+                        _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t\t<dependencyType> \n"));
+                        _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t\t\t<defaultType name=\"%s\"/> \n"),
+                            temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].DefaultType.c_str());
+                        _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t\t\t<patterns> \n"));
+                        for(int i = 0; i < temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].DependencyPatterns.size(); i++)
+                        {
+                            _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t\t\t\t<pattern> \n"));
+                            _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t\t\t\t\t<dependencies operator=\"%s\"> \n"),
+                                temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].DependencyPatterns[i].Operator.c_str());
+                            for(int j = 0; j < temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].DependencyPatterns[i].Dependencies.size(); j++)
+                            {
+                                if(temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].DependencyPatterns[i].Dependencies[j].Type == _T("file"))
+                                    _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t\t\t\t\t\t<fileDependency file=\"%s\" state=\"%s\"/> \n"),
+                                        temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].DependencyPatterns[i].Dependencies[j].Name.c_str(),
+                                        temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].DependencyPatterns[i].Dependencies[j].Value.c_str());
+                                else if(temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].DependencyPatterns[i].Dependencies[j].Type == _T("flag"))
+                                    _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t\t\t\t\t\t<flagDependency flag=\"%s\" value=\"%s\"/> \n"),
+                                        temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].DependencyPatterns[i].Dependencies[j].Name.c_str(),
+                                        temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].DependencyPatterns[i].Dependencies[j].Value.c_str());
+                            }
+                            _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t\t\t\t\t</dependencies> \n"));
+                            _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t\t\t\t\t<type name=\"%s\"/> \n"),
+                                temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].DependencyPatterns[i].Type.c_str());
+
+                            _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t\t\t\t</pattern> \n"));
+                        }
+                        _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t\t\t</patterns> \n"));
+                        _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t\t</dependencyType> \n"));
+                    }
+                    _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t</typeDescriptor> \n"));
+
                     _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t</plugin> \n"));
                 }
                 _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t</plugins> \n"));
@@ -1134,9 +1267,21 @@ void __fastcall TMainForm::SaveMenuClick(TObject *Sender)
             }
         _tcscat(t_path, _T("runafter.txt"));
         RunBatFile(t_path, temp_fomod);
+
+        mdlconfXMLStateLabel->Caption = "OK";
     }
     else
+    {
         MessageBox(NULL, _T("Can't open 'fomod\\ModuleConfig.xml' for write"), _T("FOMOD Creation Tool"),  MB_OK);
+        mdlconfXMLStateLabel->Caption = "Error";
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::ShowConfirmationTimerTimer(TObject *Sender)
+{
+    SaveConfirmationPanel->Visible = false;
+    ShowConfirmationTimer->Enabled = false;
 }
 //---------------------------------------------------------------------------
 
@@ -1215,13 +1360,14 @@ void __fastcall TMainForm::OpenMenuClick(TObject *Sender)
                 rewind(fpModuleConfigxml);
                 t_str = new _TCHAR [(fsize/sizeof(_TCHAR))+1];
                 fread(t_str, sizeof(_TCHAR), fsize/sizeof(_TCHAR), fpModuleConfigxml);
-                t_str[fsize] = _T('\0');
+                t_str[(fsize/sizeof(_TCHAR))] = _T('\0');
 
 
-
+                int ambiguity = AMB_UNDEFINED;
                 int curr_step = -1;
                 int curr_group = -1;
                 int curr_plugin = -1;
+                int curr_pattern = -1;
                 t_str_p = ParseXMLString(t_str, tegname, teginner, tegprops, state);
                 while( *t_str_p != _T('\0') )
                 {
@@ -1240,14 +1386,87 @@ void __fastcall TMainForm::OpenMenuClick(TObject *Sender)
                         }
                         if(tegname_l == "flagdependency")
                         {
+                            if(ambiguity == AMB_VISIBILITY)
+                            {
+                                if(curr_step > -1)
+                                {
+                                    if(tegprops.size() > 1)
+                                    {
+                                        CCondition new_condition;
+                                        new_condition.Name = tegprops[0].second;
+                                        if(tegprops[1].second == NULL)
+                                            new_condition.Value = "";
+                                        else
+                                            new_condition.Value = tegprops[1].second;
+                                        FOMOD.Steps[curr_step].ConditionSet.push_back(new_condition);
+                                    }
+                                }
+                            }
+                            else if(ambiguity == AMB_PATTERN)
+                            {
+                                if(curr_step > -1)
+                                {
+                                    if(tegprops.size() > 1)
+                                    {
+                                        CDependency new_dependency;
+                                        new_dependency.Type = _T("flag");
+                                        new_dependency.Name = tegprops[0].second;
+                                        if(tegprops[1].second == NULL)
+                                            new_dependency.Value = "";
+                                        else
+                                            new_dependency.Value = tegprops[1].second;
+                                        FOMOD.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].DependencyPatterns[curr_pattern].Dependencies.push_back(new_dependency);
+                                    }
+                                }
+                            }
+                        }
+                        if(tegname_l == "filedependency")
+                        {
+                            if(ambiguity == AMB_PATTERN)
+                            {
+                                if(curr_step > -1)
+                                {
+                                    if(tegprops.size() > 1)
+                                    {
+                                        CDependency new_dependency;
+                                        new_dependency.Type = _T("file");
+                                        new_dependency.Name = tegprops[0].second;
+                                        new_dependency.Value = tegprops[1].second;
+                                        FOMOD.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].DependencyPatterns[curr_pattern].Dependencies.push_back(new_dependency);
+                                    }
+                                }
+                            }
+                        }
+                        if(tegname_l == "type")
+                        {
+                            if(ambiguity == AMB_DIRECTTYPE)
+                            {
+                                if(curr_step > -1)
+                                {
+                                    if(tegprops.size() > 0)
+                                    {
+                                        FOMOD.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].DefaultType = tegprops[0].second;
+                                    }
+                                }
+                            }
+                            else if(ambiguity == AMB_PATTERN)
+                            {
+                                if(curr_step > -1)
+                                {
+                                    if(tegprops.size() > 0)
+                                    {
+                                        FOMOD.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].DependencyPatterns[curr_pattern].Type = tegprops[0].second;
+                                    }
+                                }
+                            }
+                        }
+                        if(tegname_l == "dependencies")
+                        {
                             if(curr_step > -1)
                             {
-                                CCondition new_condition;
-                                if(tegprops.size() > 1)
+                                if(tegprops.size() > 0)
                                 {
-                                    new_condition.Name = tegprops[0].second;
-                                    new_condition.Value = tegprops[1].second;
-                                    FOMOD.Steps[curr_step].ConditionSet.push_back(new_condition);
+                                    FOMOD.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].DependencyPatterns[curr_pattern].Operator = tegprops[0].second;
                                 }
                             }
                         }
@@ -1332,6 +1551,21 @@ void __fastcall TMainForm::OpenMenuClick(TObject *Sender)
                                 FOMOD.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].Files.push_back(new_file);
                             }
                         }
+                        if(tegname_l == "visible")
+                        {
+                            ambiguity = AMB_VISIBILITY;
+                        }
+                        if(tegname_l == "typedescriptor")
+                        {
+                            ambiguity = AMB_DIRECTTYPE;
+                        }
+                        if(tegname_l == "pattern")
+                        {
+                            CDependencyPattern tdp;
+                            FOMOD.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].DependencyPatterns.push_back(tdp);
+                            curr_pattern = FOMOD.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].DependencyPatterns.size()-1;
+                            ambiguity = AMB_PATTERN;
+                        }
                     }
                     state = TEG_NONE;
                     t_str_p = ParseXMLString(t_str_p, tegname, teginner, tegprops, state);
@@ -1378,16 +1612,23 @@ void __fastcall TMainForm::NewMenuClick(TObject *Sender)
     FOMOD.Name = "";
     FOMOD.AuthorName = "";
     FOMOD.Version = "";
-    FOMOD.ModCategory = "";
     FOMOD.URL = "";
+    FOMOD.ModCategory = "";
     FOMOD.Description = "";
     FOMOD.Steps.clear();
     StepCount = FOMOD.Steps.size();
     CurrentStepIndx = 0;
+
     StepsTabSheet->TabVisible = false;
     ModInfoTabSheet->Show();
     while(StepsTabControl->PageCount > 1)
         StepsTabControl->Pages[1]->Free();
+    ModNameEdit->Text = "";
+    ModAuthorEdit->Text = "";
+    ModVersionEdit->Text = "";
+    ModURLEdit->Text = "";
+    ModCategoryEdit->Text = "";
+    ModDesccriptionMemo->Text = "";
     ProceedButton->Enabled = true;
     OpenRootDirButton->Enabled = true;
     RootDirEdit->Enabled = true;
@@ -1426,7 +1667,6 @@ void __fastcall TMainForm::RunBeforeSaveMenuClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-
 void __fastcall TMainForm::RunAfterSaveMenuClick(TObject *Sender)
 {
     _TCHAR t_path[256];
@@ -1460,6 +1700,198 @@ void __fastcall TMainForm::RunAfterSaveMenuClick(TObject *Sender)
 void __fastcall TMainForm::ExitMenuClick(TObject *Sender)
 {
     exit(0);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::pdDefTypeComboBoxChange(TObject *Sender)
+{
+    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.size() > 0 && PluginListView->ItemIndex > -1)
+    {
+        FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].DefaultType = pdDefTypeComboBox->Text;
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::pdDependencyTypeComboBoxChange(TObject *Sender)
+{
+    if(pdDependencyTypeComboBox->Text == "file")
+        Label12->Caption = "State";
+    else if(pdDependencyTypeComboBox->Text == "flag")
+        Label12->Caption = "Value";
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::pdOperatorComboBoxChange(TObject *Sender)
+{
+    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.size() > 0 && PluginListView->ItemIndex > -1)
+    {
+        int pattern_indx = pdPatternsPageControl->ActivePageIndex;
+        if( pattern_indx > -1 )
+            FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].DependencyPatterns[pattern_indx].Operator = pdOperatorComboBox->Text;
+
+        pdPatternsPageControlChange(Sender);
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::pdTypeNameComboBoxChange(TObject *Sender)
+{
+    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.size() > 0 && PluginListView->ItemIndex > -1)
+    {
+        int pattern_indx = pdPatternsPageControl->ActivePageIndex;
+        if( pattern_indx > -1 )
+            FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].DependencyPatterns[pattern_indx].Type = pdTypeNameComboBox->Text;
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::pdAddButtonClick(TObject *Sender)
+{
+    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.size() > 0 && PluginListView->ItemIndex > -1)
+    {
+        int patter_indx = pdPatternsPageControl->ActivePageIndex;
+        if(patter_indx > -1)
+        {
+            CDependency new_dependency;
+            new_dependency.Type = pdDependencyTypeComboBox->Text;
+            new_dependency.Name = pdFileFlagNameEdit->Text;
+            new_dependency.Value = pdStateValueComboBox->Text;
+            FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].DependencyPatterns[patter_indx].Dependencies.push_back(new_dependency);
+
+            TListItem *item = PluginDependenciesListView->Items->Add();
+            item->Caption = pdDependencyTypeComboBox->Text;
+            item->SubItems->Add(pdFileFlagNameEdit->Text);
+            item->SubItems->Add(pdStateValueComboBox->Text);
+            item->SubItems->Add(pdOperatorComboBox->Text);
+        }
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::pdNewPatternButtonClick(TObject *Sender)
+{
+    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.size() > 0 && PluginListView->ItemIndex > -1)
+    {
+        CDependencyPattern new_pattern;
+        new_pattern.Operator = pdOperatorComboBox->Text;
+        new_pattern.Type = pdTypeNameComboBox->Text;
+        FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].DependencyPatterns.push_back(new_pattern);
+
+        TTabSheet *new_tab = new TTabSheet(pdPatternsPageControl);
+        new_tab->Caption = "Pattern[" + IntToStr(int(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].DependencyPatterns.size()-1)) + "]";
+        new_tab->PageControl = pdPatternsPageControl;
+        pdPatternsPageControl->ActivePage = new_tab;
+        pdPatternsPageControlChange(Sender);
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::pdPatternsPageControlChange(TObject *Sender)
+{
+    PluginDependenciesListView->Clear();
+    if(pdPatternsPageControl->PageCount == 0)
+        pdDeletePatternButton->Enabled = false;
+    else
+        pdDeletePatternButton->Enabled = true;
+    pdDependencyTypeComboBox->Enabled = false;
+    pdFileFlagNameEdit->Enabled = false;
+    pdStateValueComboBox->Enabled = false;
+    pdDeleteButton->Enabled = false;
+    pdAddButton->Enabled = false;
+
+    if(    FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.size() > 0
+        && PluginListView->ItemIndex > -1 )
+    {
+
+        int pattern_indx = pdPatternsPageControl->ActivePageIndex;
+        if(pattern_indx > -1)
+        {
+            for(int i = 0; i < FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].DependencyPatterns[pattern_indx].Dependencies.size(); i++)
+            {
+                TListItem *item = PluginDependenciesListView->Items->Add();
+                item->Caption = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].DependencyPatterns[pattern_indx].Dependencies[i].Type;
+                item->SubItems->Add(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].DependencyPatterns[pattern_indx].Dependencies[i].Name);
+                item->SubItems->Add(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].DependencyPatterns[pattern_indx].Dependencies[i].Value);
+                item->SubItems->Add(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].DependencyPatterns[pattern_indx].Operator);
+            }
+            pdOperatorComboBox->Text = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].DependencyPatterns[pattern_indx].Operator;
+            pdTypeNameComboBox->Text = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].DependencyPatterns[pattern_indx].Type;
+
+            pdDependencyTypeComboBox->Enabled = true;
+            pdFileFlagNameEdit->Enabled = true;
+            pdStateValueComboBox->Enabled = true;
+            pdAddButton->Enabled = true;
+        }
+        PluginDependenciesListViewClick(Sender);
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::pdDeletePatternButtonClick(TObject *Sender)
+{
+    if(    FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.size() > 0
+        && PluginListView->ItemIndex > -1 )
+    {
+        int pattern_indx = pdPatternsPageControl->ActivePageIndex;
+        if(pattern_indx > -1)
+        {
+            PluginDependenciesListView->Clear();
+            FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].DependencyPatterns.erase(
+                FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].DependencyPatterns.begin()+pattern_indx);
+            pdPatternsPageControl->Pages[pattern_indx]->Free();
+            if(pdPatternsPageControl->PageCount == 0)
+                pdDeletePatternButton->Enabled = false;
+            else
+                pdDeletePatternButton->Enabled = true;
+
+            pdPatternsPageControlChange(Sender);
+        }
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::pdDeleteButtonClick(TObject *Sender)
+{
+    if(PluginDependenciesListView->ItemIndex > -1)
+    {
+        FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].DependencyPatterns[pdPatternsPageControl->ActivePageIndex].Dependencies.erase(
+            FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].DependencyPatterns[pdPatternsPageControl->ActivePageIndex].Dependencies.begin()+PluginDependenciesListView->ItemIndex);
+        PluginDependenciesListView->Items->Delete(PluginDependenciesListView->ItemIndex);
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::PluginDependenciesListViewChange(TObject *Sender, TListItem *Item,
+          TItemChange Change)
+{
+    PluginDependenciesListViewClick(Sender);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::PluginDependenciesListViewClick(TObject *Sender)
+{
+    if(PluginDependenciesListView->ItemIndex > -1)
+        pdDeleteButton->Enabled = true;
+    else
+        pdDeleteButton->Enabled = false;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::EditListElementCMenuClick(TObject *Sender)
+{
+    TListView *clicked_list = static_cast<TListView*>(PopupMenu->PopupComponent);
+    if(clicked_list->ItemIndex > -1)
+        ListView_EditLabel(clicked_list->Handle, clicked_list->ItemIndex);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::PopupMenuPopup(TObject *Sender)
+{
+    TListView *clicked_list = static_cast<TListView*>(PopupMenu->PopupComponent);
+    if(clicked_list->ItemIndex > -1)
+        EditListElementCMenu->Enabled = true;
+    else
+        EditListElementCMenu->Enabled = false;
 }
 //---------------------------------------------------------------------------
 

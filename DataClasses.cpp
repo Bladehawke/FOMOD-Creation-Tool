@@ -15,12 +15,28 @@ CCondition::CCondition(UnicodeString name, UnicodeString value) : Name(name), Va
 
 CFile::CFile() {}
 
-CPlugin::CPlugin() {}
-CPlugin::CPlugin(UnicodeString name) : Name(name) {}
+CDependency::CDependency() {}
+
+CDependencyPattern::CDependencyPattern() {}
+
+CDependencyPattern::~CDependencyPattern()
+{
+    Dependencies.clear();
+}
+
+CPlugin::CPlugin()
+{
+    DefaultType = _T("Optional");
+}
+CPlugin::CPlugin(UnicodeString name) : Name(name)
+{
+    DefaultType = _T("Optional");
+}
 CPlugin::~CPlugin()
 {
     ConditionSet.clear();
     Files.clear();
+    DependencyPatterns.clear();
 }
 
 CPluginGroup::CPluginGroup() {}

@@ -26,6 +26,27 @@ class CFile
         UnicodeString DstPath;
 };
 
+class CDependency
+{
+    public:
+        CDependency();
+
+        UnicodeString Type;
+        UnicodeString Name;
+        UnicodeString Value;
+};
+
+class CDependencyPattern
+{
+    public:
+        CDependencyPattern();
+        ~CDependencyPattern();
+
+        UnicodeString Operator;
+        UnicodeString Type;
+        vector <CDependency> Dependencies;
+};
+
 class CPlugin
 {
     public:
@@ -36,8 +57,10 @@ class CPlugin
         UnicodeString Name;
         UnicodeString Description;
         UnicodeString ImagePath;
+        UnicodeString DefaultType;
         vector <CCondition> ConditionSet;
         vector <CFile> Files;
+        vector <CDependencyPattern> DependencyPatterns;
 };
 
 class CPluginGroup

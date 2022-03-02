@@ -48,7 +48,7 @@ UnicodeString AppPath;
 
 
 TSettings Settings;
-vector <TLanguagePair> LanguageTable;
+std::vector <TLanguagePair> LanguageTable;
 
 int
     StepCount,
@@ -108,10 +108,10 @@ UnicodeString GetFileVersionOfApplication(LPTSTR lpszFilePath)
 }
 //---------------------------------------------------------------------------
 
-_TCHAR *ParseXMLString(_TCHAR *xml_string, UnicodeString &tegname, UnicodeString &teginner, vector < pair<UnicodeString, UnicodeString> > &tegprops, int &state)
+_TCHAR *ParseXMLString(_TCHAR *xml_string, UnicodeString &tegname, UnicodeString &teginner, std::vector < std::pair<UnicodeString, UnicodeString> > &tegprops, int &state)
 {
     _TCHAR w_letter;
-    unsigned int str_len;
+	unsigned int str_len;
     UnicodeString ustr;
     int i;
     int exit_cicle = 0;
@@ -146,16 +146,16 @@ _TCHAR *ParseXMLString(_TCHAR *xml_string, UnicodeString &tegname, UnicodeString
                         }
                         else if(w_letter != '"')
                         {
-                            pair <UnicodeString, UnicodeString> new_pair;
-                            new_pair.first = ustr.LowerCase().Trim();
-                            new_pair.second = "";
-                            tegprops.push_back(new_pair);
-                            teg_complete = false;
-                        }
-                    }
-                    else if(w_letter != '"')
-                    {
-                        pair <UnicodeString, UnicodeString> new_pair;
+							std::pair <UnicodeString, UnicodeString> new_pair;
+							new_pair.first = ustr.LowerCase().Trim();
+							new_pair.second = "";
+							tegprops.push_back(new_pair);
+							teg_complete = false;
+						}
+					}
+					else if(w_letter != '"')
+					{
+						std::pair <UnicodeString, UnicodeString> new_pair;
                         new_pair.first = ustr.LowerCase().Trim();
                         new_pair.second = "";
                         tegprops.push_back(new_pair);
@@ -374,7 +374,7 @@ bool LoadFOMODFromXML(_TCHAR *filename, CFOMOD &fomod)
         teginner;
     UnicodeString
         tegname;
-    vector < pair<UnicodeString, UnicodeString> > tegprops;
+	std::vector < std::pair<UnicodeString, UnicodeString> > tegprops;
 
     int state = TEG_NONE;
 
@@ -672,7 +672,7 @@ bool LoadFOMODInfoFromXML(_TCHAR *filename, CFOMOD &fomod)
         teginner;
     UnicodeString
         tegname;
-    vector < pair<UnicodeString, UnicodeString> > tegprops;
+	std::vector < std::pair<UnicodeString, UnicodeString> > tegprops;
 
     int state = TEG_NONE;
 
@@ -849,7 +849,7 @@ bool LoadSettings(TSettings &settings)
     return result;
 }
 
-void LoadLangugeFile(UnicodeString filename, vector <TLanguagePair> &table)
+void LoadLangugeFile(UnicodeString filename, std::vector <TLanguagePair> &table)
 {
 
     unsigned int
@@ -913,11 +913,11 @@ void LoadLangugeFile(UnicodeString filename, vector <TLanguagePair> &table)
     }
 }
 
-UnicodeString GetLangText(UnicodeString key, vector <TLanguagePair> &table)
+UnicodeString GetLangText(UnicodeString key, std::vector <TLanguagePair> &table)
 {
     UnicodeString result = key;
 
-    vector <TLanguagePair> :: iterator it;
+    std::vector <TLanguagePair> :: iterator it;
     for(it = table.begin(); it != table.end(); it++)
         if(it->Name.UpperCase() == key.UpperCase())
         {
@@ -928,7 +928,7 @@ UnicodeString GetLangText(UnicodeString key, vector <TLanguagePair> &table)
     return result;
 }
 
-void ApplyLanguage(TWinControl *container, vector <TLanguagePair> &table)
+void ApplyLanguage(TWinControl *container, std::vector <TLanguagePair> &table)
 {
     for(int i = 0; i < container->ControlCount; i++)
     {
@@ -987,7 +987,7 @@ void ApplyLanguage(TWinControl *container, vector <TLanguagePair> &table)
 
 void ManageRecentFiles(UnicodeString path)
 {
-    deque<AnsiString>::iterator it;
+	std::deque<AnsiString>::iterator it;
 
     if(path != NULL)
     {
@@ -1236,9 +1236,9 @@ void __fastcall TMainForm::StepNameEditChange(TObject *Sender)
 
 void __fastcall TMainForm::StepsTabControlChange(TObject *Sender)
 {
-    vector <UnicodeString> TotalConditionSet;
-    vector <UnicodeString> TotalValueSet;
-    vector <UnicodeString> TotalDependencySet;
+    std::vector <UnicodeString> TotalConditionSet;
+    std::vector <UnicodeString> TotalValueSet;
+    std::vector <UnicodeString> TotalDependencySet;
 
     ConditionListView->Clear();
     GroupListView->Clear();
@@ -2852,7 +2852,7 @@ void __fastcall TMainForm::pdAddButtonClick(TObject *Sender)
 
 
 			_TCHAR *tstr = new _TCHAR[pdFileFlagNameComboBox->Items[0].Text.Length()];
-            vector<UnicodeString> itemslist;
+			std::vector<UnicodeString> itemslist;
 			UnicodeString token1;
             bool exist;
 			_tcscpy(tstr, pdFileFlagNameComboBox->Items[0].Text.c_str());

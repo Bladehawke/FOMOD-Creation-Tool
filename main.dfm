@@ -117,7 +117,6 @@ object MainForm: TMainForm
             Top = 121
             Width = 346
             Height = 21
-            ItemHeight = 13
             TabOrder = 4
             OnChange = ModCategoryEditChange
             Items.Strings = (
@@ -340,10 +339,6 @@ object MainForm: TMainForm
       Caption = 'Steps'
       Enabled = False
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel1: TPanel
         Left = 0
         Top = 789
@@ -410,10 +405,6 @@ object MainForm: TMainForm
         TabOrder = 1
         object GroupsFileTabSheet: TTabSheet
           Caption = 'Groups and Files'
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           object ScrollBox1: TScrollBox
             Left = 0
             Top = 0
@@ -553,10 +544,6 @@ object MainForm: TMainForm
                 TabOrder = 1
                 object FlagSetTabSheet: TTabSheet
                   Caption = 'Flag set'
-                  ExplicitLeft = 0
-                  ExplicitTop = 0
-                  ExplicitWidth = 0
-                  ExplicitHeight = 0
                   object AddVaribleButton: TButton
                     Left = 281
                     Top = 20
@@ -639,7 +626,6 @@ object MainForm: TMainForm
                         Top = 24
                         Width = 176
                         Height = 21
-                        ItemHeight = 0
                         TabOrder = 0
                       end
                       object VaribleValueComboBox: TComboBox
@@ -647,7 +633,6 @@ object MainForm: TMainForm
                         Top = 24
                         Width = 50
                         Height = 21
-                        ItemHeight = 0
                         ItemIndex = 0
                         TabOrder = 1
                         Text = 'On'
@@ -661,10 +646,6 @@ object MainForm: TMainForm
                 object PluginDependenciesTabSheet: TTabSheet
                   Caption = 'Plugin dependencies'
                   ImageIndex = 1
-                  ExplicitLeft = 0
-                  ExplicitTop = 0
-                  ExplicitWidth = 0
-                  ExplicitHeight = 0
                   object PluginDependenciesListView: TListView
                     Left = 0
                     Top = 233
@@ -768,7 +749,6 @@ object MainForm: TMainForm
                       Width = 73
                       Height = 21
                       Enabled = False
-                      ItemHeight = 0
                       ItemIndex = 0
                       TabOrder = 3
                       Text = 'And'
@@ -783,7 +763,6 @@ object MainForm: TMainForm
                       Width = 145
                       Height = 21
                       Enabled = False
-                      ItemHeight = 0
                       ItemIndex = 0
                       TabOrder = 0
                       Text = 'Optional'
@@ -846,7 +825,6 @@ object MainForm: TMainForm
                       Top = 175
                       Width = 119
                       Height = 21
-                      ItemHeight = 0
                       TabOrder = 7
                     end
                     object pdDeletePatternButton: TButton
@@ -865,7 +843,6 @@ object MainForm: TMainForm
                       Width = 122
                       Height = 21
                       Enabled = False
-                      ItemHeight = 0
                       ItemIndex = 0
                       TabOrder = 4
                       Text = 'Optional'
@@ -890,7 +867,6 @@ object MainForm: TMainForm
                       Top = 200
                       Width = 119
                       Height = 21
-                      ItemHeight = 0
                       TabOrder = 8
                       Items.Strings = (
                         'Active'
@@ -1227,10 +1203,6 @@ object MainForm: TMainForm
         object ConditionsTabSheet: TTabSheet
           Caption = 'Conditions'
           ImageIndex = 1
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           object ScrollBox: TScrollBox
             Left = 0
             Top = 0
@@ -1281,7 +1253,6 @@ object MainForm: TMainForm
                 Top = 41
                 Width = 225
                 Height = 21
-                ItemHeight = 0
                 TabOrder = 1
               end
               object ConditionValueComboBox: TComboBox
@@ -1289,7 +1260,6 @@ object MainForm: TMainForm
                 Top = 41
                 Width = 87
                 Height = 21
-                ItemHeight = 0
                 ItemIndex = 0
                 TabOrder = 2
                 Text = 'On'
@@ -1367,7 +1337,6 @@ object MainForm: TMainForm
                 Top = 41
                 Width = 73
                 Height = 21
-                ItemHeight = 0
                 ItemIndex = 0
                 TabOrder = 3
                 Text = 'And'
@@ -1499,10 +1468,6 @@ object MainForm: TMainForm
       Caption = 'Conditional installations'
       Enabled = False
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ConiditionalFilesPageControl: TPageControl
         Left = 0
         Top = 0
@@ -1618,7 +1583,6 @@ object MainForm: TMainForm
           Width = 51
           Height = 21
           Enabled = False
-          ItemHeight = 0
           ItemIndex = 0
           TabOrder = 0
           Text = 'And'
@@ -1649,7 +1613,6 @@ object MainForm: TMainForm
           Width = 120
           Height = 21
           Enabled = False
-          ItemHeight = 0
           TabOrder = 6
           Items.Strings = (
             'Active'
@@ -1711,7 +1674,6 @@ object MainForm: TMainForm
           Width = 176
           Height = 21
           Enabled = False
-          ItemHeight = 0
           TabOrder = 5
         end
       end
@@ -1818,10 +1780,6 @@ object MainForm: TMainForm
     object InfoTabSheet: TTabSheet
       Caption = 'Help'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Memo1: TMemo
         Left = 0
         Top = 0
@@ -2234,7 +2192,6 @@ object MainForm: TMainForm
     Width = 105
     Height = 21
     Enabled = False
-    ItemHeight = 13
     ItemIndex = 0
     TabOrder = 3
     Text = 'SelectExactlyOne'

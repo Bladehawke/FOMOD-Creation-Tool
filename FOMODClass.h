@@ -4,7 +4,7 @@
 #define FOMODClassH
 
 #include <vcl.h>
-#include <vector.h>
+#include <vector>
 
 class CCondition
 {
@@ -44,8 +44,8 @@ class CDependencyPattern
         ~CDependencyPattern();
 
         UnicodeString Operator;
-        UnicodeString Type;
-        vector <CDependency> Dependencies;
+		UnicodeString Type;
+		std::vector <CDependency> Dependencies;
 };
 
 class CPlugin
@@ -59,9 +59,9 @@ class CPlugin
         UnicodeString Description;
         UnicodeString ImagePath;
         UnicodeString DefaultType;
-        vector <CCondition> ConditionSet;
-        vector <CFile> Files;
-        vector <CDependencyPattern> DependencyPatterns;
+        std::vector <CCondition> ConditionSet;
+        std::vector <CFile> Files;
+        std::vector <CDependencyPattern> DependencyPatterns;
 };
 
 class CPluginGroup
@@ -73,7 +73,7 @@ class CPluginGroup
 
         UnicodeString Name;
         UnicodeString Type;
-        vector <CPlugin> Plugins;
+        std::vector <CPlugin> Plugins;
 };
 
 class CStep
@@ -85,8 +85,8 @@ class CStep
 
         UnicodeString Name;
         UnicodeString VisibilityOperator;
-        vector <CDependency>  VisibilityDependencies;
-        vector <CPluginGroup> PluginGroups;
+        std::vector <CDependency>  VisibilityDependencies;
+        std::vector <CPluginGroup> PluginGroups;
 };
 
 class CConditionalFile
@@ -96,8 +96,8 @@ class CConditionalFile
         ~CConditionalFile();
 
         UnicodeString Operator;
-        vector <CDependency> Dependencies;
-        vector <CFile> Files;
+        std::vector <CDependency> Dependencies;
+        std::vector <CFile> Files;
 };
 
 class CFOMOD
@@ -114,9 +114,9 @@ class CFOMOD
         UnicodeString URL;
         UnicodeString HeaderImagePath;
         UnicodeString Description;
-        vector <CStep> Steps;
-        vector <CFile> RequiredFiles;
-        vector <CConditionalFile> ConditionalFiles;
+        std::vector <CStep> Steps;
+        std::vector <CFile> RequiredFiles;
+		std::vector <CConditionalFile> ConditionalFiles;
 };
 
 //---------------------------------------------------------------------------

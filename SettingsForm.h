@@ -10,7 +10,8 @@
 #include <ComCtrls.hpp>
 #include <ExtCtrls.hpp>
 
-#include <deque.h>
+#include <deque>
+#include <algorithm>
 //---------------------------------------------------------------------------
 class TSettingsForm : public TForm
 {
@@ -44,7 +45,7 @@ private:	// User declarations
 public:		// User declarations
     __fastcall TSettingsForm(TComponent* Owner);
 
-    deque <AnsiString> recentFiles;
+	 std::deque <AnsiString> recentFiles;
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TSettingsForm *SettingsForm;

@@ -11,7 +11,8 @@
 #include <StdCtrls.hpp>
 #include <Menus.hpp>
 
-#include <deque.h>
+#include <deque>
+#include <algorithm>
 //---------------------------------------------------------------------------
 
 typedef struct SSettings
@@ -24,7 +25,7 @@ typedef struct SSettings
     int splashScreenSeconds;
     int MaxRecentFiles;
     int RecentFilesNum;
-    deque <AnsiString> RecentFiles;
+	std::deque <AnsiString> RecentFiles;
 } TSettings;
 
 typedef struct SLanguagePair

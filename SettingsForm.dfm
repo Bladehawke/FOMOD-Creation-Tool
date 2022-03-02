@@ -63,7 +63,6 @@ object SettingsForm: TSettingsForm
     ExplicitWidth = 513
     object SettingsGeneralTabSheet: TTabSheet
       Caption = 'General'
-      ExplicitWidth = 505
       object IntTextSizeLabel: TLabel
         Left = 16
         Top = 144
@@ -99,7 +98,6 @@ object SettingsForm: TSettingsForm
         Top = 141
         Width = 206
         Height = 21
-        ItemHeight = 13
         ItemIndex = 2
         TabOrder = 2
         Text = '8'
@@ -117,7 +115,6 @@ object SettingsForm: TSettingsForm
         Top = 13
         Width = 206
         Height = 21
-        ItemHeight = 13
         TabOrder = 3
       end
       object ReplaceRNCheckBox: TCheckBox

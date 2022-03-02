@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 
 #include <vcl.h>
-#include <vector.h>
+#include <vector>
 #include <jpeg.hpp>
 #pragma hdrstop
 
@@ -15,12 +15,12 @@
 TSplashForm *SplashForm;
 
 extern TSettings Settings;
-extern vector <TLanguagePair> LanguageTable;
+extern std::vector <TLanguagePair> LanguageTable;
 extern UnicodeString AppPath;
 extern bool LoadSettings(TSettings &settings);
-extern void LoadLangugeFile(UnicodeString filename, vector <TLanguagePair> &table);
-extern UnicodeString GetLangText(UnicodeString key, vector <TLanguagePair> &table);
-extern void ApplyLanguage(TWinControl *container, vector <TLanguagePair> &table);
+extern void LoadLangugeFile(UnicodeString filename, std::vector <TLanguagePair> &table);
+extern UnicodeString GetLangText(UnicodeString key, std::vector <TLanguagePair> &table);
+extern void ApplyLanguage(TWinControl *container, std::vector <TLanguagePair> &table);
 //---------------------------------------------------------------------------
 __fastcall TSplashForm::TSplashForm(TComponent* Owner)
     : TForm(Owner)

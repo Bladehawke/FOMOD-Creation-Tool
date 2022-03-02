@@ -29,7 +29,7 @@ __fastcall TSplashForm::TSplashForm(TComponent* Owner)
 //---------------------------------------------------------------------------
 void __fastcall TSplashForm::Timer1Timer(TObject *Sender)
 {
-    static secCount = 0;
+    static int secCount = 0;
     Timer1->Enabled = false;
     if(secCount == 0)
     {

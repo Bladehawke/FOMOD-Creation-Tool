@@ -1,36 +1,36 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899/12/30 00:00:00.000.dfm,D:\Куски кода\FOMOD Creation Tool\SettingsForm.dfm=D:\Куски кода\FOMOD Creation Tool\Unit1.dfm</Transaction>
-    <Transaction>1899/12/30 00:00:00.000.h,D:\Куски кода\FOMOD Creation Tool\SplashScreen.h=D:\Куски кода\FOMOD Creation Tool\Unit1.h</Transaction>
-    <Transaction>1899/12/30 00:00:00.000.dfm,D:\Куски кода\FOMOD Creation Tool\ScriptForm.dfm=D:\Куски кода\FOMOD Creation Tool\Unit1.dfm</Transaction>
-    <Transaction>1899/12/30 00:00:00.000.cpp,D:\Куски кода\FOMOD Creation Tool\FOMODClass.cpp=D:\Куски кода\FOMOD Creation Tool\DataClasses.cpp</Transaction>
-    <Transaction>1899/12/30 00:00:00.000.dfm,D:\Куски кода\FOMOD Creation Tool\SettingsForm.dfm=D:\Куски кода\FOMOD Creation Tool\Unit1.dfm</Transaction>
     <Transaction>1899/12/30 00:00:00.000.dfm,D:\Куски кода\FOMOD Creation Tool\SettingsForm.dfm=</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.h,D:\Куски кода\FOMOD Creation Tool\main.h=C:\Users\Alexander\Documents\RAD Studio\Projects\Unit1.h</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.dfm,D:\Куски кода\FOMOD Creation Tool\ScriptForm.dfm=D:\Куски кода\FOMOD Creation Tool\Unit1.dfm</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.dfm,D:\Куски кода\FOMOD Creation Tool\SplashScreen.dfm=D:\Куски кода\FOMOD Creation Tool\Unit1.dfm</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.dfm,D:\Куски кода\FOMOD Creation Tool\SettingsForm.dfm=D:\Куски кода\FOMOD Creation Tool\Unit1.dfm</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.dfm,D:\Куски кода\FOMOD Creation Tool\SettingsForm.dfm=D:\Куски кода\FOMOD Creation Tool\Unit1.dfm</Transaction>
     <Transaction>1899/12/30 00:00:00.000.dfm,D:\Куски кода\FOMOD Creation Tool\SettingsForm.dfm=D:\Куски кода\FOMOD Creation Tool\Unit1.dfm</Transaction>
     <Transaction>1899/12/30 00:00:00.000.dfm,D:\Куски кода\FOMOD Creation Tool\SettingsForm.dfm=</Transaction>
     <Transaction>1899/12/30 00:00:00.000.dfm,D:\Куски кода\FOMOD Creation Tool\SettingsForm_.dfm=</Transaction>
     <Transaction>1899/12/30 00:00:00.000.h,D:\Куски кода\FOMOD Creation Tool\SettingsForm_.h=D:\Куски кода\FOMOD Creation Tool\Unit1.h</Transaction>
     <Transaction>1899/12/30 00:00:00.000.dfm,D:\Куски кода\FOMOD Creation Tool\main.dfm=C:\Users\Alexander\Documents\RAD Studio\Projects\Unit1.dfm</Transaction>
     <Transaction>1899/12/30 00:00:00.000.cpp,D:\Куски кода\FOMOD Creation Tool\main.cpp=C:\Users\Alexander\Documents\RAD Studio\Projects\Unit1.cpp</Transaction>
-    <Transaction>1899/12/30 00:00:00.000.cpp,D:\Куски кода\FOMOD Creation Tool\SettingsForm_.cpp=D:\Куски кода\FOMOD Creation Tool\Unit1.cpp</Transaction>
     <Transaction>1899/12/30 00:00:00.000.cpp,D:\Куски кода\FOMOD Creation Tool\SettingsForm_.cpp=</Transaction>
-    <Transaction>1899/12/30 00:00:00.000.dfm,D:\Куски кода\FOMOD Creation Tool\SplashScreen.dfm=D:\Куски кода\FOMOD Creation Tool\Unit1.dfm</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.cpp,D:\Куски кода\FOMOD Creation Tool\SettingsForm_.cpp=D:\Куски кода\FOMOD Creation Tool\Unit1.cpp</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.cpp,D:\Куски кода\FOMOD Creation Tool\FOMODClass.cpp=D:\Куски кода\FOMOD Creation Tool\DataClasses.cpp</Transaction>
     <Transaction>1899/12/30 00:00:00.000.dfm,D:\Куски кода\FOMOD Creation Tool\SettingsForm_.dfm=D:\Куски кода\FOMOD Creation Tool\Unit1.dfm</Transaction>
     <Transaction>1899/12/30 00:00:00.000.cpp,D:\Куски кода\FOMOD Creation Tool\SettingsForm.cpp=</Transaction>
     <Transaction>1899/12/30 00:00:00.000.cpp,D:\Куски кода\FOMOD Creation Tool\SettingsForm.cpp=D:\Куски кода\FOMOD Creation Tool\Unit1.cpp</Transaction>
-    <Transaction>1899/12/30 00:00:00.000.cpp,D:\Куски кода\FOMOD Creation Tool\SettingsForm.cpp=</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.cpp,D:\Куски кода\FOMOD Creation Tool\SettingsForm.cpp=D:\Куски кода\FOMOD Creation Tool\Unit1.cpp</Transaction>
     <Transaction>1899/12/30 00:00:00.000.cpp,D:\Куски кода\FOMOD Creation Tool\SettingsForm.cpp=D:\Куски кода\FOMOD Creation Tool\Unit1.cpp</Transaction>
     <Transaction>1899/12/30 00:00:00.000.cpp,D:\Куски кода\FOMOD Creation Tool\ScriptForm.cpp=D:\Куски кода\FOMOD Creation Tool\Unit1.cpp</Transaction>
     <Transaction>1899/12/30 00:00:00.000.h,D:\Куски кода\FOMOD Creation Tool\ScriptForm.h=D:\Куски кода\FOMOD Creation Tool\Unit1.h</Transaction>
     <Transaction>1899/12/30 00:00:00.000.h,D:\Куски кода\FOMOD Creation Tool\DataClasses.h=D:\Куски кода\FOMOD Creation Tool\Unit1.h</Transaction>
-    <Transaction>1899/12/30 00:00:00.000.cpp,D:\Куски кода\FOMOD Creation Tool\SettingsForm.cpp=D:\Куски кода\FOMOD Creation Tool\Unit1.cpp</Transaction>
-    <Transaction>1899/12/30 00:00:00.000.h,D:\Куски кода\FOMOD Creation Tool\SettingsForm.h=D:\Куски кода\FOMOD Creation Tool\Unit1.h</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.cpp,D:\Куски кода\FOMOD Creation Tool\SettingsForm.cpp=</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.h,D:\Куски кода\FOMOD Creation Tool\FOMODClass.h=D:\Куски кода\FOMOD Creation Tool\DataClasses.h</Transaction>
     <Transaction>1899/12/30 00:00:00.000.cpp,D:\Куски кода\FOMOD Creation Tool\SplashScreen.cpp=D:\Куски кода\FOMOD Creation Tool\Unit1.cpp</Transaction>
     <Transaction>1899/12/30 00:00:00.000.cpp,D:\Куски кода\FOMOD Creation Tool\DataClasses.cpp=D:\Куски кода\FOMOD Creation Tool\Unit1.cpp</Transaction>
-    <Transaction>1899/12/30 00:00:00.000.h,D:\Куски кода\FOMOD Creation Tool\main.h=C:\Users\Alexander\Documents\RAD Studio\Projects\Unit1.h</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.h,D:\Куски кода\FOMOD Creation Tool\SplashScreen.h=D:\Куски кода\FOMOD Creation Tool\Unit1.h</Transaction>
     <Transaction>1899/12/30 00:00:00.000.cbproj,D:\Куски кода\FOMOD Creation Tool\FOMODCreationTool.cbproj=C:\Users\Alexander\Documents\RAD Studio\Projects\Project1.cbproj</Transaction>
-    <Transaction>1899/12/30 00:00:00.000.h,D:\Куски кода\FOMOD Creation Tool\FOMODClass.h=D:\Куски кода\FOMOD Creation Tool\DataClasses.h</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.h,D:\Куски кода\FOMOD Creation Tool\SettingsForm.h=D:\Куски кода\FOMOD Creation Tool\Unit1.h</Transaction>
     <Transaction>1899/12/30 00:00:00.000.h,D:\Куски кода\FOMOD Creation Tool\SettingsForm.h=D:\Куски кода\FOMOD Creation Tool\Unit1.h</Transaction>
     <Transaction>1899/12/30 00:00:00.000.h,D:\Куски кода\FOMOD Creation Tool\SettingsForm.h=D:\Куски кода\FOMOD Creation Tool\Unit1.h</Transaction>
   </Transactions>

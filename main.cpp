@@ -544,12 +544,14 @@ bool LoadFOMODFromXML(_TCHAR *filename, CFOMOD &fomod)
                 }
                 if(tegname_l == "description")
                 {
-                    if(curr_step > -1 && curr_group > -1 && curr_plugin > -1 && teginner != _T("\n"))
-                        if(fomod.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].Description == "")
-                            fomod.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].Description = teginner;
-                        else
-                            fomod.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].Description =
-                                fomod.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].Description + teginner;
+					if(curr_step > -1 && curr_group > -1 && curr_plugin > -1 && teginner != _T("\n"))
+					{
+						if(fomod.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].Description == "")
+							fomod.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].Description = teginner;
+						else
+							fomod.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].Description =
+								fomod.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].Description + teginner;
+					}
                 }
                 if(tegname_l == "image")
                 {
@@ -748,7 +750,7 @@ void SaveConfig(TSettings Settings)
 
         fprintf(fp, "\n[RecentFiles]\n");
         fprintf(fp, "iMaxRecentFiles = %d\n", Settings.MaxRecentFiles);
-        fprintf(fp, "iRecentFilesNum = %d\n", Settings.RecentFiles.size());
+        fprintf(fp, "iRecentFilesNum = %lu\n", (unsigned long)Settings.RecentFiles.size());
         fprintf(fp, "sRecentFiles = \n");
         for(int i = 0; i < Settings.RecentFiles.size(); i++)
             fprintf(fp, "%s\n", Settings.RecentFiles[i].c_str());
@@ -1079,11 +1081,13 @@ void __fastcall TMainForm::OpenRootDirButtonClick(TObject *Sender)
 void __fastcall TMainForm::RootDirEditChange(TObject *Sender)
 {
     RootDirectory = RootDirEdit->Text;
-    if(RootDirectory != "")
-        if(dirExists(OpenFolderDialog->FileName + "\\fomod"))
-            ProceedButton->Enabled = true;
-        else
-            ProceedButton->Enabled = false;
+	if(RootDirectory != "")
+	{
+		if(dirExists(OpenFolderDialog->FileName + "\\fomod"))
+			ProceedButton->Enabled = true;
+		else
+			ProceedButton->Enabled = false;
+	}
 }
 //---------------------------------------------------------------------------
 
@@ -2152,7 +2156,7 @@ void __fastcall TMainForm::SaveMenuClick(TObject *Sender)
         if(sizeof(_TCHAR) > 1)
             fwrite(&BOM, sizeof(_TCHAR), 1, fpModuleConfigxml);
 
-        _ftprintf(fpModuleConfigxml, _T("<!-- Created with FOMOD Creation Tool %s [%s] --> \n"), GetFileVersionOfApplication(Application->ExeName.c_str()), _T("http://www.nexusmods.com/fallout4/mods/6821"));
+        _ftprintf(fpModuleConfigxml, _T("<!-- Created with FOMOD Creation Tool %ls [%s] --> \n"), GetFileVersionOfApplication(Application->ExeName.c_str()).c_str(), _T("http://www.nexusmods.com/fallout4/mods/6821"));
 
         _ftprintf(fpModuleConfigxml, _T("<config xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"http://qconsulting.ca/fo3/ModConfig5.0.xsd\"> \n"));
         _ftprintf(fpModuleConfigxml, _T("\t<moduleName>%s</moduleName> \n"), temp_fomod.Name.c_str());

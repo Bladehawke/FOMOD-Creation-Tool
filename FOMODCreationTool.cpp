@@ -3,13 +3,14 @@
 #include <vcl.h>
 #pragma hdrstop
 #include <tchar.h>
+
 //---------------------------------------------------------------------------
 USEFORM("ScriptForm.cpp", ScriptForm1);
 USEFORM("main.cpp", MainForm);
 USEFORM("SettingsForm.cpp", SettingsForm);
 USEFORM("SplashScreen.cpp", SplashForm);
 //---------------------------------------------------------------------------
-WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
+int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 {
     try
     {

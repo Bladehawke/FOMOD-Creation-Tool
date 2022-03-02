@@ -2,7 +2,7 @@
 
 #pragma hdrstop
 
-#include "DataClasses.h"
+#include "FOMODClass.h"
 
 //---------------------------------------------------------------------------
 
@@ -50,8 +50,15 @@ CStep::CStep() {}
 CStep::CStep(UnicodeString name) : Name(name) {}
 CStep::~CStep()
 {
-    ConditionSet.clear();
+    VisibilityDependencies.clear();
     PluginGroups.clear();
+}
+
+CConditionalFile::CConditionalFile() {}
+CConditionalFile::~CConditionalFile()
+{
+    Dependencies.clear();
+    Files.clear();
 }
 
 CFOMOD::CFOMOD() {}
@@ -59,4 +66,6 @@ CFOMOD::CFOMOD(UnicodeString name) : Name(name) {};
 CFOMOD::~CFOMOD()
 {
     Steps.clear();
+    RequiredFiles.clear();
+    ConditionalFiles.clear();
 }

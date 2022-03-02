@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 
-#ifndef DataClassesH
-#define DataClassesH
+#ifndef FOMODClassH
+#define FOMODClassH
 
 #include <vcl.h>
 #include <vector.h>
@@ -83,8 +83,19 @@ class CStep
         ~CStep();
 
         UnicodeString Name;
-        vector <CCondition> ConditionSet;
+        vector <CDependency>  VisibilityDependencies;
         vector <CPluginGroup> PluginGroups;
+};
+
+class CConditionalFile
+{
+    public:
+        CConditionalFile();
+        ~CConditionalFile();
+
+        UnicodeString Operator;
+        vector <CDependency> Dependencies;
+        vector <CFile> Files;
 };
 
 class CFOMOD
@@ -101,6 +112,8 @@ class CFOMOD
         UnicodeString URL;
         UnicodeString Description;
         vector <CStep> Steps;
+        vector <CFile> RequiredFiles;
+        vector <CConditionalFile> ConditionalFiles;
 };
 
 //---------------------------------------------------------------------------

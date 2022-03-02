@@ -4,7 +4,7 @@ object SettingsForm: TSettingsForm
   BorderStyle = bsDialog
   Caption = 'Settings'
   ClientHeight = 291
-  ClientWidth = 513
+  ClientWidth = 563
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,18 +18,20 @@ object SettingsForm: TSettingsForm
   object Panel1: TPanel
     Left = 0
     Top = 250
-    Width = 513
+    Width = 563
     Height = 41
     Align = alBottom
     TabOrder = 0
+    ExplicitWidth = 513
     object Panel3: TPanel
-      Left = 336
+      Left = 386
       Top = 1
       Width = 176
       Height = 39
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 0
+      ExplicitLeft = 336
       object CancelButton: TButton
         Left = 7
         Top = 6
@@ -53,13 +55,15 @@ object SettingsForm: TSettingsForm
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 513
+    Width = 563
     Height = 250
     ActivePage = SettingsGeneralTabSheet
     Align = alClient
     TabOrder = 1
+    ExplicitWidth = 513
     object SettingsGeneralTabSheet: TTabSheet
       Caption = 'General'
+      ExplicitWidth = 505
       object IntTextSizeLabel: TLabel
         Left = 16
         Top = 144
@@ -93,7 +97,7 @@ object SettingsForm: TSettingsForm
       object IntTextSizeComboBox: TComboBox
         Left = 339
         Top = 141
-        Width = 145
+        Width = 206
         Height = 21
         ItemHeight = 13
         ItemIndex = 2
@@ -111,7 +115,7 @@ object SettingsForm: TSettingsForm
       object LanguagesComboBox: TComboBox
         Left = 339
         Top = 13
-        Width = 145
+        Width = 206
         Height = 21
         ItemHeight = 13
         TabOrder = 3

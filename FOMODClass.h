@@ -24,6 +24,7 @@ class CFile
         UnicodeString Type;
         UnicodeString SrcPath;
         UnicodeString DstPath;
+        unsigned int  Priority;
 };
 
 class CDependency
@@ -111,6 +112,7 @@ class CFOMOD
         UnicodeString Version;
         UnicodeString ModCategory;
         UnicodeString URL;
+        UnicodeString HeaderImagePath;
         UnicodeString Description;
         vector <CStep> Steps;
         vector <CFile> RequiredFiles;

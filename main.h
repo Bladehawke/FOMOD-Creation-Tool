@@ -89,14 +89,13 @@ __published:	// IDE-managed Components
     TOpenDialog *OpenDialog;
     TFileOpenDialog *OpenFolderDialog;
     TListView *GroupListView;
-    TPageControl *PageControl1;
+    TPageControl *StepsPageControl;
     TTabSheet *GroupsFileTabSheet;
     TTabSheet *ConditionsTabSheet;
     TScrollBox *ScrollBox;
     TScrollBox *ScrollBox1;
     TTabSheet *InfoTabSheet;
     TPageControl *StepsTabControl;
-    TTabSheet *Step1;
     TMemo *Memo1;
     TListView *DstFilesListView;
     TLabel *DataLabel;
@@ -223,6 +222,21 @@ __published:	// IDE-managed Components
     TMenuItem *RecentFileTemplate;
     TLabel *visOperatorLabel;
     TComboBox *visOperatorComboBox;
+    TLabel *ModHeaderImageLabel;
+    TShape *Shape4;
+    TLabel *NoHeaderImageLabel;
+    TImage *HeaderImage;
+    TButton *ClearHeaderImageButton;
+    TButton *ChooseHeaderImageButton;
+    TEdit *ModHeaderImageEdit;
+    TPopupMenu *PopupMenu2;
+    TMenuItem *EditListElementCMenu2;
+    TMenuItem *EditGroupTypeCMenu2;
+    TComboBox *EditGroupTypeComboBox;
+    TPopupMenu *PopupMenuFiles;
+    TMenuItem *EditPathCMenu;
+    TMenuItem *EditPriorityCMenu;
+    TEdit *FilePriorityEdit;
     void __fastcall FormCreate(TObject *Sender);
     void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
     void __fastcall OpenRootDirButtonClick(TObject *Sender);
@@ -289,11 +303,17 @@ __published:	// IDE-managed Components
     void __fastcall pdNewPatternButtonClick(TObject *Sender);
     void __fastcall pdPatternsPageControlChange(TObject *Sender);
     void __fastcall pdDeletePatternButtonClick(TObject *Sender);
-    void __fastcall pdDeleteButtonClick(TObject *Sender);                                            
+    void __fastcall pdDeleteButtonClick(TObject *Sender);
     void __fastcall PluginDependenciesListViewSelectItem(TObject *Sender, TListItem *Item,
           bool Selected);
     void __fastcall EditListElementCMenuClick(TObject *Sender);
+    void __fastcall EditListElementCMenu2Click(TObject *Sender);
+    void __fastcall EditGroupTypeCMenu2Click(TObject *Sender);
+    void __fastcall EditPathCMenuClick(TObject *Sender);
+    void __fastcall EditPriorityCMenuClick(TObject *Sender);
     void __fastcall PopupMenuPopup(TObject *Sender);
+    void __fastcall PopupMenu2Popup(TObject *Sender);
+    void __fastcall PopupMenuFilesPopup(TObject *Sender);
     void __fastcall FormResize(TObject *Sender);
     void __fastcall VisibilityTypeComboBoxChange(TObject *Sender);
     void __fastcall AddRequiredFileButtonClick(TObject *Sender);
@@ -327,10 +347,19 @@ __published:	// IDE-managed Components
     void __fastcall RemoveCondFileConditionButtonClick(TObject *Sender);
     void __fastcall SettingsMenuClick(TObject *Sender);
     void __fastcall RecentFileTemplateClick(TObject *Sender);
+    void __fastcall ChooseHeaderImageButtonClick(TObject *Sender);
+    void __fastcall ClearHeaderImageButtonClick(TObject *Sender);
+    void __fastcall EditGroupTypeComboBoxExit(TObject *Sender);
+    void __fastcall EditGroupTypeComboBoxKeyPress(TObject *Sender, wchar_t &Key);
+    void __fastcall FilePriorityEditExit(TObject *Sender);
+    void __fastcall FilePriorityEditKeyPress(TObject *Sender, wchar_t &Key);
+
+
 
 private:	// User declarations
 public:		// User declarations
-    __fastcall TMainForm(TComponent* Owner);
+	__fastcall TMainForm(TComponent* Owner);
+	void __fastcall CreateParams(Controls::TCreateParams &Params);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TMainForm *MainForm;

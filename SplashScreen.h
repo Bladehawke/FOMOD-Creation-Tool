@@ -17,9 +17,12 @@ __published:	// IDE-managed Components
     TImage *LogoImage;
     void __fastcall Timer1Timer(TObject *Sender);
     void __fastcall FormCreate(TObject *Sender);
+	void __fastcall FormActivate(TObject *Sender);
+	void __fastcall FormShow(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
-    __fastcall TSplashForm(TComponent* Owner);
+	__fastcall TSplashForm(TComponent* Owner);
+	void __fastcall CreateParams(TCreateParams &Params);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TSplashForm *SplashForm;

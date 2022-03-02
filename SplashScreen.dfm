@@ -1,6 +1,7 @@
 object SplashForm: TSplashForm
   Left = 0
   Top = 0
+  BorderIcons = []
   BorderStyle = bsNone
   Caption = 'SplashForm'
   ClientHeight = 166
@@ -13,7 +14,9 @@ object SplashForm: TSplashForm
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnActivate = FormActivate
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object LogoImage: TImage

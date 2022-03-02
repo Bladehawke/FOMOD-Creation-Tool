@@ -13,7 +13,10 @@
 CCondition::CCondition() {}
 CCondition::CCondition(UnicodeString name, UnicodeString value) : Name(name), Value(value) {}
 
-CFile::CFile() {}
+CFile::CFile()
+{
+    Priority = 0;
+}
 
 CDependency::CDependency() {}
 

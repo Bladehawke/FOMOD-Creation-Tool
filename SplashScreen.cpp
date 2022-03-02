@@ -30,6 +30,7 @@ __fastcall TSplashForm::TSplashForm(TComponent* Owner)
 void __fastcall TSplashForm::Timer1Timer(TObject *Sender)
 {
     static secCount = 0;
+    Timer1->Enabled = false;
     if(secCount == 0)
     {
         Label1->Caption = "Loading... config.ini";
@@ -74,27 +75,54 @@ void __fastcall TSplashForm::Timer1Timer(TObject *Sender)
     secCount++;
     if(secCount >= Settings.splashScreenSeconds)
     {
-        Hide();
+		Hide();
         MainForm->Show();
-        Timer1->Enabled = false;
     }
     else
+    {
         Label1->Caption = "Loading...";
+        Timer1->Enabled = true;
+    }
 }
 //---------------------------------------------------------------------------
 void __fastcall TSplashForm::FormCreate(TObject *Sender)
 {
-    FILE *fp = fopen("logo.jpg", "r");
-    if(fp)
-    {
-        fclose(fp);
-        TJPEGImage *jpg = new TJPEGImage;
-        jpg->LoadFromFile("logo.jpg");
-        LogoImage->Picture->Bitmap->Assign(jpg);
-        delete jpg;
-        SplashForm->Height = LogoImage->Height;
-        SplashForm->Width = LogoImage->Width;
-    }
+	Application->MainFormOnTaskBar = false;
+	DWORD dwExStyle = GetWindowLong(Application->Handle, GWL_EXSTYLE);
+    dwExStyle &= ~WS_EX_APPWINDOW;
+    dwExStyle |= WS_EX_TOOLWINDOW;
+	SetWindowLong(Application->Handle, GWL_EXSTYLE, dwExStyle);
+	FILE *fp = fopen("logo.jpg", "r");
+	if(fp)
+	{
+		fclose(fp);
+		TJPEGImage *jpg = new TJPEGImage;
+		jpg->LoadFromFile("logo.jpg");
+		LogoImage->Picture->Bitmap->Assign(jpg);
+		delete jpg;
+		SplashForm->Height = LogoImage->Height;
+		SplashForm->Width = LogoImage->Width;
+	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TSplashForm::CreateParams(TCreateParams &Params)
+{
+    TForm::CreateParams(Params);
+    Params.ExStyle &= ~WS_EX_APPWINDOW;
+    Params.ExStyle |= WS_EX_TOOLWINDOW;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TSplashForm::FormActivate(TObject *Sender)
+{
+	ShowWindow(Application->Handle, SW_HIDE);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TSplashForm::FormShow(TObject *Sender)
+{
+	ShowWindow(Application->Handle, SW_HIDE);
 }
 //---------------------------------------------------------------------------
 

@@ -2,7 +2,7 @@ object MainForm: TMainForm
   Left = 0
   Top = 0
   Caption = 'FOMOD Creation Tool'
-  ClientHeight = 800
+  ClientHeight = 858
   ClientWidth = 1108
   Color = clBtnFace
   Constraints.MinHeight = 650
@@ -24,7 +24,7 @@ object MainForm: TMainForm
     Left = 0
     Top = 0
     Width = 1108
-    Height = 800
+    Height = 858
     ActivePage = ModInfoTabSheet
     Align = alClient
     TabOrder = 0
@@ -35,7 +35,7 @@ object MainForm: TMainForm
         Left = 0
         Top = 0
         Width = 1100
-        Height = 660
+        Height = 718
         Align = alClient
         Caption = 'Mod infornation'
         TabOrder = 0
@@ -43,13 +43,13 @@ object MainForm: TMainForm
           Left = 2
           Top = 15
           Width = 1096
-          Height = 154
+          Height = 290
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 0
           object ModCategoryLabel: TLabel
             Left = 13
-            Top = 125
+            Top = 124
             Width = 66
             Height = 13
             Caption = 'Mod category'
@@ -82,13 +82,43 @@ object MainForm: TMainForm
             Height = 13
             Caption = 'Mod page on Nexus'
           end
+          object ModHeaderImageLabel: TLabel
+            Left = 13
+            Top = 151
+            Width = 88
+            Height = 13
+            Caption = 'Mod header image'
+          end
+          object Shape4: TShape
+            Left = 734
+            Top = 151
+            Width = 196
+            Height = 133
+          end
+          object NoHeaderImageLabel: TLabel
+            Left = 734
+            Top = 208
+            Width = 196
+            Height = 76
+            Align = alCustom
+            Alignment = taCenter
+            AutoSize = False
+            Caption = '[No image]'
+          end
+          object HeaderImage: TImage
+            Left = 734
+            Top = 151
+            Width = 196
+            Height = 133
+            Stretch = True
+          end
           object ModCategoryComboBox: TComboBox
             Left = 159
             Top = 121
             Width = 346
             Height = 21
             ItemHeight = 13
-            TabOrder = 0
+            TabOrder = 4
             OnChange = ModCategoryEditChange
             Items.Strings = (
               'Ammo'
@@ -98,21 +128,25 @@ object MainForm: TMainForm
               'Audio - Music'
               'Audio - SFX'
               'Audio - Voice'
+              'Body, Face, and Hair'
               'Bug Fixes'
               'Buildings'
-              'Cheats and God'
+              'Character Presets'
+              'Cheats and God items'
               'Clothing'
+              'Clothing - Backpacks'
               'Collectibles, Treasure Hunts, and Puzzles'
               'Companions'
               'Crafting - Equipment'
-              'Crafting - Home'
+              'Crafting - Home/Settlement'
+              'Crafting - Other'
               'Creatures'
               'ENB Presets'
               'Environment'
               'Factions'
               'Gameplay Effects and Changes'
-              'Hair and Face Models'
-              'Items - Food/Drinks/Chems/etc'
+              'Immersion'
+              'Items (Food, Drinks, Chems, etc)'
               'Locations - New'
               'Locations - Vanilla'
               'Miscellaneous'
@@ -125,19 +159,26 @@ object MainForm: TMainForm
               'Patches'
               'Performance'
               'Perks'
+              'Pip-Boy'
               'Player Homes'
               'Player Settlement'
               'Poses'
+              'Power Armour'
               'Quests and Adventures'
               'Radio'
-              'Saved Games/Characters'
+              'ReShade Presets'
+              'Save Games'
               'Skills and Leveling'
+              'Tattoos'
+              'Transfer Settlement Blueprints'
               'User Interface'
               'Utilities'
               'Vehicles'
+              'Videos and Trailers'
               'Visuals and Graphics'
               'Weapons'
-              'Weapons and Armour')
+              'Weapons and Armour'
+              'Weather and Lighting')
           end
           object ModAuthorEdit: TEdit
             Left = 159
@@ -152,7 +193,7 @@ object MainForm: TMainForm
             Top = 13
             Width = 346
             Height = 21
-            TabOrder = 2
+            TabOrder = 0
             OnChange = ModNameEditChange
           end
           object ModVersionEdit: TEdit
@@ -160,7 +201,7 @@ object MainForm: TMainForm
             Top = 67
             Width = 146
             Height = 21
-            TabOrder = 3
+            TabOrder = 2
             OnChange = ModVersionEditChange
           end
           object ModURLEdit: TEdit
@@ -168,15 +209,40 @@ object MainForm: TMainForm
             Top = 94
             Width = 346
             Height = 21
-            TabOrder = 4
+            TabOrder = 3
             OnChange = ModURLEditChange
+          end
+          object ClearHeaderImageButton: TButton
+            Left = 623
+            Top = 148
+            Width = 75
+            Height = 25
+            Caption = 'Clear'
+            TabOrder = 7
+            OnClick = ClearHeaderImageButtonClick
+          end
+          object ChooseHeaderImageButton: TButton
+            Left = 533
+            Top = 148
+            Width = 75
+            Height = 25
+            Caption = 'Choose'
+            TabOrder = 6
+            OnClick = ChooseHeaderImageButtonClick
+          end
+          object ModHeaderImageEdit: TEdit
+            Left = 159
+            Top = 148
+            Width = 346
+            Height = 21
+            TabOrder = 5
           end
         end
         object Panel6: TPanel
           Left = 2
-          Top = 169
+          Top = 305
           Width = 1096
-          Height = 489
+          Height = 411
           Align = alClient
           BevelOuter = bvNone
           Caption = 'Panel6'
@@ -199,7 +265,7 @@ object MainForm: TMainForm
             Left = 14
             Top = 24
             Width = 1068
-            Height = 451
+            Height = 373
             Align = alClient
             ScrollBars = ssVertical
             TabOrder = 0
@@ -209,7 +275,7 @@ object MainForm: TMainForm
       end
       object WorkSpaceGroupBox: TGroupBox
         Left = 0
-        Top = 660
+        Top = 718
         Width = 1100
         Height = 64
         Align = alBottom
@@ -228,7 +294,7 @@ object MainForm: TMainForm
           Width = 75
           Height = 25
           Caption = 'Open'
-          TabOrder = 0
+          TabOrder = 1
           OnClick = OpenRootDirButtonClick
         end
         object RootDirEdit: TEdit
@@ -236,13 +302,13 @@ object MainForm: TMainForm
           Top = 23
           Width = 424
           Height = 21
-          TabOrder = 1
+          TabOrder = 0
           OnChange = RootDirEditChange
         end
       end
       object Panel3: TPanel
         Left = 0
-        Top = 724
+        Top = 782
         Width = 1100
         Height = 48
         Align = alBottom
@@ -274,9 +340,13 @@ object MainForm: TMainForm
       Caption = 'Steps'
       Enabled = False
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel1: TPanel
         Left = 0
-        Top = 731
+        Top = 789
         Width = 1100
         Height = 41
         Align = alBottom
@@ -296,7 +366,7 @@ object MainForm: TMainForm
             Height = 25
             Caption = 'Delete step'
             Enabled = False
-            TabOrder = 0
+            TabOrder = 2
             OnClick = DeleteStepButtonClick
           end
           object NewStepButton: TButton
@@ -305,7 +375,7 @@ object MainForm: TMainForm
             Width = 116
             Height = 25
             Caption = 'New step'
-            TabOrder = 1
+            TabOrder = 3
             OnClick = NewStepButtonClick
           end
           object MoveLeftButton: TButton
@@ -315,7 +385,7 @@ object MainForm: TMainForm
             Height = 25
             Caption = 'Move left'
             Enabled = False
-            TabOrder = 2
+            TabOrder = 0
             OnClick = MoveLeftButtonClick
           end
           object MoveRightButton: TButton
@@ -325,26 +395,30 @@ object MainForm: TMainForm
             Height = 25
             Caption = 'Move right'
             Enabled = False
-            TabOrder = 3
+            TabOrder = 1
             OnClick = MoveRightButtonClick
           end
         end
       end
-      object PageControl1: TPageControl
+      object StepsPageControl: TPageControl
         Left = 0
         Top = 27
         Width = 1100
-        Height = 704
+        Height = 762
         ActivePage = GroupsFileTabSheet
         Align = alClient
         TabOrder = 1
         object GroupsFileTabSheet: TTabSheet
           Caption = 'Groups and Files'
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object ScrollBox1: TScrollBox
             Left = 0
             Top = 0
             Width = 1092
-            Height = 676
+            Height = 734
             HorzScrollBar.Range = 1066
             VertScrollBar.Range = 617
             Align = alClient
@@ -354,15 +428,15 @@ object MainForm: TMainForm
               Left = 0
               Top = 497
               Width = 1088
-              Height = 175
+              Height = 233
               Align = alClient
               Caption = 'Files'
-              TabOrder = 0
+              TabOrder = 2
               object FilesPanel: TPanel
                 Left = 2
                 Top = 15
                 Width = 1084
-                Height = 158
+                Height = 216
                 Align = alClient
                 BevelOuter = bvNone
                 TabOrder = 0
@@ -411,13 +485,16 @@ object MainForm: TMainForm
                   Columns = <
                     item
                       Caption = 'Destination path'
-                      Width = 425
+                      Width = 375
+                    end
+                    item
+                      Caption = 'Priority'
                     end>
                   ColumnClick = False
                   GridLines = True
                   RowSelect = True
                   ParentShowHint = False
-                  PopupMenu = PopupMenu
+                  PopupMenu = PopupMenuFiles
                   ShowHint = True
                   TabOrder = 2
                   ViewStyle = vsReport
@@ -438,7 +515,7 @@ object MainForm: TMainForm
                   Left = 16
                   Top = 26
                   Width = 503
-                  Height = 111
+                  Height = 112
                   Columns = <
                     item
                       Caption = 'File/Folder'
@@ -473,9 +550,13 @@ object MainForm: TMainForm
                 Height = 431
                 ActivePage = FlagSetTabSheet
                 Align = alRight
-                TabOrder = 0
+                TabOrder = 1
                 object FlagSetTabSheet: TTabSheet
                   Caption = 'Flag set'
+                  ExplicitLeft = 0
+                  ExplicitTop = 0
+                  ExplicitWidth = 0
+                  ExplicitHeight = 0
                   object AddVaribleButton: TButton
                     Left = 281
                     Top = 20
@@ -483,7 +564,7 @@ object MainForm: TMainForm
                     Height = 25
                     Caption = 'Add'
                     Enabled = False
-                    TabOrder = 0
+                    TabOrder = 1
                     OnClick = AddVaribleButtonClick
                   end
                   object DeleteVaribleButton: TButton
@@ -493,7 +574,7 @@ object MainForm: TMainForm
                     Height = 25
                     Caption = 'Delete'
                     Enabled = False
-                    TabOrder = 1
+                    TabOrder = 2
                     OnClick = DeleteVaribleButtonClick
                   end
                   object Panel17: TPanel
@@ -503,7 +584,7 @@ object MainForm: TMainForm
                     Height = 403
                     Align = alLeft
                     BevelOuter = bvNone
-                    TabOrder = 2
+                    TabOrder = 0
                     object FlagSetListView: TListView
                       Left = 0
                       Top = 51
@@ -558,7 +639,7 @@ object MainForm: TMainForm
                         Top = 24
                         Width = 176
                         Height = 21
-                        ItemHeight = 13
+                        ItemHeight = 0
                         TabOrder = 0
                       end
                       object VaribleValueComboBox: TComboBox
@@ -566,7 +647,7 @@ object MainForm: TMainForm
                         Top = 24
                         Width = 50
                         Height = 21
-                        ItemHeight = 13
+                        ItemHeight = 0
                         ItemIndex = 0
                         TabOrder = 1
                         Text = 'On'
@@ -580,6 +661,10 @@ object MainForm: TMainForm
                 object PluginDependenciesTabSheet: TTabSheet
                   Caption = 'Plugin dependencies'
                   ImageIndex = 1
+                  ExplicitLeft = 0
+                  ExplicitTop = 0
+                  ExplicitWidth = 0
+                  ExplicitHeight = 0
                   object PluginDependenciesListView: TListView
                     Left = 0
                     Top = 233
@@ -683,9 +768,9 @@ object MainForm: TMainForm
                       Width = 73
                       Height = 21
                       Enabled = False
-                      ItemHeight = 13
+                      ItemHeight = 0
                       ItemIndex = 0
-                      TabOrder = 0
+                      TabOrder = 3
                       Text = 'And'
                       OnChange = pdOperatorComboBoxChange
                       Items.Strings = (
@@ -698,9 +783,9 @@ object MainForm: TMainForm
                       Width = 145
                       Height = 21
                       Enabled = False
-                      ItemHeight = 13
+                      ItemHeight = 0
                       ItemIndex = 0
-                      TabOrder = 1
+                      TabOrder = 0
                       Text = 'Optional'
                       OnChange = pdDefTypeComboBoxChange
                       Items.Strings = (
@@ -714,12 +799,12 @@ object MainForm: TMainForm
                       Left = 130
                       Top = 148
                       Width = 63
-                      Height = 21
-                      Style = csDropDownList
+                      Height = 19
+                      Style = csOwnerDrawFixed
                       Enabled = False
                       ItemHeight = 13
                       ItemIndex = 0
-                      TabOrder = 2
+                      TabOrder = 6
                       Text = 'file'
                       OnChange = pdDependencyTypeComboBoxChange
                       Items.Strings = (
@@ -733,7 +818,7 @@ object MainForm: TMainForm
                       Height = 25
                       Caption = 'Add'
                       Enabled = False
-                      TabOrder = 3
+                      TabOrder = 9
                       OnClick = pdAddButtonClick
                     end
                     object pdDeleteButton: TButton
@@ -743,7 +828,7 @@ object MainForm: TMainForm
                       Height = 25
                       Caption = 'Delete'
                       Enabled = False
-                      TabOrder = 4
+                      TabOrder = 10
                       OnClick = pdDeleteButtonClick
                     end
                     object pdNewPatternButton: TButton
@@ -753,7 +838,7 @@ object MainForm: TMainForm
                       Height = 25
                       Caption = 'New pattern'
                       Enabled = False
-                      TabOrder = 5
+                      TabOrder = 2
                       OnClick = pdNewPatternButtonClick
                     end
                     object pdFileFlagNameComboBox: TComboBox
@@ -761,8 +846,8 @@ object MainForm: TMainForm
                       Top = 175
                       Width = 119
                       Height = 21
-                      ItemHeight = 13
-                      TabOrder = 6
+                      ItemHeight = 0
+                      TabOrder = 7
                     end
                     object pdDeletePatternButton: TButton
                       Left = 255
@@ -771,7 +856,7 @@ object MainForm: TMainForm
                       Height = 25
                       Caption = 'Delete pattern'
                       Enabled = False
-                      TabOrder = 7
+                      TabOrder = 5
                       OnClick = pdDeletePatternButtonClick
                     end
                     object pdTypeNameComboBox: TComboBox
@@ -780,9 +865,9 @@ object MainForm: TMainForm
                       Width = 122
                       Height = 21
                       Enabled = False
-                      ItemHeight = 13
+                      ItemHeight = 0
                       ItemIndex = 0
-                      TabOrder = 8
+                      TabOrder = 4
                       Text = 'Optional'
                       OnChange = pdTypeNameComboBoxChange
                       Items.Strings = (
@@ -797,7 +882,7 @@ object MainForm: TMainForm
                       Top = 46
                       Width = 353
                       Height = 29
-                      TabOrder = 9
+                      TabOrder = 1
                       OnChange = pdPatternsPageControlChange
                     end
                     object pdStateValueComboBox: TComboBox
@@ -805,8 +890,8 @@ object MainForm: TMainForm
                       Top = 200
                       Width = 119
                       Height = 21
-                      ItemHeight = 13
-                      TabOrder = 10
+                      ItemHeight = 0
+                      TabOrder = 8
                       Items.Strings = (
                         'Active'
                         'Inactive'
@@ -822,7 +907,7 @@ object MainForm: TMainForm
                 Height = 431
                 Align = alClient
                 BevelOuter = bvNone
-                TabOrder = 1
+                TabOrder = 0
                 object Panel7: TPanel
                   Left = 0
                   Top = 281
@@ -830,7 +915,7 @@ object MainForm: TMainForm
                   Height = 150
                   Align = alBottom
                   BevelOuter = bvNone
-                  TabOrder = 0
+                  TabOrder = 2
                   object Shape3: TShape
                     Left = 486
                     Top = 12
@@ -839,9 +924,9 @@ object MainForm: TMainForm
                   end
                   object NoImageLabel: TLabel
                     Left = 486
-                    Top = 64
+                    Top = 72
                     Width = 196
-                    Height = 57
+                    Height = 74
                     Align = alCustom
                     Alignment = taCenter
                     AutoSize = False
@@ -875,7 +960,7 @@ object MainForm: TMainForm
                     Height = 25
                     Caption = 'Clear'
                     Enabled = False
-                    TabOrder = 1
+                    TabOrder = 2
                     OnClick = ClearPluginImageButtonClick
                   end
                   object ChoosePluginImageButton: TButton
@@ -885,7 +970,7 @@ object MainForm: TMainForm
                     Height = 25
                     Caption = 'Choose'
                     Enabled = False
-                    TabOrder = 2
+                    TabOrder = 1
                     OnClick = ChoosePluginImageButtonClick
                   end
                 end
@@ -896,7 +981,7 @@ object MainForm: TMainForm
                   Height = 169
                   Align = alTop
                   BevelOuter = bvNone
-                  TabOrder = 1
+                  TabOrder = 0
                   object GTypeLabel: TLabel
                     Left = 214
                     Top = 20
@@ -905,12 +990,12 @@ object MainForm: TMainForm
                     Caption = 'type'
                   end
                   object AddGroupButton: TButton
-                    Left = 214
+                    Left = 242
                     Top = 44
-                    Width = 107
+                    Width = 112
                     Height = 25
                     Caption = 'Add'
-                    TabOrder = 0
+                    TabOrder = 3
                     OnClick = AddGroupButtonClick
                   end
                   object AddPluginButton: TButton
@@ -920,23 +1005,23 @@ object MainForm: TMainForm
                     Height = 25
                     Caption = 'Add'
                     Enabled = False
-                    TabOrder = 1
+                    TabOrder = 9
                     OnClick = AddPluginButtonClick
                   end
                   object GroupDownButton: TButton
-                    Left = 214
+                    Left = 242
                     Top = 137
-                    Width = 107
+                    Width = 112
                     Height = 25
                     Caption = 'Move down'
                     Enabled = False
-                    TabOrder = 2
+                    TabOrder = 6
                     OnClick = GroupDownButtonClick
                   end
                   object GroupListView: TListView
                     Left = 9
                     Top = 44
-                    Width = 199
+                    Width = 227
                     Height = 118
                     Hint = 
                       'To edit: select destination path and then click on it again. It'#39 +
@@ -948,15 +1033,15 @@ object MainForm: TMainForm
                       end
                       item
                         Caption = 'Type'
-                        Width = 75
+                        Width = 103
                       end>
                     ColumnClick = False
                     GridLines = True
                     RowSelect = True
                     ParentShowHint = False
-                    PopupMenu = PopupMenu
+                    PopupMenu = PopupMenu2
                     ShowHint = True
-                    TabOrder = 3
+                    TabOrder = 2
                     ViewStyle = vsReport
                     OnEdited = GroupListViewEdited
                     OnSelectItem = GroupListViewSelectItem
@@ -971,17 +1056,17 @@ object MainForm: TMainForm
                     EditLabel.Height = 13
                     EditLabel.Caption = 'Group name'
                     LabelPosition = lpLeft
-                    TabOrder = 4
+                    TabOrder = 0
                   end
                   object GroupTypeComboBox: TComboBox
                     Left = 242
                     Top = 17
                     Width = 112
-                    Height = 21
-                    Style = csDropDownList
+                    Height = 19
+                    Style = csOwnerDrawFixed
                     ItemHeight = 13
                     ItemIndex = 0
-                    TabOrder = 5
+                    TabOrder = 1
                     Text = 'SelectExactlyOne'
                     Items.Strings = (
                       'SelectExactlyOne'
@@ -991,13 +1076,13 @@ object MainForm: TMainForm
                       'SelectAll')
                   end
                   object GroupUpButton: TButton
-                    Left = 214
+                    Left = 242
                     Top = 106
-                    Width = 107
+                    Width = 112
                     Height = 25
                     Caption = 'Move up'
                     Enabled = False
-                    TabOrder = 6
+                    TabOrder = 5
                     OnClick = GroupUpButtonClick
                   end
                   object PluginDownButton: TButton
@@ -1007,7 +1092,7 @@ object MainForm: TMainForm
                     Height = 25
                     Caption = 'Move down'
                     Enabled = False
-                    TabOrder = 7
+                    TabOrder = 12
                     OnClick = PluginDownButtonClick
                   end
                   object PluginListView: TListView
@@ -1044,7 +1129,7 @@ object MainForm: TMainForm
                     EditLabel.Height = 13
                     EditLabel.Caption = 'Plugin name'
                     LabelPosition = lpLeft
-                    TabOrder = 9
+                    TabOrder = 7
                   end
                   object PluginUpButton: TButton
                     Left = 575
@@ -1053,17 +1138,17 @@ object MainForm: TMainForm
                     Height = 25
                     Caption = 'Move up'
                     Enabled = False
-                    TabOrder = 10
+                    TabOrder = 11
                     OnClick = PluginUpButtonClick
                   end
                   object RemoveGroupButton: TButton
-                    Left = 214
+                    Left = 242
                     Top = 75
-                    Width = 107
+                    Width = 112
                     Height = 25
                     Caption = 'Remove'
                     Enabled = False
-                    TabOrder = 11
+                    TabOrder = 4
                     OnClick = RemoveGroupButtonClick
                   end
                   object RemovePluginButton: TButton
@@ -1073,7 +1158,7 @@ object MainForm: TMainForm
                     Height = 25
                     Caption = 'Remove'
                     Enabled = False
-                    TabOrder = 12
+                    TabOrder = 10
                     OnClick = RemovePluginButtonClick
                   end
                 end
@@ -1088,7 +1173,7 @@ object MainForm: TMainForm
                   Constraints.MinHeight = 100
                   Padding.Left = 8
                   Padding.Right = 8
-                  TabOrder = 2
+                  TabOrder = 1
                   object PluginDescLabel: TLabel
                     Left = 8
                     Top = 0
@@ -1120,7 +1205,7 @@ object MainForm: TMainForm
               Height = 49
               Align = alTop
               Caption = 'Step settings'
-              TabOrder = 2
+              TabOrder = 0
               object StepNameLabel: TLabel
                 Left = 18
                 Top = 24
@@ -1142,18 +1227,22 @@ object MainForm: TMainForm
         object ConditionsTabSheet: TTabSheet
           Caption = 'Conditions'
           ImageIndex = 1
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object ScrollBox: TScrollBox
             Left = 0
             Top = 0
             Width = 1092
-            Height = 676
+            Height = 734
             Align = alClient
             TabOrder = 0
             object ConditionSetGroupBox: TGroupBox
               Left = 0
               Top = 0
               Width = 1088
-              Height = 672
+              Height = 730
               Align = alClient
               Caption = 'Condition set'
               TabOrder = 0
@@ -1192,17 +1281,17 @@ object MainForm: TMainForm
                 Top = 41
                 Width = 225
                 Height = 21
-                ItemHeight = 13
-                TabOrder = 0
+                ItemHeight = 0
+                TabOrder = 1
               end
               object ConditionValueComboBox: TComboBox
                 Left = 399
                 Top = 41
                 Width = 87
                 Height = 21
-                ItemHeight = 13
+                ItemHeight = 0
                 ItemIndex = 0
-                TabOrder = 1
+                TabOrder = 2
                 Text = 'On'
                 Items.Strings = (
                   'On'
@@ -1235,7 +1324,7 @@ object MainForm: TMainForm
                 GridLines = True
                 ReadOnly = True
                 RowSelect = True
-                TabOrder = 2
+                TabOrder = 6
                 ViewStyle = vsReport
                 OnSelectItem = ConditionListViewSelectItem
               end
@@ -1245,7 +1334,7 @@ object MainForm: TMainForm
                 Width = 75
                 Height = 25
                 Caption = 'Add'
-                TabOrder = 3
+                TabOrder = 4
                 OnClick = AddConditionButtonClick
               end
               object DeleteConditionButton: TButton
@@ -1255,18 +1344,18 @@ object MainForm: TMainForm
                 Height = 25
                 Caption = 'Delete'
                 Enabled = False
-                TabOrder = 4
+                TabOrder = 5
                 OnClick = DeleteConditionButtonClick
               end
               object VisibilityTypeComboBox: TComboBox
                 Left = 52
                 Top = 41
                 Width = 51
-                Height = 21
-                Style = csDropDownList
+                Height = 19
+                Style = csOwnerDrawFixed
                 ItemHeight = 13
                 ItemIndex = 1
-                TabOrder = 5
+                TabOrder = 0
                 Text = 'flag'
                 OnChange = VisibilityTypeComboBoxChange
                 Items.Strings = (
@@ -1278,9 +1367,9 @@ object MainForm: TMainForm
                 Top = 41
                 Width = 73
                 Height = 21
-                ItemHeight = 13
+                ItemHeight = 0
                 ItemIndex = 0
-                TabOrder = 6
+                TabOrder = 3
                 Text = 'And'
                 OnChange = visOperatorComboBoxChange
                 Items.Strings = (
@@ -1296,13 +1385,9 @@ object MainForm: TMainForm
         Top = 0
         Width = 1100
         Height = 27
-        ActivePage = Step1
         Align = alTop
         TabOrder = 2
         OnChange = StepsTabControlChange
-        object Step1: TTabSheet
-          Caption = 'Step1'
-        end
       end
     end
     object RequiredInstallsTabSheet: TTabSheet
@@ -1313,7 +1398,7 @@ object MainForm: TMainForm
         Left = 0
         Top = 0
         Width = 1100
-        Height = 772
+        Height = 830
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
@@ -1337,7 +1422,7 @@ object MainForm: TMainForm
           Width = 101
           Height = 25
           Caption = 'Add file'
-          TabOrder = 0
+          TabOrder = 2
           OnClick = AddRequiredFileButtonClick
         end
         object AddRequiredFolderButton: TButton
@@ -1346,7 +1431,7 @@ object MainForm: TMainForm
           Width = 101
           Height = 25
           Caption = 'Add folder'
-          TabOrder = 1
+          TabOrder = 3
           OnClick = AddRequiredFolderButtonClick
         end
         object RequiredFilesDstListView: TListView
@@ -1360,15 +1445,18 @@ object MainForm: TMainForm
           Columns = <
             item
               Caption = 'Destination path'
-              Width = 425
+              Width = 375
+            end
+            item
+              Caption = 'Priority'
             end>
           ColumnClick = False
           GridLines = True
           RowSelect = True
           ParentShowHint = False
-          PopupMenu = PopupMenu
+          PopupMenu = PopupMenuFiles
           ShowHint = True
-          TabOrder = 2
+          TabOrder = 1
           ViewStyle = vsReport
           OnEdited = RequiredFilesDstListViewEdited
           OnSelectItem = RequiredFilesDstListViewSelectItem
@@ -1380,7 +1468,7 @@ object MainForm: TMainForm
           Height = 25
           Caption = 'Remove'
           Enabled = False
-          TabOrder = 3
+          TabOrder = 4
           OnClick = RemoveRequiredFileFolderButtonClick
         end
         object RequiredFilesSrcListView: TListView
@@ -1401,7 +1489,7 @@ object MainForm: TMainForm
           GridLines = True
           ReadOnly = True
           RowSelect = True
-          TabOrder = 4
+          TabOrder = 0
           ViewStyle = vsReport
           OnSelectItem = RequiredFilesSrcListViewSelectItem
         end
@@ -1411,6 +1499,10 @@ object MainForm: TMainForm
       Caption = 'Conditional installations'
       Enabled = False
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ConiditionalFilesPageControl: TPageControl
         Left = 0
         Top = 0
@@ -1422,11 +1514,11 @@ object MainForm: TMainForm
       end
       object Panel12: TPanel
         Left = 0
-        Top = 731
+        Top = 789
         Width = 1100
         Height = 41
         Align = alBottom
-        TabOrder = 1
+        TabOrder = 3
         object Panel13: TPanel
           Left = 533
           Top = 1
@@ -1488,7 +1580,7 @@ object MainForm: TMainForm
         Width = 1100
         Height = 208
         Align = alTop
-        TabOrder = 2
+        TabOrder = 1
         object ciOperatorLabel: TLabel
           Left = 17
           Top = 23
@@ -1526,7 +1618,7 @@ object MainForm: TMainForm
           Width = 51
           Height = 21
           Enabled = False
-          ItemHeight = 13
+          ItemHeight = 0
           ItemIndex = 0
           TabOrder = 0
           Text = 'And'
@@ -1539,12 +1631,12 @@ object MainForm: TMainForm
           Left = 598
           Top = 47
           Width = 51
-          Height = 21
-          Style = csDropDownList
+          Height = 19
+          Style = csOwnerDrawFixed
           Enabled = False
           ItemHeight = 13
           ItemIndex = 1
-          TabOrder = 1
+          TabOrder = 4
           Text = 'flag'
           OnChange = CondFileDependTypeComboBoxChange
           Items.Strings = (
@@ -1557,8 +1649,8 @@ object MainForm: TMainForm
           Width = 120
           Height = 21
           Enabled = False
-          ItemHeight = 13
-          TabOrder = 2
+          ItemHeight = 0
+          TabOrder = 6
           Items.Strings = (
             'Active'
             'Inactive'
@@ -1589,7 +1681,7 @@ object MainForm: TMainForm
           GridLines = True
           ReadOnly = True
           RowSelect = True
-          TabOrder = 3
+          TabOrder = 1
           ViewStyle = vsReport
           OnSelectItem = CondFilePatternListViewSelectItem
         end
@@ -1600,7 +1692,7 @@ object MainForm: TMainForm
           Height = 25
           Caption = 'Add'
           Enabled = False
-          TabOrder = 4
+          TabOrder = 2
           OnClick = AddCondFileConditionButtonClick
         end
         object RemoveCondFileConditionButton: TButton
@@ -1610,7 +1702,7 @@ object MainForm: TMainForm
           Height = 25
           Caption = 'Delete'
           Enabled = False
-          TabOrder = 5
+          TabOrder = 3
           OnClick = RemoveCondFileConditionButtonClick
         end
         object CondFileDependNameComboBox: TComboBox
@@ -1619,17 +1711,17 @@ object MainForm: TMainForm
           Width = 176
           Height = 21
           Enabled = False
-          ItemHeight = 13
-          TabOrder = 6
+          ItemHeight = 0
+          TabOrder = 5
         end
       end
       object Panel15: TPanel
         Left = 0
         Top = 235
         Width = 1100
-        Height = 496
+        Height = 554
         Align = alClient
-        TabOrder = 3
+        TabOrder = 2
         object DataLabel3: TLabel
           Left = 525
           Top = 6
@@ -1655,15 +1747,18 @@ object MainForm: TMainForm
           Columns = <
             item
               Caption = 'Destination path'
-              Width = 425
+              Width = 375
+            end
+            item
+              Caption = 'Priority'
             end>
           ColumnClick = False
           GridLines = True
           RowSelect = True
           ParentShowHint = False
-          PopupMenu = PopupMenu
+          PopupMenu = PopupMenuFiles
           ShowHint = True
-          TabOrder = 0
+          TabOrder = 1
           ViewStyle = vsReport
           OnEdited = CondFilesDstListViewEdited
           OnSelectItem = CondFilesDstListViewSelectItem
@@ -1686,7 +1781,7 @@ object MainForm: TMainForm
           GridLines = True
           ReadOnly = True
           RowSelect = True
-          TabOrder = 1
+          TabOrder = 0
           ViewStyle = vsReport
           OnSelectItem = CondFilesSrcListViewSelectItem
         end
@@ -1721,18 +1816,22 @@ object MainForm: TMainForm
       end
     end
     object InfoTabSheet: TTabSheet
-      Caption = 'Info'
+      Caption = 'Help'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Memo1: TMemo
         Left = 0
         Top = 0
         Width = 1100
-        Height = 772
+        Height = 830
         Align = alClient
         Lines.Strings = (
           'FOMOD Creation Tool'
           'Quick guide'
-          ''
+          ' '
           'Preparation.'
           
             'First of first you should prepare folder where will be your mod ' +
@@ -1740,7 +1839,7 @@ object MainForm: TMainForm
             'ure of your mod, but keep in mind that some people may want to d' +
             'o manual installation so making '
           'this structure reasonable is good idea.'
-          ''
+          ' '
           '1. Program menu.'
           '1.1. FOMOD menu.'
           
@@ -1749,23 +1848,19 @@ object MainForm: TMainForm
           
             '1.1.2. Open folder. Opens existing fomod .xml files. You should ' +
             'specify root folder that contains '#39'fomod'#39' folder. FOMOD Creation' +
-            ' Tool since 1.2 version support unicode text only in UTF-16 (UCS' +
-            '-2) Little Endian encoding. If '
+            ' Tool mainly support unicode text in UTF-16 (UCS-2) Little Endia' +
+            'n encoding, and since 1.6 '
           
-            'fomod that you willing to open in other that this encoding you s' +
-            'hould convert it manually. To do this open .xml'#39's file in Window' +
-            ' Notepad, choose '#39'File->Save as'#39' menu, in save window choose enc' +
-            'oding '#39'Unicode'#39', save file with '
-          
-            'same name, replace existing one. If you using Notepad++ open .xm' +
-            'l file, choose '#39'Encoding->Encode in UCS-2 Little Endian'#39', save f' +
-            'ile.'
+            'version limitedly support UTF-8. Non-english symbols in UTF-8 ma' +
+            'y be interpreted incorrectly.'
           
             '1.1.3. Open file. Opens existing fomod .xml files. You may choos' +
             'e info.xml or ModuleConfig.xml file, FOMOD CT will catch up pair' +
-            ' for it if such exist. FOMOD Creation Tool since 1.2 version sup' +
-            'port unicode text only in UTF-'
-          '16 (UCS-2) Little Endian encoding.'
+            ' for it if such exist. FOMOD Creation Tool mainly support unicod' +
+            'e text in UTF-16 (UCS-2) Little '
+          
+            'Endian encoding, and since 1.6 version limitedly support UTF-8. ' +
+            'Non-english symbols in UTF-8 may be interpreted incorrectly.'
           
             '1.1.4. Save. Saves fomod .xml files. FOMOD Creation Tool since 1' +
             '.2 version support unicode text only in UTF-16 (UCS-2) Little En' +
@@ -1795,8 +1890,11 @@ object MainForm: TMainForm
           
             'Creation Tool macro to insert specific data in script. More abou' +
             't supported macro you can read in script window.'
+          ''
           'Example:'
+          ''
           'del "$MODROOT$\*.rar" /q'
+          ''
           'This deletes existing .rar archives from root catalog.'
           
             '1.2.3. Run after save. Opens window where you can write down som' +
@@ -1806,50 +1904,60 @@ object MainForm: TMainForm
           
             'Tool macro to insert specific data in script. More about support' +
             'ed macro you can read in script window.'
+          ''
           'Example:'
+          ''
           'd:'
           'cd "$MODROOT$"'
           
             '"C:\Program Files\WinRAR\rar.exe" a -r -ep1 "$MODNAME$_$MODVERSI' +
             'ON$.rar" *'
+          ''
           
             'This will change active drive to D:\. Then set active path to mo' +
             'd root directory. Then using WinRar pack all files in root direc' +
             'tory in archive named with mod name and mod version.'
+          ' '
+          '2. Program main interface.'
           ''
-          '2. Programm main interface.'
           '2.1. Mod info.'
           
-            'At start of programm you'#39'll see '#39'Mod info'#39' tab where you put inf' +
-            'ormation about your mod.'
+            'At start of program you'#39'll see '#39'Mod info'#39' tab where you put info' +
+            'rmation about your mod.'
           '2.1.1. Mod information.'
-          'Mod name - name of your mod.'
-          'Mod author - it'#39's you, comrade.'
-          'Mod version - i think it'#39's understandable.'
+          #8226'         Mod name - name of your mod.'
+          #8226'         Mod author - it'#39's you, comrade.'
+          #8226'         Mod version - i think it'#39's understandable.'
           
-            'Mod page on Nexus - URL to your mod'#39's page on www.nexusmods.com.' +
-            ' To get it create file in your account on Nexus, but not upload ' +
-            'anything and not publish it, you'#39'll be able to copy URL of your ' +
-            'future mod now.'
+            #8226'         Mod page on Nexus - URL to your mod'#39's page on www.nexu' +
+            'smods.com. To get it create file in your account on Nexus, but n' +
+            'ot upload anything and not publish it, you'#39'll be able to copy UR' +
+            'L of your future mod now.'
           
-            'Mod description - text that will be shown in right part of NMM w' +
-            'hen your mod selected. This field can be multiline, but that doe' +
-            'sn'#39't mean that in NMM (or any other mod installer) this descript' +
-            'ion will be multilined. Use some '
-          'special codes or BB codes in order to get correct page layout.'
-          'Mod category - category on Nexus your mod belong.'
+            #8226'         Mod header image - image that will be shown on top of ' +
+            'installation window to the right from mod name.'
           
-            'Technically this fields not necessary but you want your mod look' +
-            ' gleam and neat, aren'#39't you?'
+            #8226'         Mod description - text that will be shown in right par' +
+            't of NMM when your mod selected. This field can be multiline, bu' +
+            't that doesn'#39't mean that in NMM (or any other mod installer) thi' +
+            's description will be multiline. Use '
+          
+            'some special codes or BB codes in order to get correct page layo' +
+            'ut.'
+          #8226'         Mod category - category on Nexus your mod belongs.'
+          
+            #8226'         Technically this fields not necessary but you want you' +
+            'r mod look gleam and neat, aren'#39't you?'
           '2.1.2. Workspace.'
           
             'There you set root folder, which you prepare and where will be y' +
             'our mod files and '#39'fomod'#39' folder, if there no '#39'fomod'#39' folder pro' +
-            'gramm will offer you to create one. After workspace is setted co' +
-            'rrectly '#39'Proceed'#39' button is '
+            'gram will offer you to create one. After workspace is set correc' +
+            'tly '#39'Proceed'#39' button is enabled. '
           
-            'enabled. Once '#39'Proceed'#39' button hited you'#39'll see '#39'Steps'#39' tab and ' +
-            'not be able to change root directory.'
+            'Once '#39'Proceed'#39' button is click you'#39'll see '#39'Steps'#39' tab and not be' +
+            ' able to change root directory.'
+          ''
           '2.2. Steps.'
           'Basic tab where you create your FOMOD installation.'
           '2.2.1. Groups and Files'
@@ -1859,60 +1967,60 @@ object MainForm: TMainForm
             ' empty.'
           
             '2.2.1.2. Groups. Add at least one group to each step. Group name' +
-            ' will be displayed at left part of instalation window. Choose ty' +
-            'pe for your groups. You may change group name from context menu ' +
-            'or by selecting group in '
+            ' will be displayed at left part of installation window. Choose t' +
+            'ype for your groups. You may change group name from context menu' +
+            ' or by selecting group in '
           
             'list end then press left mouse button again on it, just like you' +
-            ' rename files in Windows. Group type can'#39't be changed. There is ' +
-            'four types:'
+            ' rename files in Windows. Group can be changed via context menu.' +
+            ' There are four types of groups:'
           
-            '- SelectExatlyOne - you can select only one option in group, can' +
-            #39't select none or several.'
+            #8226'         SelectExatlyOne - you can select only one option in gr' +
+            'oup, can'#39't select none or several.'
           
-            '- SelectAny - you can select none, several or all options in gro' +
-            'up;'
+            #8226'         SelectAny - you can select none, several or all option' +
+            's in group;'
           
-            '- SelectAtMostOne - you can select none or only one option in gr' +
-            'oups.'
+            #8226'         SelectAtMostOne - you can select none or only one opti' +
+            'on in groups.'
           
-            '- SelectAtLeastOne - you can select one, several ar all options ' +
-            'in group, can'#39't select none.'
-          '- SelectAll - you must select all options in group.'
+            #8226'         SelectAtLeastOne - you can select one, several or all ' +
+            'options in group, can'#39't select none.'
+          #8226'         SelectAll - you must select all options in group.'
           
-            '2.2.1.3. Plugins. Plugins is a options under groups wich you cho' +
-            'ose upon instalation. At least one plugin must be in each group.' +
-            ' Group must be selected in group list in order to add plugin in ' +
-            'it. You may change plugin name '
+            '2.2.1.3. Plugins. Plugins is a options under groups which you ch' +
+            'oose upon installation. At least one plugin must be in each grou' +
+            'p. Group must be selected in group list in order to add plugin i' +
+            'n it. You may change plugin name '
           
             'from context menu or by selecting plugin in list end then press ' +
             'left mouse button again on it, just like you rename files in Win' +
             'dows.'
           
             '2.2.1.4. Plugin description. Text that will be shown in right to' +
-            'p part of instalation window when plugin is selected by user. Th' +
-            'is field can be multiline, but that doesn'#39't mean that in NMM (or' +
-            ' any other mod installer) this '
+            'p part of installation window when plugin is selected by user. T' +
+            'his field can be multiline, but that doesn'#39't mean that in NMM (o' +
+            'r any other mod installer) this '
           
-            'description will be multilined. Use some special codes or BB cod' +
-            'es in order to get correct page layout. Plugin must be selected ' +
-            'in order to add description.'
+            'description will be multiline. Use some special codes or BB code' +
+            's in order to get correct page layout. Plugin must be selected i' +
+            'n order to add description.'
           
             '2.2.1.5. Plugin image. Image that will be shown at right bottom ' +
-            'part of instalation window when plugin is selected by user. Use ' +
-            'english letters in image name. It will be wise to put you images' +
-            ' in '#39'fomod'#39' folder, but nit '
+            'part of installation window when plugin is selected by user. Use' +
+            ' English letters in image name. It will be wise to put you image' +
+            's in '#39'fomod'#39' folder, but nit '
           
             'necessary. Plugin must be selected in order to add description. ' +
             'Image must belong to root directory.'
           
-            '2.2.1.6. Variable set. If you making FOMOD instalation with cond' +
-            'otions you should operate with some variables. Every plugin may ' +
-            'set several variables to any text value, '#39'On'#39' and '#39'Off'#39' for exam' +
-            'ple. If you don'#39't need '
+            '2.2.1.6. Variable set. If you are making FOMOD installation with' +
+            ' conditions you should operate with some variables. Every plugin' +
+            ' may set several variables to any text value, '#39'On'#39' and '#39'Off'#39' for' +
+            ' example. If you don'#39't need '
           
-            'conditions leave it blanck. Plugin must be selected in order to ' +
-            'add varible.'
+            'conditions leave it blank. Plugin must be selected in order to a' +
+            'dd variable.'
           
             '2.2.1.7. Plugin dependencies. For more experienced modders. Here' +
             ' you can set conditions for showing information messages to user' +
@@ -1920,79 +2028,99 @@ object MainForm: TMainForm
             's pre-defined by fomod '
           'installer, not this program. Fields:'
           
-            'Default type name - specifies default type of plugin. Can be set' +
-            ' to: Optional, Required, Recommended, CouldBeUsable, Not Usable.' +
-            ' If you don'#39't add dependency patterns this field will be transla' +
-            'ted to xml as '
+            #8226'         Default type name - specifies default type of plugin. ' +
+            'Can be set to: Optional, Required, Recommended, CouldBeUsable, N' +
+            'ot Usable. If you don'#39't add dependency patterns this field will ' +
+            'be translated to xml as '
           
             'typeDescriptor/type, otherwise typeDescriptor/dependency Type/de' +
             'faultType.'
           
-            'Operator - specifies logic of conditions, should they all be mee' +
-            't or enough only one to be true. Can be set to '#39'And'#39' or '#39'Or'#39'.'
+            #8226'         Operator - specifies logic of conditions, should they ' +
+            'all be meet or enough only one to be true. Can be set to '#39'And'#39' o' +
+            'r '#39'Or'#39'.'
           
-            'Type name - same as default type name but valid only for one dep' +
-            'endency pattern.'
+            #8226'         Type name - same as default type name but valid only f' +
+            'or one dependency pattern.'
           
-            'Dependency type - specifies would be condition based on file dep' +
-            'endency or flag. Available if at least one dependency pattern cr' +
-            'eated.'
+            #8226'         Dependency type - specifies would be condition based o' +
+            'n file dependency or flag. Available if at least one dependency ' +
+            'pattern created.'
           
-            'File/Flag name - self explanatory. Available if at least one dep' +
-            'endency pattern created.'
+            #8226'         File/Flag name - self-explanatory. Available if at lea' +
+            'st one dependency pattern created.'
           
-            'State(Value) - value to be meet for condition to be true. Availa' +
-            'ble if at least one dependency pattern created.'
+            #8226'         State(Value) - value to be meet for condition to be tr' +
+            'ue. Available if at least one dependency pattern created.'
           
-            '2.2.1.8. Files. Each plugin may instal some files. You may add f' +
-            'iles one by one to plugin or add entire folder. Plugin must be s' +
-            'elected in order to add files and/or folders. Note: path for fil' +
-            'es and folders is relative, but source '
+            '2.2.1.8. Files. Each plugin may install some files. You may add ' +
+            'files one by one to plugin or add entire folder. Plugin must be ' +
+            'selected in order to add files and/or folders. Each file/folder ' +
+            'have three main property: source '
           
-            'path relate from root directory, place where '#39'fomod'#39' folder is, ' +
-            'and destination path relates from '#39'DATA'#39' folder in game director' +
-            'y. FOMOD Creation Tool will attempt to automatically determine c' +
-            'orrect destination path. '
+            'path, destination path, priority. Path for files and folders is ' +
+            'relative, but source path relates from root directory, place whe' +
+            're '#39'fomod'#39' folder is, and destination path relates from '#39'DATA'#39' f' +
+            'older in game directory. FOMOD '
           
-            'Program recognize files: .esp, .esm; also recognize folders: STR' +
-            'INGS, TEXTURES, MUSIC, SOUND, INTERFACE, MESHES, PROGRAMS, MATER' +
-            'IALS, LODSETTINGS, VIS, MISC, SCRIPTS, SHADERSFX. You may change' +
-            ' '
+            'Creation Tool will attempt to automatically determine correct de' +
+            'stination path. Program recognize files: .esp, .esm; also recogn' +
+            'ize folders: STRINGS, TEXTURES, MUSIC, SOUND, INTERFACE, MESHES,' +
+            ' PROGRAMS, '
           
-            'destination path from context menu or by selecting file in list ' +
-            'end then press left mouse button again on it, just like you rena' +
-            'me files in Windows.'
+            'MATERIALS, LODSETTINGS, VIS, MISC, SCRIPTS, SHADERSFX. Priority ' +
+            'determine order in which files/folders will be installed. Files ' +
+            'with lower priority number will be installed first, with highest' +
+            ' - last. Priority may be used in '
+          
+            'case your installation will overwrite its own files. For example' +
+            ', by default your mod install files from folders A, B and C, but' +
+            ' if user choose some option then fomod installer should take fil' +
+            'es from catalog '#208' and overwrite files '
+          
+            'installed from catalog B. So, to not let things go wrong, like f' +
+            'iles from B overwrites D, '#208' files should have priority number hi' +
+            'gher then B. Priority also may be used to specify order in which' +
+            ' files will be placed in mods load '
+          
+            'order. Files with lower priority number will be higher in load o' +
+            'rder. You may change destination path and priority from context ' +
+            'menu or by selecting file in list end then press left mouse butt' +
+            'on again on it, just like you rename '
+          'files in Windows.'
           '2.2.2. Conditions.'
           
-            'If you making FOMOD instalation with multiple steps and conditio' +
-            'ns you must set this conditions.'
+            'If you are making FOMOD installation with multiple steps and con' +
+            'ditions you must set the conditions.'
           
             '2.2.2.1. Condition set. When you setted variables for your plugi' +
-            'ns (group options) this variables will be available in dropdown ' +
-            'list. Choose one or several and choose corresponding comparison ' +
-            'value. If variable is equal to '
+            'ns (group options) these variables will be available in dropdown' +
+            ' list. Choose one or several and choose corresponding comparison' +
+            ' value. If variable is equal to '
           
-            'comparison value this step will be shown in instalation. If not ' +
-            'then step will be skiped and hiden from user. If several conditi' +
-            'on setted then all of them should be fulfilled at the same time.'
+            'comparison value this step will be shown in installation. If not' +
+            ' then step will be skipped and hidden from user. If several cond' +
+            'ition setted then all of them should be fulfilled at the same ti' +
+            'me.'
+          ''
           '2.3. Required installations.'
           'Files specified here will be installed under any circumstances.'
+          ''
           '2.4. Conditional installations.'
           
             'Files specified here will be installed depending on conditions w' +
             'hich may be flags and/or other files. Conditional installation s' +
-            'plitted into patterns. Each patterns consist of a set of depende' +
-            'ncies, logic operator between it, and '
-          
-            'set of files that will be installed if result condition is true.' +
-            ' '
+            'plit into patterns. Each pattern consists of a set of dependenci' +
+            'es, logic operator between it, and set '
+          'of files that will be installed if result condition is true.'
+          ''
           '2.5. Finalization.'
           
-            'Choose FOMOD->Save menu when you set everithing you wnated. '#39'inf' +
+            'Choose FOMOD->Save menu when you set everything you wanted. '#39'inf' +
             'o.xml'#39' and '#39'ModuleConfig.xml'#39' files will be created in '#39'fomod'#39' d' +
             'irectory. Now you can pack you mod in archive and test it before' +
-            ' uploading anywhere. '
-          ''
+            ' uploading anywhere.'
+          ' '
           '3. Language files.'
           
             'FOMOD CT from version 1.5 support multi language interface and u' +
@@ -2000,23 +2128,27 @@ object MainForm: TMainForm
             'in unicode UTF-16 Little Endian encoding. It consist of list of ' +
             'pairs key = "value". Users are free '
           'to make their own language, for this follow this instruction:'
-          '1) Copy any existing language file in '#39'Language'#39' catalog. '
+          '1.       Copy any existing language file in '#39'Language'#39' catalog.'
           
-            '2) Set name of this copy to correspond language you are about to' +
-            ' translate.'
-          '3) Open it any text editor you prefer, select all and cut.'
+            '2.       Set name of this copy to correspond language you are ab' +
+            'out to translate.'
+          '3.       Open it any text editor you prefer, select all and cut.'
           
-            '4) Open any translator that support whole text translation. For ' +
-            'example google translator. Past text to it. Don'#39't forget to spec' +
-            'ify languages from and to wich you translating. '
+            '4.       Open any translator that support whole text translation' +
+            '. For example google translator. Past text to it. Don'#39't forget t' +
+            'o specify languages from and to which you are translating.'
           
-            '5) Check the result. Keys should not be translated, file should ' +
-            'save it structure key = "value" where only value should be trans' +
-            'lated. Manually edit translation if needed.'
+            '5.       Check the result. Keys should not be translated, file s' +
+            'hould save it structure key = "value" where only value should be' +
+            ' translated. Manually edit translation if needed.'
           
-            '6) Copy your translation and past in copied file, save it. Now y' +
-            'o'#1075' can choose this language file from settings window in FOMOD C' +
-            'T.')
+            '6.       Copy your translation and past in copied file, save it.' +
+            ' Now you can choose this language file from settings window in F' +
+            'OMOD CT.'
+          ''
+          
+            'Redacted by Valyn81. Nexus: https://rd.nexusmods.com/fallout4/us' +
+            'ers/2283611')
         ReadOnly = True
         ScrollBars = ssVertical
         TabOrder = 0
@@ -2083,20 +2215,53 @@ object MainForm: TMainForm
       ParentFont = False
     end
   end
+  object FilePriorityEdit: TEdit
+    Left = 916
+    Top = 664
+    Width = 52
+    Height = 21
+    Enabled = False
+    NumbersOnly = True
+    TabOrder = 2
+    Text = '0'
+    Visible = False
+    OnExit = FilePriorityEditExit
+    OnKeyPress = FilePriorityEditKeyPress
+  end
+  object EditGroupTypeComboBox: TComboBox
+    Left = 96
+    Top = 247
+    Width = 105
+    Height = 21
+    Enabled = False
+    ItemHeight = 13
+    ItemIndex = 0
+    TabOrder = 3
+    Text = 'SelectExactlyOne'
+    Visible = False
+    OnExit = EditGroupTypeComboBoxExit
+    OnKeyPress = EditGroupTypeComboBoxKeyPress
+    Items.Strings = (
+      'SelectExactlyOne'
+      'SelectAny'
+      'SelectAtMostOne'
+      'SelectAtLeastOne'
+      'SelectAll')
+  end
   object OpenDialog: TOpenDialog
-    Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofNoNetworkButton, ofEnableSizing]
-    Left = 792
+    Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofNoNetworkButton, ofEnableSizing, ofDontAddToRecent]
+    Left = 496
     Top = 24
   end
   object OpenFolderDialog: TFileOpenDialog
     FavoriteLinks = <>
     FileTypes = <>
     Options = [fdoPickFolders, fdoPathMustExist]
-    Left = 872
+    Left = 576
     Top = 24
   end
   object MainMenu: TMainMenu
-    Left = 712
+    Left = 416
     Top = 24
     object FOMODMenu: TMenuItem
       Caption = 'FOMOD'
@@ -2164,16 +2329,42 @@ object MainForm: TMainForm
     Enabled = False
     Interval = 2000
     OnTimer = ShowConfirmationTimerTimer
-    Left = 624
+    Left = 328
     Top = 24
   end
   object PopupMenu: TPopupMenu
     OnPopup = PopupMenuPopup
-    Left = 952
+    Left = 656
     Top = 24
     object EditListElementCMenu: TMenuItem
       Caption = 'Edit'
       OnClick = EditListElementCMenuClick
+    end
+  end
+  object PopupMenu2: TPopupMenu
+    OnPopup = PopupMenu2Popup
+    Left = 720
+    Top = 24
+    object EditListElementCMenu2: TMenuItem
+      Caption = 'Edit name'
+      OnClick = EditListElementCMenu2Click
+    end
+    object EditGroupTypeCMenu2: TMenuItem
+      Caption = 'Edit type'
+      OnClick = EditGroupTypeCMenu2Click
+    end
+  end
+  object PopupMenuFiles: TPopupMenu
+    OnPopup = PopupMenuFilesPopup
+    Left = 792
+    Top = 24
+    object EditPathCMenu: TMenuItem
+      Caption = 'Edit path'
+      OnClick = EditPathCMenuClick
+    end
+    object EditPriorityCMenu: TMenuItem
+      Caption = 'Edit priority'
+      OnClick = EditPriorityCMenuClick
     end
   end
 end

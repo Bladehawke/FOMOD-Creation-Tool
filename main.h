@@ -31,7 +31,6 @@ __published:	// IDE-managed Components
     TGroupBox *GroupBox4;
     TLabel *Label1;
     TComboBox *ConditionComboBox;
-    TLabel *Label2;
     TLabel *Label3;
     TComboBox *ConditionValueComboBox;
     TListView *ConditionListView;
@@ -53,7 +52,7 @@ __published:	// IDE-managed Components
     TLabel *Label6;
     TLabel *Label7;
     TComboBox *VaribleValueComboBox;
-    TListView *VaribleSetListView;
+    TListView *FlagSetListView;
     TButton *AddVaribleButton;
     TButton *DeleteVaribleButton;
     TGroupBox *FilesGroupBox;
@@ -108,7 +107,7 @@ __published:	// IDE-managed Components
     TPanel *Panel5;
     TPanel *Panel6;
     TPageControl *PageControl2;
-    TTabSheet *VariableSetTabSheet;
+    TTabSheet *FlagSetTabSheet;
     TTabSheet *PluginDependenciesTabSheet;
     TListView *PluginDependenciesListView;
     TLabel *Label12;
@@ -118,7 +117,6 @@ __published:	// IDE-managed Components
     TComboBox *pdDependencyTypeComboBox;
     TLabel *Label13;
     TLabel *Label11;
-    TEdit *pdFileFlagNameEdit;
     TLabel *Label14;
     TComboBox *pdOperatorComboBox;
     TLabel *Label15;
@@ -140,6 +138,56 @@ __published:	// IDE-managed Components
     TButton *pdNewPatternButton;
     TPopupMenu *PopupMenu;
     TMenuItem *EditListElementCMenu;
+    TPanel *FilesPanel;
+    TPanel *Panel7;
+    TPanel *Panel8;
+    TPanel *Panel9;
+    TPanel *Panel10;
+    TLabel *Label16;
+    TComboBox *VisibilityTypeComboBox;
+    TTabSheet *RequiredInstalsTabSheet;
+    TTabSheet *ConditionalInstalsTabSheet;
+    TPanel *Panel11;
+    TLabel *Label2;
+    TLabel *Label21;
+    TButton *AddRequiredFileButton;
+    TButton *AddRequiredFolderButton;
+    TListView *RequiredFilesDstListView;
+    TButton *RemoveRequiredFileFolderButton;
+    TListView *RequiredFilesSrcListView;
+    TPageControl *ConiditionalFilesPageControl;
+    TPanel *Panel12;
+    TPanel *Panel13;
+    TButton *RemoveCondFilePatternButton;
+    TButton *AddCondFilePatternButton;
+    TButton *MoveLeftCondFilePatternButton;
+    TButton *MoveRightCondFilePatternButton;
+    TPanel *Panel14;
+    TPanel *Panel15;
+    TLabel *Label22;
+    TListView *CondFilesDstListView;
+    TListView *CondFilesSrcListView;
+    TLabel *Label23;
+    TButton *CondFileAddFileButton;
+    TButton *CondFileAddFolderButton;
+    TButton *CondFileRemoveFileFolderButton;
+    TLabel *Label24;
+    TComboBox *CondFilePatternOperatorComboBox;
+    TComboBox *CondFileDependTypeComboBox;
+    TLabel *Label25;
+    TLabel *Label26;
+    TLabel *Label27;
+    TComboBox *CondFileDependValueComboBox;
+    TListView *CondFilePatternListView;
+    TButton *AddCondFileConditionButton;
+    TButton *RemoveCondFileConditionButton;
+    TComboBox *pdFileFlagNameComboBox;
+    TComboBox *CondFileDependNameComboBox;
+    TPanel *Panel16;
+    TPanel *Panel17;
+    TPanel *Panel18;
+    TMenuItem *OpenfileMenu;
+    TMenuItem *MergeFOMODMenu;
     void __fastcall FormCreate(TObject *Sender);
     void __fastcall OpenRootDirButtonClick(TObject *Sender);
     void __fastcall RootDirEditChange(TObject *Sender);
@@ -158,27 +206,25 @@ __published:	// IDE-managed Components
     void __fastcall GroupListViewEdited(TObject *Sender, TListItem *Item, UnicodeString &S);
     void __fastcall GroupUpButtonClick(TObject *Sender);
     void __fastcall GroupDownButtonClick(TObject *Sender);
-    void __fastcall GroupListViewChange(TObject *Sender, TListItem *Item, TItemChange Change);
-    void __fastcall GroupListViewClick(TObject *Sender);
+    void __fastcall GroupListViewSelectItem(TObject *Sender, TListItem *Item, bool Selected);
     void __fastcall AddPluginButtonClick(TObject *Sender);
     void __fastcall RemovePluginButtonClick(TObject *Sender);
     void __fastcall PluginUpButtonClick(TObject *Sender);
     void __fastcall PluginDownButtonClick(TObject *Sender);
-    void __fastcall PluginListViewChange(TObject *Sender, TListItem *Item, TItemChange Change);
-    void __fastcall PluginListViewClick(TObject *Sender);
+    void __fastcall PluginListViewSelectItem(TObject *Sender, TListItem *Item, bool Selected);
     void __fastcall PluginListViewEdited(TObject *Sender, TListItem *Item, UnicodeString &S);
     void __fastcall AddVaribleButtonClick(TObject *Sender);
     void __fastcall DeleteVaribleButtonClick(TObject *Sender);
-    void __fastcall VaribleSetListViewChange(TObject *Sender, TListItem *Item, TItemChange Change);
-    void __fastcall VaribleSetListViewClick(TObject *Sender);
+    void __fastcall FlagSetListViewSelectItem(TObject *Sender, TListItem *Item,
+          bool Selected);
     void __fastcall PluginDescriptionMemoChange(TObject *Sender);
     void __fastcall AddFileButtonClick(TObject *Sender);
     void __fastcall AddFolderButtonClick(TObject *Sender);
     void __fastcall RemoveFileFolderButtonClick(TObject *Sender);
-    void __fastcall SrcFilesListViewChange(TObject *Sender, TListItem *Item, TItemChange Change);
-    void __fastcall SrcFilesListViewClick(TObject *Sender);
-    void __fastcall DstFilesListViewChange(TObject *Sender, TListItem *Item, TItemChange Change);
-    void __fastcall DstFilesListViewClick(TObject *Sender);
+    void __fastcall SrcFilesListViewSelectItem(TObject *Sender, TListItem *Item,
+          bool Selected);
+    void __fastcall DstFilesListViewSelectItem(TObject *Sender, TListItem *Item,
+          bool Selected);
     void __fastcall ChoosePluginImageButtonClick(TObject *Sender);
     void __fastcall ClearPluginImageButtonClick(TObject *Sender);
     void __fastcall NewStepButtonClick(TObject *Sender);
@@ -189,8 +235,10 @@ __published:	// IDE-managed Components
     void __fastcall MoveRightButtonClick(TObject *Sender);
     void __fastcall SaveMenuClick(TObject *Sender);
     void __fastcall ShowConfirmationTimerTimer(TObject *Sender);
-    void __fastcall OpenMenuClick(TObject *Sender);
     void __fastcall NewMenuClick(TObject *Sender);
+    void __fastcall OpenMenuClick(TObject *Sender);
+    void __fastcall OpenfileMenuClick(TObject *Sender);
+    void __fastcall MergeFOMODMenuClick(TObject *Sender);
     void __fastcall RunBeforeSaveMenuClick(TObject *Sender);
     void __fastcall RunAfterSaveMenuClick(TObject *Sender);
     void __fastcall ExitMenuClick(TObject *Sender);
@@ -202,12 +250,44 @@ __published:	// IDE-managed Components
     void __fastcall pdNewPatternButtonClick(TObject *Sender);
     void __fastcall pdPatternsPageControlChange(TObject *Sender);
     void __fastcall pdDeletePatternButtonClick(TObject *Sender);
-    void __fastcall pdDeleteButtonClick(TObject *Sender);
-    void __fastcall PluginDependenciesListViewChange(TObject *Sender, TListItem *Item,
-          TItemChange Change);
-    void __fastcall PluginDependenciesListViewClick(TObject *Sender);
+    void __fastcall pdDeleteButtonClick(TObject *Sender);                                            
+    void __fastcall PluginDependenciesListViewSelectItem(TObject *Sender, TListItem *Item,
+          bool Selected);
     void __fastcall EditListElementCMenuClick(TObject *Sender);
     void __fastcall PopupMenuPopup(TObject *Sender);
+    void __fastcall FormResize(TObject *Sender);
+    void __fastcall VisibilityTypeComboBoxChange(TObject *Sender);
+    void __fastcall AddRequiredFileButtonClick(TObject *Sender);
+    void __fastcall AddRequiredFolderButtonClick(TObject *Sender);
+    void __fastcall RequiredFilesSrcListViewSelectItem(TObject *Sender, TListItem *Item,
+          bool Selected);
+    void __fastcall RequiredFilesDstListViewSelectItem(TObject *Sender, TListItem *Item,
+          bool Selected);
+    void __fastcall RemoveRequiredFileFolderButtonClick(TObject *Sender);
+    void __fastcall RequiredFilesDstListViewEdited(TObject *Sender, TListItem *Item,
+          UnicodeString &S);
+    void __fastcall CondFileDependTypeComboBoxChange(TObject *Sender);
+    void __fastcall ConiditionalFilesPageControlChange(TObject *Sender);
+    void __fastcall CondFilePatternListViewSelectItem(TObject *Sender, TListItem *Item,
+          bool Selected);
+    void __fastcall AddCondFilePatternButtonClick(TObject *Sender);
+    void __fastcall RemoveCondFilePatternButtonClick(TObject *Sender);
+    void __fastcall MoveLeftCondFilePatternButtonClick(TObject *Sender);
+    void __fastcall MoveRightCondFilePatternButtonClick(TObject *Sender);
+    void __fastcall CondFilesDstListViewEdited(TObject *Sender, TListItem *Item,
+          UnicodeString &S);
+    void __fastcall CondFilePatternOperatorComboBoxChange(TObject *Sender);
+    void __fastcall CondFileAddFileButtonClick(TObject *Sender);
+    void __fastcall CondFileAddFolderButtonClick(TObject *Sender);
+    void __fastcall CondFileRemoveFileFolderButtonClick(TObject *Sender);
+    void __fastcall CondFilesSrcListViewSelectItem(TObject *Sender, TListItem *Item,
+          bool Selected);
+    void __fastcall CondFilesDstListViewSelectItem(TObject *Sender, TListItem *Item,
+          bool Selected);
+    void __fastcall AddCondFileConditionButtonClick(TObject *Sender);
+    void __fastcall RemoveCondFileConditionButtonClick(TObject *Sender);
+
+
 
 
 private:	// User declarations

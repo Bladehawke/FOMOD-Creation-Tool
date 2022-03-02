@@ -2,7 +2,7 @@ object MainForm: TMainForm
   Left = 0
   Top = 0
   Caption = 'FOMOD Creation Tool'
-  ClientHeight = 773
+  ClientHeight = 800
   ClientWidth = 1087
   Color = clBtnFace
   Constraints.MinHeight = 650
@@ -16,26 +16,29 @@ object MainForm: TMainForm
   OldCreateOrder = False
   Position = poDesigned
   OnCreate = FormCreate
+  OnResize = FormResize
   PixelsPerInch = 96
   TextHeight = 13
   object PageControl: TPageControl
     Left = 0
     Top = 0
     Width = 1087
-    Height = 773
+    Height = 800
     ActivePage = ModInfoTabSheet
     Align = alClient
     TabOrder = 0
+    OnChange = StepsTabControlChange
     object ModInfoTabSheet: TTabSheet
       Caption = 'Mod info'
       object GroupBox1: TGroupBox
         Left = 0
         Top = 0
         Width = 1079
-        Height = 433
-        Align = alTop
+        Height = 660
+        Align = alClient
         Caption = 'Mod infornation'
         TabOrder = 0
+        ExplicitHeight = 433
         object Panel5: TPanel
           Left = 2
           Top = 15
@@ -120,7 +123,7 @@ object MainForm: TMainForm
           Left = 2
           Top = 169
           Width = 1075
-          Height = 262
+          Height = 489
           Align = alClient
           BevelOuter = bvNone
           Caption = 'Panel6'
@@ -128,6 +131,7 @@ object MainForm: TMainForm
           Padding.Right = 14
           Padding.Bottom = 14
           TabOrder = 1
+          ExplicitHeight = 262
           object Label10: TLabel
             Left = 14
             Top = 0
@@ -142,21 +146,24 @@ object MainForm: TMainForm
             Left = 14
             Top = 24
             Width = 1047
-            Height = 224
+            Height = 451
             Align = alClient
+            ScrollBars = ssVertical
             TabOrder = 0
             OnChange = ModDesccriptionMemoChange
+            ExplicitHeight = 224
           end
         end
       end
       object WorkSpaceGroupBox: TGroupBox
         Left = 0
-        Top = 433
+        Top = 660
         Width = 1079
         Height = 64
-        Align = alTop
+        Align = alBottom
         Caption = 'Workspace'
         TabOrder = 1
+        ExplicitTop = 433
         object RootDirEdit: TLabeledEdit
           Left = 112
           Top = 27
@@ -183,7 +190,7 @@ object MainForm: TMainForm
       end
       object Panel3: TPanel
         Left = 0
-        Top = 697
+        Top = 724
         Width = 1079
         Height = 48
         Align = alBottom
@@ -213,11 +220,11 @@ object MainForm: TMainForm
     end
     object StepsTabSheet: TTabSheet
       Caption = 'Steps'
+      Enabled = False
       ImageIndex = 1
-      TabVisible = False
       object Panel1: TPanel
         Left = 0
-        Top = 704
+        Top = 731
         Width = 1079
         Height = 41
         Align = alBottom
@@ -275,7 +282,7 @@ object MainForm: TMainForm
         Left = 0
         Top = 27
         Width = 1079
-        Height = 677
+        Height = 704
         ActivePage = GroupsFileTabSheet
         Align = alClient
         TabOrder = 1
@@ -285,7 +292,7 @@ object MainForm: TMainForm
             Left = 0
             Top = 0
             Width = 1071
-            Height = 649
+            Height = 676
             HorzScrollBar.Range = 1066
             VertScrollBar.Range = 617
             Align = alClient
@@ -293,393 +300,130 @@ object MainForm: TMainForm
             TabOrder = 0
             object FilesGroupBox: TGroupBox
               Left = 0
-              Top = 481
+              Top = 497
               Width = 1067
-              Height = 140
-              Align = alTop
+              Height = 175
+              Align = alClient
               Caption = 'Files'
               TabOrder = 0
-              object Label8: TLabel
-                Left = 18
-                Top = 23
-                Width = 45
-                Height = 13
-                Caption = 'Copy this'
-              end
-              object Label9: TLabel
-                Left = 525
-                Top = 22
-                Width = 31
-                Height = 13
-                Caption = 'DATA\'
-              end
-              object SrcFilesListView: TListView
-                Left = 16
-                Top = 42
-                Width = 503
-                Height = 86
-                Columns = <
-                  item
-                    Caption = 'File/Folder'
-                    Width = 70
-                  end
-                  item
-                    Caption = 'Source path'
-                    Width = 425
-                  end>
-                ColumnClick = False
-                GridLines = True
-                ReadOnly = True
-                RowSelect = True
+              object FilesPanel: TPanel
+                Left = 2
+                Top = 15
+                Width = 1063
+                Height = 158
+                Align = alClient
+                BevelOuter = bvNone
                 TabOrder = 0
-                ViewStyle = vsReport
-                OnChange = SrcFilesListViewChange
-                OnClick = SrcFilesListViewClick
-              end
-              object AddFileButton: TButton
-                Left = 969
-                Top = 40
-                Width = 75
-                Height = 25
-                Caption = 'Add file'
-                Enabled = False
-                TabOrder = 1
-                OnClick = AddFileButtonClick
-              end
-              object AddFolderButton: TButton
-                Left = 969
-                Top = 71
-                Width = 75
-                Height = 25
-                Caption = 'Add folder'
-                Enabled = False
-                TabOrder = 2
-                OnClick = AddFolderButtonClick
-              end
-              object RemoveFileFolderButton: TButton
-                Left = 969
-                Top = 102
-                Width = 75
-                Height = 25
-                Caption = 'Remove'
-                Enabled = False
-                TabOrder = 3
-                OnClick = RemoveFileFolderButtonClick
-              end
-              object DstFilesListView: TListView
-                Left = 525
-                Top = 41
-                Width = 438
-                Height = 86
-                Hint = 
-                  'To edit: select destination path and then click on it again. It'#39 +
-                  's like you rename files in Windows.'
-                Columns = <
-                  item
-                    Caption = 'Destination path'
-                    Width = 425
-                  end>
-                ColumnClick = False
-                GridLines = True
-                RowSelect = True
-                ParentShowHint = False
-                PopupMenu = PopupMenu
-                ShowHint = True
-                TabOrder = 4
-                ViewStyle = vsReport
-                OnChange = DstFilesListViewChange
-                OnClick = DstFilesListViewClick
-                OnEdited = DstFilesListViewEdited
+                object Label8: TLabel
+                  Left = 16
+                  Top = 7
+                  Width = 45
+                  Height = 13
+                  Caption = 'Copy this'
+                end
+                object Label9: TLabel
+                  Left = 525
+                  Top = 6
+                  Width = 31
+                  Height = 13
+                  Caption = 'DATA\'
+                end
+                object AddFileButton: TButton
+                  Left = 980
+                  Top = 29
+                  Width = 75
+                  Height = 25
+                  Caption = 'Add file'
+                  Enabled = False
+                  TabOrder = 0
+                  OnClick = AddFileButtonClick
+                end
+                object AddFolderButton: TButton
+                  Left = 980
+                  Top = 60
+                  Width = 75
+                  Height = 25
+                  Caption = 'Add folder'
+                  Enabled = False
+                  TabOrder = 1
+                  OnClick = AddFolderButtonClick
+                end
+                object DstFilesListView: TListView
+                  Left = 525
+                  Top = 25
+                  Width = 449
+                  Height = 112
+                  Hint = 
+                    'To edit: select destination path and then click on it again. It'#39 +
+                    's like you rename files in Windows.'
+                  Columns = <
+                    item
+                      Caption = 'Destination path'
+                      Width = 425
+                    end>
+                  ColumnClick = False
+                  GridLines = True
+                  RowSelect = True
+                  ParentShowHint = False
+                  PopupMenu = PopupMenu
+                  ShowHint = True
+                  TabOrder = 2
+                  ViewStyle = vsReport
+                  OnEdited = DstFilesListViewEdited
+                  OnSelectItem = DstFilesListViewSelectItem
+                end
+                object RemoveFileFolderButton: TButton
+                  Left = 980
+                  Top = 91
+                  Width = 75
+                  Height = 25
+                  Caption = 'Remove'
+                  Enabled = False
+                  TabOrder = 3
+                  OnClick = RemoveFileFolderButtonClick
+                end
+                object SrcFilesListView: TListView
+                  Left = 16
+                  Top = 26
+                  Width = 503
+                  Height = 111
+                  Columns = <
+                    item
+                      Caption = 'File/Folder'
+                      Width = 70
+                    end
+                    item
+                      Caption = 'Source path'
+                      Width = 409
+                    end>
+                  ColumnClick = False
+                  GridLines = True
+                  ReadOnly = True
+                  RowSelect = True
+                  TabOrder = 4
+                  ViewStyle = vsReport
+                  OnSelectItem = SrcFilesListViewSelectItem
+                end
               end
             end
             object GroupsGroupBox: TGroupBox
               Left = 0
               Top = 49
               Width = 1067
-              Height = 432
+              Height = 448
               Align = alTop
               Caption = 'Groups && plugins'
               TabOrder = 1
-              object Shape3: TShape
-                Left = 485
-                Top = 288
-                Width = 196
-                Height = 133
-              end
-              object Label4: TLabel
-                Left = 223
-                Top = 21
-                Width = 22
-                Height = 13
-                Caption = 'type'
-              end
-              object Label5: TLabel
-                Left = 18
-                Top = 169
-                Width = 83
-                Height = 13
-                Caption = 'Plugin description'
-              end
-              object Label20: TLabel
-                Left = 485
-                Top = 346
-                Width = 196
-                Height = 13
-                Align = alCustom
-                Alignment = taCenter
-                AutoSize = False
-                Caption = '[No image]'
-              end
-              object PluginImage: TImage
-                Left = 485
-                Top = 288
-                Width = 196
-                Height = 133
-                Stretch = True
-              end
-              object GroupNameEdit: TLabeledEdit
-                Left = 80
-                Top = 18
-                Width = 137
-                Height = 21
-                AutoSize = False
-                EditLabel.Width = 58
-                EditLabel.Height = 13
-                EditLabel.Caption = 'Group name'
-                LabelPosition = lpLeft
-                TabOrder = 0
-              end
-              object GroupTypeComboBox: TComboBox
-                Left = 251
-                Top = 18
-                Width = 112
-                Height = 21
-                Style = csDropDownList
-                ItemHeight = 13
-                ItemIndex = 0
-                TabOrder = 1
-                Text = 'SelectExactlyOne'
-                Items.Strings = (
-                  'SelectExactlyOne'
-                  'SelectAny'
-                  'SelectAtMostOne'
-                  'SelectAtLeastOne'
-                  'SelectAll')
-              end
-              object AddGroupButton: TButton
-                Left = 223
-                Top = 45
-                Width = 75
-                Height = 25
-                Caption = 'Add'
-                TabOrder = 2
-                OnClick = AddGroupButtonClick
-              end
-              object RemoveGroupButton: TButton
-                Left = 223
-                Top = 76
-                Width = 75
-                Height = 25
-                Caption = 'Remove'
-                Enabled = False
-                TabOrder = 3
-                OnClick = RemoveGroupButtonClick
-              end
-              object PluginNameEdit: TLabeledEdit
-                Left = 473
-                Top = 18
-                Width = 137
-                Height = 21
-                AutoSize = False
-                EditLabel.Width = 57
-                EditLabel.Height = 13
-                EditLabel.Caption = 'Plugin name'
-                LabelPosition = lpLeft
-                TabOrder = 4
-              end
-              object RemovePluginButton: TButton
-                Left = 616
-                Top = 45
-                Width = 75
-                Height = 25
-                Caption = 'Remove'
-                Enabled = False
-                TabOrder = 5
-                OnClick = RemovePluginButtonClick
-              end
-              object AddPluginButton: TButton
-                Left = 616
-                Top = 18
-                Width = 75
-                Height = 25
-                Caption = 'Add'
-                Enabled = False
-                TabOrder = 6
-                OnClick = AddPluginButtonClick
-              end
-              object PluginDescriptionMemo: TMemo
-                Left = 18
-                Top = 188
-                Width = 673
-                Height = 94
-                Enabled = False
-                TabOrder = 7
-                OnChange = PluginDescriptionMemoChange
-              end
-              object ChoosePluginImageButton: TButton
-                Left = 323
-                Top = 288
-                Width = 75
-                Height = 25
-                Caption = 'Choose'
-                Enabled = False
-                TabOrder = 8
-                OnClick = ChoosePluginImageButtonClick
-              end
-              object ClearPluginImageButton: TButton
-                Left = 404
-                Top = 288
-                Width = 75
-                Height = 25
-                Caption = 'Clear'
-                Enabled = False
-                TabOrder = 9
-                OnClick = ClearPluginImageButtonClick
-              end
-              object PluginImageEdit: TLabeledEdit
-                Left = 80
-                Top = 290
-                Width = 237
-                Height = 21
-                AutoSize = False
-                EditLabel.Width = 59
-                EditLabel.Height = 13
-                EditLabel.Caption = 'Plugin image'
-                Enabled = False
-                LabelPosition = lpLeft
-                ReadOnly = True
-                TabOrder = 10
-              end
-              object GroupListView: TListView
-                Left = 18
-                Top = 45
-                Width = 199
-                Height = 118
-                Hint = 
-                  'To edit: select destination path and then click on it again. It'#39 +
-                  's like you rename files in Windows.'
-                Columns = <
-                  item
-                    Caption = 'Name'
-                    Width = 100
-                  end
-                  item
-                    AutoSize = True
-                    Caption = 'Type'
-                  end>
-                ColumnClick = False
-                GridLines = True
-                RowSelect = True
-                ParentShowHint = False
-                PopupMenu = PopupMenu
-                ShowHint = True
-                TabOrder = 11
-                ViewStyle = vsReport
-                OnChange = GroupListViewChange
-                OnClick = GroupListViewClick
-                OnEdited = GroupListViewEdited
-              end
-              object GroupUpButton: TButton
-                Left = 223
-                Top = 107
-                Width = 75
-                Height = 25
-                Caption = 'Move up'
-                Enabled = False
-                TabOrder = 12
-                OnClick = GroupUpButtonClick
-              end
-              object GroupDownButton: TButton
-                Left = 223
-                Top = 138
-                Width = 75
-                Height = 25
-                Caption = 'Move down'
-                Enabled = False
-                TabOrder = 13
-                OnClick = GroupDownButtonClick
-              end
-              object PluginUpButton: TButton
-                Left = 616
-                Top = 107
-                Width = 75
-                Height = 25
-                Caption = 'Move up'
-                Enabled = False
-                TabOrder = 14
-                OnClick = PluginUpButtonClick
-              end
-              object PluginDownButton: TButton
-                Left = 616
-                Top = 138
-                Width = 75
-                Height = 25
-                Caption = 'Move down'
-                Enabled = False
-                TabOrder = 15
-                OnClick = PluginDownButtonClick
-              end
-              object PluginListView: TListView
-                Left = 411
-                Top = 45
-                Width = 199
-                Height = 118
-                Hint = 
-                  'To edit: select destination path and then click on it again. It'#39 +
-                  's like you rename files in Windows.'
-                Columns = <
-                  item
-                    AutoSize = True
-                    Caption = 'Name'
-                  end>
-                ColumnClick = False
-                GridLines = True
-                RowSelect = True
-                ParentShowHint = False
-                PopupMenu = PopupMenu
-                ShowHint = True
-                TabOrder = 16
-                ViewStyle = vsReport
-                OnChange = PluginListViewChange
-                OnClick = PluginListViewClick
-                OnEdited = PluginListViewEdited
-              end
               object PageControl2: TPageControl
-                Left = 697
-                Top = 18
+                Left = 698
+                Top = 15
                 Width = 367
-                Height = 407
-                ActivePage = VariableSetTabSheet
-                TabOrder = 17
-                object VariableSetTabSheet: TTabSheet
-                  Caption = 'Variable set'
-                  object Label6: TLabel
-                    Left = 4
-                    Top = 5
-                    Width = 121
-                    Height = 13
-                    Alignment = taCenter
-                    AutoSize = False
-                    Caption = 'variable'
-                  end
-                  object Label7: TLabel
-                    Left = 185
-                    Top = 25
-                    Width = 34
-                    Height = 13
-                    AutoSize = False
-                    Caption = 'set'
-                  end
+                Height = 431
+                ActivePage = FlagSetTabSheet
+                Align = alRight
+                TabOrder = 0
+                object FlagSetTabSheet: TTabSheet
+                  Caption = 'Flag set'
                   object AddVaribleButton: TButton
                     Left = 281
                     Top = 20
@@ -700,120 +444,97 @@ object MainForm: TMainForm
                     TabOrder = 1
                     OnClick = DeleteVaribleButtonClick
                   end
-                  object VaribleComboBox: TComboBox
-                    Left = 3
-                    Top = 24
-                    Width = 176
-                    Height = 21
-                    ItemHeight = 13
+                  object Panel17: TPanel
+                    Left = 0
+                    Top = 0
+                    Width = 275
+                    Height = 403
+                    Align = alLeft
+                    BevelOuter = bvNone
                     TabOrder = 2
-                  end
-                  object VaribleSetListView: TListView
-                    Left = 3
-                    Top = 51
-                    Width = 272
-                    Height = 326
-                    Columns = <
-                      item
-                        Caption = 'Variable'
-                        Width = 130
+                    object FlagSetListView: TListView
+                      Left = 0
+                      Top = 51
+                      Width = 275
+                      Height = 352
+                      Align = alClient
+                      Columns = <
+                        item
+                          Caption = 'Flag name'
+                          Width = 130
+                        end
+                        item
+                        end
+                        item
+                          AutoSize = True
+                          Caption = 'Value'
+                        end>
+                      ColumnClick = False
+                      GridLines = True
+                      ReadOnly = True
+                      RowSelect = True
+                      TabOrder = 0
+                      ViewStyle = vsReport
+                      OnSelectItem = FlagSetListViewSelectItem
+                    end
+                    object Panel18: TPanel
+                      Left = 0
+                      Top = 0
+                      Width = 275
+                      Height = 51
+                      Align = alTop
+                      BevelOuter = bvNone
+                      TabOrder = 1
+                      object Label6: TLabel
+                        Left = 4
+                        Top = 5
+                        Width = 173
+                        Height = 13
+                        Alignment = taCenter
+                        AutoSize = False
+                        Caption = 'Flag name'
                       end
-                      item
+                      object Label7: TLabel
+                        Left = 185
+                        Top = 25
+                        Width = 34
+                        Height = 13
+                        AutoSize = False
+                        Caption = 'set'
                       end
-                      item
-                        AutoSize = True
-                        Caption = 'Value'
-                      end>
-                    ColumnClick = False
-                    GridLines = True
-                    ReadOnly = True
-                    RowSelect = True
-                    TabOrder = 3
-                    ViewStyle = vsReport
-                    OnChange = VaribleSetListViewChange
-                    OnClick = VaribleSetListViewClick
-                  end
-                  object VaribleValueComboBox: TComboBox
-                    Left = 225
-                    Top = 24
-                    Width = 50
-                    Height = 21
-                    ItemHeight = 13
-                    ItemIndex = 0
-                    TabOrder = 4
-                    Text = 'On'
-                    Items.Strings = (
-                      'On'
-                      'Off')
+                      object VaribleComboBox: TComboBox
+                        Left = 3
+                        Top = 24
+                        Width = 176
+                        Height = 21
+                        ItemHeight = 13
+                        TabOrder = 0
+                      end
+                      object VaribleValueComboBox: TComboBox
+                        Left = 223
+                        Top = 24
+                        Width = 50
+                        Height = 21
+                        ItemHeight = 13
+                        ItemIndex = 0
+                        TabOrder = 1
+                        Text = 'On'
+                        Items.Strings = (
+                          'On'
+                          'Off')
+                      end
+                    end
                   end
                 end
                 object PluginDependenciesTabSheet: TTabSheet
                   Caption = 'Plugin dependencies'
                   ImageIndex = 1
-                  object Label12: TLabel
-                    Left = 3
-                    Top = 205
-                    Width = 26
-                    Height = 13
-                    Caption = 'State'
-                  end
-                  object Label13: TLabel
-                    Left = 3
-                    Top = 151
-                    Width = 85
-                    Height = 13
-                    Alignment = taCenter
-                    Caption = 'Dependency type'
-                  end
-                  object Label11: TLabel
-                    Left = 3
-                    Top = 177
-                    Width = 69
-                    Height = 13
-                    Alignment = taCenter
-                    Caption = 'File/Flag name'
-                  end
-                  object Label14: TLabel
-                    Left = 3
-                    Top = 81
-                    Width = 44
-                    Height = 13
-                    Alignment = taCenter
-                    Caption = 'Operator'
-                  end
-                  object Label15: TLabel
-                    Left = 3
-                    Top = 12
-                    Width = 89
-                    Height = 13
-                    Alignment = taCenter
-                    Caption = 'Default type name'
-                  end
-                  object Shape1: TShape
-                    Left = 3
-                    Top = 39
-                    Width = 353
-                    Height = 1
-                  end
-                  object Shape2: TShape
-                    Left = 3
-                    Top = 137
-                    Width = 353
-                    Height = 1
-                  end
-                  object Label17: TLabel
-                    Left = 3
-                    Top = 108
-                    Width = 53
-                    Height = 13
-                    Alignment = taCenter
-                    Caption = 'Type name'
-                  end
                   object PluginDependenciesListView: TListView
-                    Left = 3
-                    Top = 232
-                    Width = 353
-                    Height = 144
+                    Left = 0
+                    Top = 233
+                    Width = 359
+                    Height = 170
+                    Align = alClient
                     Columns = <
                       item
                         Caption = 'Type'
@@ -836,142 +557,506 @@ object MainForm: TMainForm
                     RowSelect = True
                     TabOrder = 0
                     ViewStyle = vsReport
-                    OnChange = PluginDependenciesListViewChange
-                    OnClick = PluginDependenciesListViewClick
+                    OnSelectItem = PluginDependenciesListViewSelectItem
                   end
-                  object pdStateValueComboBox: TComboBox
-                    Left = 97
-                    Top = 202
-                    Width = 120
-                    Height = 21
-                    ItemHeight = 13
+                  object Panel16: TPanel
+                    Left = 0
+                    Top = 0
+                    Width = 359
+                    Height = 233
+                    Align = alTop
+                    BevelOuter = bvNone
                     TabOrder = 1
-                    Items.Strings = (
-                      'Active'
-                      'Inactive'
-                      'Missing')
+                    object Label11: TLabel
+                      Left = 3
+                      Top = 177
+                      Width = 69
+                      Height = 13
+                      Alignment = taCenter
+                      Caption = 'File/Flag name'
+                    end
+                    object Label14: TLabel
+                      Left = 3
+                      Top = 81
+                      Width = 44
+                      Height = 13
+                      Alignment = taCenter
+                      Caption = 'Operator'
+                    end
+                    object Label13: TLabel
+                      Left = 3
+                      Top = 151
+                      Width = 85
+                      Height = 13
+                      Alignment = taCenter
+                      Caption = 'Dependency type'
+                    end
+                    object Label12: TLabel
+                      Left = 3
+                      Top = 205
+                      Width = 26
+                      Height = 13
+                      Caption = 'State'
+                    end
+                    object Label17: TLabel
+                      Left = 3
+                      Top = 108
+                      Width = 53
+                      Height = 13
+                      Alignment = taCenter
+                      Caption = 'Type name'
+                    end
+                    object Shape2: TShape
+                      Left = 3
+                      Top = 137
+                      Width = 353
+                      Height = 1
+                    end
+                    object Label15: TLabel
+                      Left = 3
+                      Top = 12
+                      Width = 89
+                      Height = 13
+                      Alignment = taCenter
+                      Caption = 'Default type name'
+                    end
+                    object Shape1: TShape
+                      Left = 3
+                      Top = 39
+                      Width = 353
+                      Height = 1
+                    end
+                    object pdOperatorComboBox: TComboBox
+                      Left = 96
+                      Top = 78
+                      Width = 51
+                      Height = 21
+                      Enabled = False
+                      ItemHeight = 13
+                      ItemIndex = 0
+                      TabOrder = 0
+                      Text = 'And'
+                      OnChange = pdOperatorComboBoxChange
+                      Items.Strings = (
+                        'And'
+                        'Or')
+                    end
+                    object pdDefTypeComboBox: TComboBox
+                      Left = 96
+                      Top = 9
+                      Width = 121
+                      Height = 21
+                      Enabled = False
+                      ItemHeight = 13
+                      ItemIndex = 0
+                      TabOrder = 1
+                      Text = 'Optional'
+                      OnChange = pdDefTypeComboBoxChange
+                      Items.Strings = (
+                        'Optional'
+                        'Required'
+                        'Recommended'
+                        'CouldBeUsable'
+                        'NotUsable')
+                    end
+                    object pdDependencyTypeComboBox: TComboBox
+                      Left = 96
+                      Top = 148
+                      Width = 51
+                      Height = 21
+                      Style = csDropDownList
+                      Enabled = False
+                      ItemHeight = 13
+                      ItemIndex = 0
+                      TabOrder = 2
+                      Text = 'file'
+                      OnChange = pdDependencyTypeComboBoxChange
+                      Items.Strings = (
+                        'file'
+                        'flag')
+                    end
+                    object pdAddButton: TButton
+                      Left = 281
+                      Top = 172
+                      Width = 75
+                      Height = 25
+                      Caption = 'Add'
+                      Enabled = False
+                      TabOrder = 3
+                      OnClick = pdAddButtonClick
+                    end
+                    object pdDeleteButton: TButton
+                      Left = 281
+                      Top = 201
+                      Width = 75
+                      Height = 25
+                      Caption = 'Delete'
+                      Enabled = False
+                      TabOrder = 4
+                      OnClick = pdDeleteButtonClick
+                    end
+                    object pdNewPatternButton: TButton
+                      Left = 272
+                      Top = 78
+                      Width = 84
+                      Height = 25
+                      Caption = 'New pattern'
+                      Enabled = False
+                      TabOrder = 5
+                      OnClick = pdNewPatternButtonClick
+                    end
+                    object pdFileFlagNameComboBox: TComboBox
+                      Left = 97
+                      Top = 175
+                      Width = 176
+                      Height = 21
+                      ItemHeight = 13
+                      TabOrder = 6
+                    end
+                    object pdDeletePatternButton: TButton
+                      Left = 273
+                      Top = 105
+                      Width = 83
+                      Height = 25
+                      Caption = 'Delete pattern'
+                      Enabled = False
+                      TabOrder = 7
+                      OnClick = pdDeletePatternButtonClick
+                    end
+                    object pdTypeNameComboBox: TComboBox
+                      Left = 96
+                      Top = 105
+                      Width = 121
+                      Height = 21
+                      Enabled = False
+                      ItemHeight = 13
+                      ItemIndex = 0
+                      TabOrder = 8
+                      Text = 'Optional'
+                      OnChange = pdTypeNameComboBoxChange
+                      Items.Strings = (
+                        'Optional'
+                        'Required'
+                        'Recommended'
+                        'CouldBeUsable'
+                        'NotUsable')
+                    end
+                    object pdPatternsPageControl: TPageControl
+                      Left = 3
+                      Top = 46
+                      Width = 353
+                      Height = 29
+                      TabOrder = 9
+                      OnChange = pdPatternsPageControlChange
+                    end
+                    object pdStateValueComboBox: TComboBox
+                      Left = 97
+                      Top = 202
+                      Width = 120
+                      Height = 21
+                      ItemHeight = 13
+                      TabOrder = 10
+                      Items.Strings = (
+                        'Active'
+                        'Inactive'
+                        'Missing')
+                    end
                   end
-                  object pdAddButton: TButton
-                    Left = 281
-                    Top = 172
+                end
+              end
+              object Panel8: TPanel
+                Left = 2
+                Top = 15
+                Width = 696
+                Height = 431
+                Align = alClient
+                BevelOuter = bvNone
+                TabOrder = 1
+                object Panel7: TPanel
+                  Left = 0
+                  Top = 281
+                  Width = 696
+                  Height = 150
+                  Align = alBottom
+                  BevelOuter = bvNone
+                  TabOrder = 0
+                  object Shape3: TShape
+                    Left = 486
+                    Top = 12
+                    Width = 196
+                    Height = 133
+                  end
+                  object Label20: TLabel
+                    Left = 486
+                    Top = 76
+                    Width = 196
+                    Height = 13
+                    Align = alCustom
+                    Alignment = taCenter
+                    AutoSize = False
+                    Caption = '[No image]'
+                  end
+                  object PluginImage: TImage
+                    Left = 486
+                    Top = 12
+                    Width = 196
+                    Height = 133
+                    Stretch = True
+                  end
+                  object PluginImageEdit: TLabeledEdit
+                    Left = 71
+                    Top = 16
+                    Width = 237
+                    Height = 21
+                    AutoSize = False
+                    EditLabel.Width = 59
+                    EditLabel.Height = 13
+                    EditLabel.Caption = 'Plugin image'
+                    Enabled = False
+                    LabelPosition = lpLeft
+                    ReadOnly = True
+                    TabOrder = 0
+                  end
+                  object ClearPluginImageButton: TButton
+                    Left = 395
+                    Top = 16
+                    Width = 75
+                    Height = 25
+                    Caption = 'Clear'
+                    Enabled = False
+                    TabOrder = 1
+                    OnClick = ClearPluginImageButtonClick
+                  end
+                  object ChoosePluginImageButton: TButton
+                    Left = 314
+                    Top = 16
+                    Width = 75
+                    Height = 25
+                    Caption = 'Choose'
+                    Enabled = False
+                    TabOrder = 2
+                    OnClick = ChoosePluginImageButtonClick
+                  end
+                end
+                object Panel9: TPanel
+                  Left = 0
+                  Top = 0
+                  Width = 696
+                  Height = 169
+                  Align = alTop
+                  BevelOuter = bvNone
+                  TabOrder = 1
+                  object Label4: TLabel
+                    Left = 214
+                    Top = 20
+                    Width = 22
+                    Height = 13
+                    Caption = 'type'
+                  end
+                  object AddGroupButton: TButton
+                    Left = 214
+                    Top = 44
+                    Width = 75
+                    Height = 25
+                    Caption = 'Add'
+                    TabOrder = 0
+                    OnClick = AddGroupButtonClick
+                  end
+                  object AddPluginButton: TButton
+                    Left = 606
+                    Top = 17
                     Width = 75
                     Height = 25
                     Caption = 'Add'
                     Enabled = False
-                    TabOrder = 2
-                    OnClick = pdAddButtonClick
+                    TabOrder = 1
+                    OnClick = AddPluginButtonClick
                   end
-                  object pdDeleteButton: TButton
-                    Left = 281
-                    Top = 201
+                  object GroupDownButton: TButton
+                    Left = 214
+                    Top = 137
                     Width = 75
                     Height = 25
-                    Caption = 'Delete'
+                    Caption = 'Move down'
                     Enabled = False
-                    TabOrder = 3
-                    OnClick = pdDeleteButtonClick
+                    TabOrder = 2
+                    OnClick = GroupDownButtonClick
                   end
-                  object pdDependencyTypeComboBox: TComboBox
-                    Left = 96
-                    Top = 148
-                    Width = 51
+                  object GroupListView: TListView
+                    Left = 9
+                    Top = 44
+                    Width = 199
+                    Height = 118
+                    Hint = 
+                      'To edit: select destination path and then click on it again. It'#39 +
+                      's like you rename files in Windows.'
+                    Columns = <
+                      item
+                        Caption = 'Name'
+                        Width = 100
+                      end
+                      item
+                        Caption = 'Type'
+                        Width = 75
+                      end>
+                    ColumnClick = False
+                    GridLines = True
+                    RowSelect = True
+                    ParentShowHint = False
+                    PopupMenu = PopupMenu
+                    ShowHint = True
+                    TabOrder = 3
+                    ViewStyle = vsReport
+                    OnEdited = GroupListViewEdited
+                    OnSelectItem = GroupListViewSelectItem
+                  end
+                  object GroupNameEdit: TLabeledEdit
+                    Left = 71
+                    Top = 17
+                    Width = 137
+                    Height = 21
+                    AutoSize = False
+                    EditLabel.Width = 58
+                    EditLabel.Height = 13
+                    EditLabel.Caption = 'Group name'
+                    LabelPosition = lpLeft
+                    TabOrder = 4
+                  end
+                  object GroupTypeComboBox: TComboBox
+                    Left = 242
+                    Top = 17
+                    Width = 112
                     Height = 21
                     Style = csDropDownList
-                    Enabled = False
                     ItemHeight = 13
                     ItemIndex = 0
-                    TabOrder = 4
-                    Text = 'file'
-                    OnChange = pdDependencyTypeComboBoxChange
-                    Items.Strings = (
-                      'file'
-                      'flag')
-                  end
-                  object pdFileFlagNameEdit: TEdit
-                    Left = 96
-                    Top = 175
-                    Width = 179
-                    Height = 21
                     TabOrder = 5
-                  end
-                  object pdOperatorComboBox: TComboBox
-                    Left = 96
-                    Top = 78
-                    Width = 51
-                    Height = 21
-                    Enabled = False
-                    ItemHeight = 13
-                    ItemIndex = 0
-                    TabOrder = 6
-                    Text = 'And'
-                    OnChange = pdOperatorComboBoxChange
+                    Text = 'SelectExactlyOne'
                     Items.Strings = (
-                      'And'
-                      'Or')
+                      'SelectExactlyOne'
+                      'SelectAny'
+                      'SelectAtMostOne'
+                      'SelectAtLeastOne'
+                      'SelectAll')
                   end
-                  object pdDefTypeComboBox: TComboBox
-                    Left = 96
-                    Top = 9
-                    Width = 121
-                    Height = 21
-                    Enabled = False
-                    ItemHeight = 13
-                    ItemIndex = 0
-                    TabOrder = 7
-                    Text = 'Optional'
-                    OnChange = pdDefTypeComboBoxChange
-                    Items.Strings = (
-                      'Optional'
-                      'Required'
-                      'Recommended'
-                      'CouldBeUsable'
-                      'NotUsable')
-                  end
-                  object pdTypeNameComboBox: TComboBox
-                    Left = 96
-                    Top = 105
-                    Width = 121
-                    Height = 21
-                    Enabled = False
-                    ItemHeight = 13
-                    ItemIndex = 0
-                    TabOrder = 8
-                    Text = 'Optional'
-                    OnChange = pdTypeNameComboBoxChange
-                    Items.Strings = (
-                      'Optional'
-                      'Required'
-                      'Recommended'
-                      'CouldBeUsable'
-                      'NotUsable')
-                  end
-                  object pdPatternsPageControl: TPageControl
-                    Left = 3
-                    Top = 46
-                    Width = 353
-                    Height = 29
-                    TabOrder = 9
-                    OnChange = pdPatternsPageControlChange
-                  end
-                  object pdDeletePatternButton: TButton
-                    Left = 273
-                    Top = 105
-                    Width = 83
+                  object GroupUpButton: TButton
+                    Left = 214
+                    Top = 106
+                    Width = 75
                     Height = 25
-                    Caption = 'Delete pattern'
+                    Caption = 'Move up'
+                    Enabled = False
+                    TabOrder = 6
+                    OnClick = GroupUpButtonClick
+                  end
+                  object PluginDownButton: TButton
+                    Left = 606
+                    Top = 137
+                    Width = 75
+                    Height = 25
+                    Caption = 'Move down'
+                    Enabled = False
+                    TabOrder = 7
+                    OnClick = PluginDownButtonClick
+                  end
+                  object PluginListView: TListView
+                    Left = 402
+                    Top = 44
+                    Width = 199
+                    Height = 118
+                    Hint = 
+                      'To edit: select destination path and then click on it again. It'#39 +
+                      's like you rename files in Windows.'
+                    Columns = <
+                      item
+                        Caption = 'Name'
+                        Width = 175
+                      end>
+                    ColumnClick = False
+                    GridLines = True
+                    RowSelect = True
+                    ParentShowHint = False
+                    PopupMenu = PopupMenu
+                    ShowHint = True
+                    TabOrder = 8
+                    ViewStyle = vsReport
+                    OnEdited = PluginListViewEdited
+                    OnSelectItem = PluginListViewSelectItem
+                  end
+                  object PluginNameEdit: TLabeledEdit
+                    Left = 464
+                    Top = 17
+                    Width = 137
+                    Height = 21
+                    AutoSize = False
+                    EditLabel.Width = 57
+                    EditLabel.Height = 13
+                    EditLabel.Caption = 'Plugin name'
+                    LabelPosition = lpLeft
+                    TabOrder = 9
+                  end
+                  object PluginUpButton: TButton
+                    Left = 606
+                    Top = 106
+                    Width = 75
+                    Height = 25
+                    Caption = 'Move up'
                     Enabled = False
                     TabOrder = 10
-                    OnClick = pdDeletePatternButtonClick
+                    OnClick = PluginUpButtonClick
                   end
-                  object pdNewPatternButton: TButton
-                    Left = 272
-                    Top = 78
-                    Width = 84
+                  object RemoveGroupButton: TButton
+                    Left = 214
+                    Top = 75
+                    Width = 75
                     Height = 25
-                    Caption = 'New pattern'
+                    Caption = 'Remove'
                     Enabled = False
                     TabOrder = 11
-                    OnClick = pdNewPatternButtonClick
+                    OnClick = RemoveGroupButtonClick
+                  end
+                  object RemovePluginButton: TButton
+                    Left = 606
+                    Top = 44
+                    Width = 75
+                    Height = 25
+                    Caption = 'Remove'
+                    Enabled = False
+                    TabOrder = 12
+                    OnClick = RemovePluginButtonClick
+                  end
+                end
+                object Panel10: TPanel
+                  Left = 0
+                  Top = 169
+                  Width = 696
+                  Height = 112
+                  Align = alClient
+                  BevelOuter = bvNone
+                  Caption = 'Panel10'
+                  Constraints.MinHeight = 100
+                  Padding.Left = 8
+                  Padding.Right = 8
+                  TabOrder = 2
+                  object Label5: TLabel
+                    Left = 8
+                    Top = 0
+                    Width = 680
+                    Height = 18
+                    Align = alTop
+                    AutoSize = False
+                    Caption = 'Plugin description'
+                  end
+                  object PluginDescriptionMemo: TMemo
+                    Left = 8
+                    Top = 18
+                    Width = 680
+                    Height = 94
+                    Align = alClient
+                    Enabled = False
+                    ScrollBars = ssVertical
+                    TabOrder = 0
+                    OnChange = PluginDescriptionMemoChange
                   end
                 end
               end
@@ -1008,73 +1093,75 @@ object MainForm: TMainForm
             Left = 0
             Top = 0
             Width = 1071
-            Height = 649
+            Height = 676
             Align = alClient
             TabOrder = 0
             object GroupBox4: TGroupBox
               Left = 0
               Top = 0
               Width = 1067
-              Height = 645
+              Height = 672
               Align = alClient
               Caption = 'Condition set'
               TabOrder = 0
               object Label1: TLabel
                 Left = 16
-                Top = 40
+                Top = 21
                 Width = 6
                 Height = 13
                 Caption = 'if'
               end
-              object Label2: TLabel
-                Left = 40
-                Top = 21
-                Width = 225
-                Height = 13
-                Alignment = taCenter
-                AutoSize = False
-                Caption = 'variable'
-              end
               object Label3: TLabel
-                Left = 271
-                Top = 40
+                Left = 351
+                Top = 43
                 Width = 34
                 Height = 13
                 AutoSize = False
                 Caption = 'equals'
               end
+              object Label16: TLabel
+                Left = 16
+                Top = 43
+                Width = 22
+                Height = 13
+                Alignment = taCenter
+                Caption = 'type'
+              end
               object ConditionComboBox: TComboBox
-                Left = 40
+                Left = 120
                 Top = 40
                 Width = 225
                 Height = 21
-                Style = csDropDownList
                 ItemHeight = 13
                 TabOrder = 0
               end
               object ConditionValueComboBox: TComboBox
-                Left = 311
+                Left = 399
                 Top = 40
-                Width = 50
+                Width = 87
                 Height = 21
-                Style = csDropDownList
                 ItemHeight = 13
-                ItemIndex = 0
                 TabOrder = 1
                 Text = 'On'
                 Items.Strings = (
                   'On'
-                  'Off')
+                  'Off'
+                  'Active'
+                  'Inactive'
+                  'Missing')
               end
               object ConditionListView: TListView
                 Left = 16
                 Top = 67
-                Width = 417
-                Height = 262
+                Width = 521
+                Height = 510
                 Columns = <
                   item
-                    Caption = 'Variable'
-                    Width = 250
+                    Caption = 'type'
+                  end
+                  item
+                    Caption = 'File/Flag name'
+                    Width = 290
                   end
                   item
                   end
@@ -1091,7 +1178,7 @@ object MainForm: TMainForm
                 ViewStyle = vsReport
               end
               object AddConditionButton: TButton
-                Left = 439
+                Left = 543
                 Top = 36
                 Width = 75
                 Height = 25
@@ -1100,13 +1187,28 @@ object MainForm: TMainForm
                 OnClick = AddConditionButtonClick
               end
               object DeleteConditionButton: TButton
-                Left = 439
+                Left = 543
                 Top = 67
                 Width = 75
                 Height = 25
                 Caption = 'Delete'
                 TabOrder = 4
                 OnClick = DeleteConditionButtonClick
+              end
+              object VisibilityTypeComboBox: TComboBox
+                Left = 52
+                Top = 40
+                Width = 51
+                Height = 21
+                Style = csDropDownList
+                ItemHeight = 13
+                ItemIndex = 1
+                TabOrder = 5
+                Text = 'flag'
+                OnChange = VisibilityTypeComboBoxChange
+                Items.Strings = (
+                  'file'
+                  'flag')
               end
             end
           end
@@ -1126,6 +1228,421 @@ object MainForm: TMainForm
         end
       end
     end
+    object RequiredInstalsTabSheet: TTabSheet
+      Caption = 'Required instalations'
+      Enabled = False
+      ImageIndex = 3
+      object Panel11: TPanel
+        Left = 0
+        Top = 0
+        Width = 1079
+        Height = 772
+        Align = alClient
+        BevelOuter = bvNone
+        TabOrder = 0
+        object Label2: TLabel
+          Left = 16
+          Top = 7
+          Width = 45
+          Height = 13
+          Caption = 'Copy this'
+        end
+        object Label21: TLabel
+          Left = 525
+          Top = 6
+          Width = 31
+          Height = 13
+          Caption = 'DATA\'
+        end
+        object AddRequiredFileButton: TButton
+          Left = 980
+          Top = 29
+          Width = 75
+          Height = 25
+          Caption = 'Add file'
+          TabOrder = 0
+          OnClick = AddRequiredFileButtonClick
+        end
+        object AddRequiredFolderButton: TButton
+          Left = 980
+          Top = 60
+          Width = 75
+          Height = 25
+          Caption = 'Add folder'
+          TabOrder = 1
+          OnClick = AddRequiredFolderButtonClick
+        end
+        object RequiredFilesDstListView: TListView
+          Left = 525
+          Top = 25
+          Width = 449
+          Height = 112
+          Hint = 
+            'To edit: select destination path and then click on it again. It'#39 +
+            's like you rename files in Windows.'
+          Columns = <
+            item
+              Caption = 'Destination path'
+              Width = 425
+            end>
+          ColumnClick = False
+          GridLines = True
+          RowSelect = True
+          ParentShowHint = False
+          PopupMenu = PopupMenu
+          ShowHint = True
+          TabOrder = 2
+          ViewStyle = vsReport
+          OnEdited = RequiredFilesDstListViewEdited
+          OnSelectItem = RequiredFilesDstListViewSelectItem
+        end
+        object RemoveRequiredFileFolderButton: TButton
+          Left = 980
+          Top = 91
+          Width = 75
+          Height = 25
+          Caption = 'Remove'
+          Enabled = False
+          TabOrder = 3
+          OnClick = RemoveRequiredFileFolderButtonClick
+        end
+        object RequiredFilesSrcListView: TListView
+          Left = 16
+          Top = 26
+          Width = 503
+          Height = 111
+          Columns = <
+            item
+              Caption = 'File/Folder'
+              Width = 70
+            end
+            item
+              Caption = 'Source path'
+              Width = 409
+            end>
+          ColumnClick = False
+          GridLines = True
+          ReadOnly = True
+          RowSelect = True
+          TabOrder = 4
+          ViewStyle = vsReport
+          OnSelectItem = RequiredFilesSrcListViewSelectItem
+        end
+      end
+    end
+    object ConditionalInstalsTabSheet: TTabSheet
+      Caption = 'Conditional instalations'
+      Enabled = False
+      ImageIndex = 4
+      object ConiditionalFilesPageControl: TPageControl
+        Left = 0
+        Top = 0
+        Width = 1079
+        Height = 27
+        Align = alTop
+        TabOrder = 0
+        OnChange = ConiditionalFilesPageControlChange
+      end
+      object Panel12: TPanel
+        Left = 0
+        Top = 731
+        Width = 1079
+        Height = 41
+        Align = alBottom
+        TabOrder = 1
+        object Panel13: TPanel
+          Left = 664
+          Top = 1
+          Width = 414
+          Height = 39
+          Align = alRight
+          BevelOuter = bvNone
+          TabOrder = 0
+          object RemoveCondFilePatternButton: TButton
+            Left = 248
+            Top = 5
+            Width = 79
+            Height = 25
+            Caption = 'Delete pattern'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 0
+            OnClick = RemoveCondFilePatternButtonClick
+          end
+          object AddCondFilePatternButton: TButton
+            Left = 333
+            Top = 5
+            Width = 75
+            Height = 25
+            Caption = 'New pattern'
+            TabOrder = 1
+            OnClick = AddCondFilePatternButtonClick
+          end
+          object MoveLeftCondFilePatternButton: TButton
+            Left = 5
+            Top = 5
+            Width = 75
+            Height = 25
+            Caption = 'Move left'
+            Enabled = False
+            TabOrder = 2
+            OnClick = MoveLeftCondFilePatternButtonClick
+          end
+          object MoveRightCondFilePatternButton: TButton
+            Left = 83
+            Top = 5
+            Width = 75
+            Height = 25
+            Caption = 'Move right'
+            Enabled = False
+            TabOrder = 3
+            OnClick = MoveRightCondFilePatternButtonClick
+          end
+        end
+      end
+      object Panel14: TPanel
+        Left = 0
+        Top = 27
+        Width = 1079
+        Height = 208
+        Align = alTop
+        TabOrder = 2
+        object Label24: TLabel
+          Left = 17
+          Top = 23
+          Width = 44
+          Height = 13
+          Alignment = taCenter
+          Caption = 'Operator'
+        end
+        object Label25: TLabel
+          Left = 471
+          Top = 50
+          Width = 85
+          Height = 13
+          Alignment = taCenter
+          Caption = 'Dependency type'
+        end
+        object Label26: TLabel
+          Left = 471
+          Top = 77
+          Width = 69
+          Height = 13
+          Alignment = taCenter
+          Caption = 'File/Flag name'
+        end
+        object Label27: TLabel
+          Left = 471
+          Top = 101
+          Width = 26
+          Height = 13
+          Caption = 'Value'
+        end
+        object CondFilePatternOperatorComboBox: TComboBox
+          Left = 77
+          Top = 20
+          Width = 51
+          Height = 21
+          Enabled = False
+          ItemHeight = 13
+          ItemIndex = 0
+          TabOrder = 0
+          Text = 'And'
+          OnChange = CondFilePatternOperatorComboBoxChange
+          Items.Strings = (
+            'And'
+            'Or')
+        end
+        object CondFileDependTypeComboBox: TComboBox
+          Left = 562
+          Top = 47
+          Width = 51
+          Height = 21
+          Style = csDropDownList
+          Enabled = False
+          ItemHeight = 13
+          ItemIndex = 1
+          TabOrder = 1
+          Text = 'flag'
+          OnChange = CondFileDependTypeComboBoxChange
+          Items.Strings = (
+            'file'
+            'flag')
+        end
+        object CondFileDependValueComboBox: TComboBox
+          Left = 562
+          Top = 101
+          Width = 120
+          Height = 21
+          Enabled = False
+          ItemHeight = 13
+          TabOrder = 2
+          Items.Strings = (
+            'Active'
+            'Inactive'
+            'Missing')
+        end
+        object CondFilePatternListView: TListView
+          Left = 16
+          Top = 47
+          Width = 353
+          Height = 144
+          Columns = <
+            item
+              Caption = 'Type'
+            end
+            item
+              AutoSize = True
+              Caption = 'File/Flag name'
+            end
+            item
+              Caption = 'State/Value'
+              Width = 70
+            end
+            item
+              Caption = 'Operator'
+              Width = 60
+            end>
+          ColumnClick = False
+          GridLines = True
+          ReadOnly = True
+          RowSelect = True
+          TabOrder = 3
+          ViewStyle = vsReport
+          OnSelectItem = CondFilePatternListViewSelectItem
+        end
+        object AddCondFileConditionButton: TButton
+          Left = 375
+          Top = 45
+          Width = 75
+          Height = 25
+          Caption = 'Add'
+          Enabled = False
+          TabOrder = 4
+          OnClick = AddCondFileConditionButtonClick
+        end
+        object RemoveCondFileConditionButton: TButton
+          Left = 375
+          Top = 74
+          Width = 75
+          Height = 25
+          Caption = 'Delete'
+          Enabled = False
+          TabOrder = 5
+          OnClick = RemoveCondFileConditionButtonClick
+        end
+        object CondFileDependNameComboBox: TComboBox
+          Left = 562
+          Top = 74
+          Width = 176
+          Height = 21
+          Enabled = False
+          ItemHeight = 13
+          TabOrder = 6
+        end
+      end
+      object Panel15: TPanel
+        Left = 0
+        Top = 235
+        Width = 1079
+        Height = 496
+        Align = alClient
+        TabOrder = 3
+        object Label22: TLabel
+          Left = 525
+          Top = 6
+          Width = 31
+          Height = 13
+          Caption = 'DATA\'
+        end
+        object Label23: TLabel
+          Left = 16
+          Top = 7
+          Width = 45
+          Height = 13
+          Caption = 'Copy this'
+        end
+        object CondFilesDstListView: TListView
+          Left = 525
+          Top = 25
+          Width = 449
+          Height = 112
+          Hint = 
+            'To edit: select destination path and then click on it again. It'#39 +
+            's like you rename files in Windows.'
+          Columns = <
+            item
+              Caption = 'Destination path'
+              Width = 425
+            end>
+          ColumnClick = False
+          GridLines = True
+          RowSelect = True
+          ParentShowHint = False
+          PopupMenu = PopupMenu
+          ShowHint = True
+          TabOrder = 0
+          ViewStyle = vsReport
+          OnEdited = CondFilesDstListViewEdited
+          OnSelectItem = CondFilesDstListViewSelectItem
+        end
+        object CondFilesSrcListView: TListView
+          Left = 16
+          Top = 26
+          Width = 503
+          Height = 111
+          Columns = <
+            item
+              Caption = 'File/Folder'
+              Width = 70
+            end
+            item
+              Caption = 'Source path'
+              Width = 409
+            end>
+          ColumnClick = False
+          GridLines = True
+          ReadOnly = True
+          RowSelect = True
+          TabOrder = 1
+          ViewStyle = vsReport
+          OnSelectItem = CondFilesSrcListViewSelectItem
+        end
+        object CondFileAddFileButton: TButton
+          Left = 980
+          Top = 29
+          Width = 75
+          Height = 25
+          Caption = 'Add file'
+          TabOrder = 2
+          OnClick = CondFileAddFileButtonClick
+        end
+        object CondFileAddFolderButton: TButton
+          Left = 980
+          Top = 60
+          Width = 75
+          Height = 25
+          Caption = 'Add folder'
+          TabOrder = 3
+          OnClick = CondFileAddFolderButtonClick
+        end
+        object CondFileRemoveFileFolderButton: TButton
+          Left = 980
+          Top = 91
+          Width = 75
+          Height = 25
+          Caption = 'Remove'
+          Enabled = False
+          TabOrder = 4
+          OnClick = CondFileRemoveFileFolderButtonClick
+        end
+      end
+    end
     object InfoTabSheet: TTabSheet
       Caption = 'Info'
       ImageIndex = 2
@@ -1133,7 +1650,7 @@ object MainForm: TMainForm
         Left = 0
         Top = 0
         Width = 1079
-        Height = 745
+        Height = 772
         Align = alClient
         Lines.Strings = (
           'FOMOD Creation Tool'
@@ -1153,24 +1670,38 @@ object MainForm: TMainForm
             '1.1.1. New. Delete all steps if such exist, cleans all mod info ' +
             'fields, clean root catalog.'
           
-            '1.1.2. Open. Opens existing fomod .xml files. You should specify' +
-            ' root folder that contains '#39'fomod'#39' folder. FOMOD Creation Tool s' +
-            'ince 1.2 version support unicode text only in UTF-16 (UCS-2) Lit' +
-            'tle Endian encoding. If '
+            '1.1.2. Open folder. Opens existing fomod .xml files. You should ' +
+            'specify root folder that contains '#39'fomod'#39' folder. FOMOD Creation' +
+            ' Tool since 1.2 version support unicode text only in UTF-16 (UCS' +
+            '-2) Little Endian '
           
-            'fomod that you willing to open in other that this encoding you s' +
-            'hould convert it manually. To do this open .xml'#39's file in Window' +
-            ' Notepad, choose '#39'File->Save as'#39' menu, in save window choose enc' +
-            'oding '#39'Unicode'#39', save file '
+            'encoding. If fomod that you willing to open in other that this e' +
+            'ncoding you should convert it manually. To do this open .xml'#39's f' +
+            'ile in Window Notepad, choose '#39'File->Save as'#39' menu, in save wind' +
+            'ow choose encoding '
           
-            'with same name, replace existing one. If you using Notepad++ ope' +
-            'n .xml file, choose '#39'Encoding->Encode in UCS-2 Little Endian'#39', s' +
-            'ave file.'
+            #39'Unicode'#39', save file with same name, replace existing one. If yo' +
+            'u using Notepad++ open .xml file, choose '#39'Encoding->Encode in UC' +
+            'S-2 Little Endian'#39', save file.'
           
-            '1.1.3. Save. Saves fomod .xml files. FOMOD Creation Tool since 1' +
+            '1.1.3. Open file. Opens existing fomod .xml files. You may choos' +
+            'e info.xml or ModuleConfig.xml file, FOMOD CT will catch up pair' +
+            ' for it if such exist. FOMOD Creation Tool since 1.2 version sup' +
+            'port unicode text only in '
+          'UTF-16 (UCS-2) Little Endian encoding.'
+          
+            '1.1.4. Save. Saves fomod .xml files. FOMOD Creation Tool since 1' +
             '.2 version support unicode text only in UTF-16 (UCS-2) Little En' +
             'dian encoding and will save files in this encoding.'
-          '1.1.4. Exit. Exits from program.'
+          
+            '1.1.5. Merge FOMOD. Allow you to merge two FOMODs. Fomod recipie' +
+            'nt should be loaded from file or created, fomod donor you specif' +
+            'y in dialog window. Choose only ModuleConfig.xml files. Steps, r' +
+            'equired files and '
+          
+            'conditional installations would be added to the end of recipient' +
+            ' fomod.'
+          '1.1.6. Exit. Exits from program.'
           '1.2. Script menu.'
           
             '1.2.1. Run before save. Opens window where you can write down so' +
@@ -1362,7 +1893,18 @@ object MainForm: TMainForm
             'ot then step will be skiped and hiden from user. If several cond' +
             'ition setted then all of them should be fulfilled at the same ti' +
             'me.'
-          '2.3. Finalization.'
+          '2.3. Required installations.'
+          'Files specified here will be installed under any circumstances.'
+          '2.4. Conditional installations.'
+          
+            'Files specified here will be installed depending on conditions w' +
+            'hich may be flags and/or other files. Conditional installation s' +
+            'plitted into patterns. Each patterns consist of a set of depende' +
+            'ncies, logic operator between it, '
+          
+            'and set of files that will be installed if result condition is t' +
+            'rue. '
+          '2.5. Finalization.'
           
             'Choose FOMOD->Save menu when you set everithing you wnated. '#39'inf' +
             'o.xml'#39' and '#39'ModuleConfig.xml'#39' files will be created in '#39'fomod'#39' d' +
@@ -1375,8 +1917,8 @@ object MainForm: TMainForm
     end
   end
   object SaveConfirmationPanel: TPanel
-    Left = 259
-    Top = -10
+    Left = 1055
+    Top = 0
     Width = 408
     Height = 79
     TabOrder = 1
@@ -1408,8 +1950,8 @@ object MainForm: TMainForm
       ParentFont = False
     end
     object mdlconfXMLStateLabel: TLabel
-      Left = 288
-      Top = 45
+      Left = 296
+      Top = 43
       Width = 64
       Height = 23
       AutoSize = False
@@ -1421,7 +1963,7 @@ object MainForm: TMainForm
       ParentFont = False
     end
     object infoXMLStateLabel: TLabel
-      Left = 288
+      Left = 296
       Top = 16
       Width = 64
       Height = 23
@@ -1456,15 +1998,24 @@ object MainForm: TMainForm
         OnClick = NewMenuClick
       end
       object OpenMenu: TMenuItem
-        Caption = 'Open'
+        Caption = 'Open folder'
         ShortCut = 16463
         OnClick = OpenMenuClick
+      end
+      object OpenfileMenu: TMenuItem
+        Caption = 'Open file'
+        OnClick = OpenfileMenuClick
       end
       object SaveMenu: TMenuItem
         Caption = 'Save'
         Enabled = False
         ShortCut = 16467
         OnClick = SaveMenuClick
+      end
+      object MergeFOMODMenu: TMenuItem
+        Caption = 'Merge FOMOD'
+        Enabled = False
+        OnClick = MergeFOMODMenuClick
       end
       object N1: TMenuItem
         Caption = '-'

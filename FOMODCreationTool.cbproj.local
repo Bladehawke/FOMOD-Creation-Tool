@@ -10,5 +10,7 @@
     <Transaction>2015.12.28 12:13:04.481.cpp,D:\Куски кода\FOMOD Creation Tool\Unit1.cpp=D:\Куски кода\FOMOD Creation Tool\ScriptForm.cpp</Transaction>
     <Transaction>2015.12.28 12:13:04.491.h,D:\Куски кода\FOMOD Creation Tool\Unit1.h=D:\Куски кода\FOMOD Creation Tool\ScriptForm.h</Transaction>
     <Transaction>2015.12.28 12:13:04.491.dfm,D:\Куски кода\FOMOD Creation Tool\Unit1.dfm=D:\Куски кода\FOMOD Creation Tool\ScriptForm.dfm</Transaction>
+    <Transaction>2016.01.19 11:18:20.675.cpp,D:\Куски кода\FOMOD Creation Tool\DataClasses.cpp=D:\Куски кода\FOMOD Creation Tool\FOMODClass.cpp</Transaction>
+    <Transaction>2016.01.19 11:18:20.693.h,D:\Куски кода\FOMOD Creation Tool\DataClasses.h=D:\Куски кода\FOMOD Creation Tool\FOMODClass.h</Transaction>
   </Transactions>
 </BorlandProject>

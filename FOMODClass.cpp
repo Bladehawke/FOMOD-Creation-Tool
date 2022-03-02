@@ -46,8 +46,14 @@ CPluginGroup::~CPluginGroup()
     Plugins.clear();
 }
 
-CStep::CStep() {}
-CStep::CStep(UnicodeString name) : Name(name) {}
+CStep::CStep()
+{
+    VisibilityOperator = _T("And");
+}
+CStep::CStep(UnicodeString name) : Name(name)
+{
+    VisibilityOperator = _T("And");
+}
 CStep::~CStep()
 {
     VisibilityDependencies.clear();

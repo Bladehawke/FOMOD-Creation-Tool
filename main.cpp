@@ -314,8 +314,9 @@ UnicodeString getProperDestinationPath(UnicodeString path)
     {
         _tcscpy(t_temp, path.c_str());
         t_len = _tcslen(t_temp);
-        for(int i = 0, start = 0; i < t_len; i++)
-            if( t_temp[i] == _T('\\') )
+        t_temp[t_len+1] = _T('\0');
+        for(int i = 0, start = 0; i <= t_len; i++)
+            if( t_temp[i] == _T('\\') || t_temp[i] == _T('\0') )
             {
                 t_temp[i] = _T('\0');
                 u_temp = &t_temp[start];
@@ -333,7 +334,8 @@ UnicodeString getProperDestinationPath(UnicodeString path)
                     || !(u_temp.UpperCase().Compare(UnicodeString("SCRIPTS")))
                     || !(u_temp.UpperCase().Compare(UnicodeString("SHADERSFX")))    )
                     {
-                        t_temp[i] = _T('\\');
+                        if(t_temp[i+1] != _T('\0'))
+                            t_temp[i] = _T('\\');
                         path = &t_temp[start];
                         break;
                     }
@@ -455,10 +457,16 @@ bool LoadFOMODFromXML(_TCHAR *filename, CFOMOD &fomod)
                         if(curr_step > -1)
                         {
                             if(ambiguity_section == AMB_INSTSTEPS)
-                                fomod.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].DependencyPatterns[curr_pattern].Operator = tegprops[0].second;
+                            {
+                                if(ambiguity_depend == AMB_PATTERN)
+                                    fomod.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].DependencyPatterns[curr_pattern].Operator = tegprops[0].second;
+                                else if(ambiguity_depend == AMB_VISIBILITY)
+                                    fomod.Steps[curr_step].VisibilityOperator = tegprops[0].second;
+                            }
                         }
                         if(ambiguity_section == AMB_CONDINSTFILES)
                             fomod.ConditionalFiles[curr_condinstfile].Operator = tegprops[0].second;
+
 
                     }
                 }
@@ -1174,9 +1182,10 @@ void __fastcall TMainForm::StepsTabControlChange(TObject *Sender)
                 item->SubItems->Add(FOMOD.Steps[CurrentStepIndx].VisibilityDependencies[i].Name);
                 item->SubItems->Add("==");
                 item->SubItems->Add(FOMOD.Steps[CurrentStepIndx].VisibilityDependencies[i].Value);
-                item->SubItems->Add("AND");
+                item->SubItems->Add(FOMOD.Steps[CurrentStepIndx].VisibilityOperator);
             }
         }
+        visOperatorComboBox->Text = FOMOD.Steps[CurrentStepIndx].VisibilityOperator;
 
         if(FOMOD.Steps[CurrentStepIndx].PluginGroups.size() > 0)
         {
@@ -1235,6 +1244,13 @@ void __fastcall TMainForm::ConditionListViewSelectItem(TObject *Sender, TListIte
         DeleteConditionButton->Enabled = true;
     else
         DeleteConditionButton->Enabled = false;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::visOperatorComboBoxChange(TObject *Sender)
+{
+    FOMOD.Steps[CurrentStepIndx].VisibilityOperator = visOperatorComboBox->Text;
+    StepsTabControlChange(Sender);
 }
 //---------------------------------------------------------------------------
 
@@ -1553,7 +1569,7 @@ void __fastcall TMainForm::AddFileButtonClick(TObject *Sender)
         OpenDialog->Filter = "";
         if(OpenDialog->Execute())
         {
-            UnicodeString temp = OpenFolderDialog->FileName.SubString(0, RootDirectory.Length()).UpperCase();
+            UnicodeString temp = OpenDialog->FileName.SubString(0, RootDirectory.Length()).UpperCase();
             if(!(temp.Compare(RootDirectory.UpperCase())))
             {
                 UnicodeString
@@ -1634,12 +1650,12 @@ void __fastcall TMainForm::RemoveFileFolderButtonClick(TObject *Sender)
         DstFilesListView->ItemIndex = -1;
         DstFilesListView->Items->Delete(ind);
         SrcFilesListView->Items->Delete(ind);
-        if( ind < SrcFilesListView->Items->Count-1 )
+        if( ind < (SrcFilesListView->Items->Count)-1 )
         {
             SrcFilesListView->ItemIndex = ind;
             DstFilesListView->ItemIndex = ind;
         }
-        else if( ind >= SrcFilesListView->Items->Count-1)
+        else if( ind >= (SrcFilesListView->Items->Count)-1)
         {
             SrcFilesListView->ItemIndex = SrcFilesListView->Items->Count-1;
             DstFilesListView->ItemIndex = SrcFilesListView->Items->Count-1;
@@ -1652,28 +1668,34 @@ void __fastcall TMainForm::RemoveFileFolderButtonClick(TObject *Sender)
 void __fastcall TMainForm::SrcFilesListViewSelectItem(TObject *Sender, TListItem *Item,
           bool Selected)
 {
-    DstFilesListView->ItemIndex = SrcFilesListView->ItemIndex;
-    if(SrcFilesListView->ItemIndex > -1)
+    if(DstFilesListView->ItemIndex != SrcFilesListView->ItemIndex)
     {
-        ListView_EnsureVisible(DstFilesListView->Handle, SrcFilesListView->ItemIndex, false);
-        RemoveFileFolderButton->Enabled = true;
+        DstFilesListView->ItemIndex = SrcFilesListView->ItemIndex;
+        if(SrcFilesListView->ItemIndex > -1)
+        {
+            ListView_EnsureVisible(DstFilesListView->Handle, SrcFilesListView->ItemIndex, false);
+            RemoveFileFolderButton->Enabled = true;
+        }
+        else
+            RemoveFileFolderButton->Enabled = false;
     }
-    else
-        RemoveFileFolderButton->Enabled = false;
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TMainForm::DstFilesListViewSelectItem(TObject *Sender, TListItem *Item,
           bool Selected)
 {
-    SrcFilesListView->ItemIndex = DstFilesListView->ItemIndex;
-    if(DstFilesListView->ItemIndex > -1)
+    if(SrcFilesListView->ItemIndex != DstFilesListView->ItemIndex)
     {
-        ListView_EnsureVisible(SrcFilesListView->Handle, DstFilesListView->ItemIndex, false);
-        RemoveFileFolderButton->Enabled = true;
+        SrcFilesListView->ItemIndex = DstFilesListView->ItemIndex;
+        if(DstFilesListView->ItemIndex > -1)
+        {
+            ListView_EnsureVisible(SrcFilesListView->Handle, DstFilesListView->ItemIndex, false);
+            RemoveFileFolderButton->Enabled = true;
+        }
+        else
+            RemoveFileFolderButton->Enabled = false;
     }
-    else
-        RemoveFileFolderButton->Enabled = false;
 }
 //---------------------------------------------------------------------------
 
@@ -1870,17 +1892,19 @@ void __fastcall TMainForm::SaveMenuClick(TObject *Sender)
             if(temp_fomod.Steps[step_i].VisibilityDependencies.size() > 0)
             {
                 _ftprintf(fpModuleConfigxml, _T("\t\t\t<visible> \n"));
+                _ftprintf(fpModuleConfigxml, _T("\t\t\t\t<dependencies operator=\"%s\"> \n"), temp_fomod.Steps[step_i].VisibilityOperator.c_str());
                 for(int i = 0; i < temp_fomod.Steps[step_i].VisibilityDependencies.size(); i++)
                 {
                     if(temp_fomod.Steps[step_i].VisibilityDependencies[i].Type == _T("file"))
-                        _ftprintf(fpModuleConfigxml, _T("\t\t\t\t<fileDependency file=\"%s\" state=\"%s\"/> \n"),
+                        _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t<fileDependency file=\"%s\" state=\"%s\"/> \n"),
                             temp_fomod.Steps[step_i].VisibilityDependencies[i].Name.c_str(),
                             temp_fomod.Steps[step_i].VisibilityDependencies[i].Value.c_str());
                     else if(temp_fomod.Steps[step_i].VisibilityDependencies[i].Type == _T("flag"))
-                        _ftprintf(fpModuleConfigxml, _T("\t\t\t\t<flagDependency flag=\"%s\" value=\"%s\"/> \n"),
+                        _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t<flagDependency flag=\"%s\" value=\"%s\"/> \n"),
                             temp_fomod.Steps[step_i].VisibilityDependencies[i].Name.c_str(),
                             temp_fomod.Steps[step_i].VisibilityDependencies[i].Value.c_str());
                 }
+                _ftprintf(fpModuleConfigxml, _T("\t\t\t\t</dependencies> \n"));
                 _ftprintf(fpModuleConfigxml, _T("\t\t\t</visible> \n"));
             }
 
@@ -2114,6 +2138,8 @@ void __fastcall TMainForm::OpenMenuClick(TObject *Sender)
                 ModDesccriptionMemo->Lines->Text = FOMOD.Description;
                 ModCategoryComboBox->Text = FOMOD.ModCategory;
             }
+            else
+                MessageBox(NULL, _T("Uncnown error ocured while opening info.xml"), _T("FOMOD Creation Tool"),  MB_OK);
             if(module_config_xml_loaded)
             {
                 for(int i = 1; i < FOMOD.Steps.size(); i++)
@@ -2142,6 +2168,8 @@ void __fastcall TMainForm::OpenMenuClick(TObject *Sender)
 
                 ManageRecentFiles(RootDirectory);
             }
+            else
+                MessageBox(NULL, _T("Uncnown error ocured while opening ModuleConfig.xml"), _T("FOMOD Creation Tool"),  MB_OK);
 
 
             StepCount = FOMOD.Steps.size();
@@ -2231,6 +2259,8 @@ void __fastcall TMainForm::OpenfileMenuClick(TObject *Sender)
             ModDesccriptionMemo->Lines->Text = FOMOD.Description;
             ModCategoryComboBox->Text = FOMOD.ModCategory;
         }
+        else
+            MessageBox(NULL, _T("Uncnown error ocured while opening info.xml"), _T("FOMOD Creation Tool"),  MB_OK);
         if(module_config_xml_loaded)
         {
             for(int i = 1; i < FOMOD.Steps.size(); i++)
@@ -2259,6 +2289,8 @@ void __fastcall TMainForm::OpenfileMenuClick(TObject *Sender)
 
             ManageRecentFiles(RootDirectory);
         }
+        else
+            MessageBox(NULL, _T("Uncnown error ocured while opening ModuleConfig.xml"), _T("FOMOD Creation Tool"),  MB_OK);
 
 
         StepCount = FOMOD.Steps.size();
@@ -2640,7 +2672,7 @@ void __fastcall TMainForm::AddRequiredFileButtonClick(TObject *Sender)
         OpenDialog->Filter = "";
         if(OpenDialog->Execute())
         {
-            UnicodeString temp = OpenFolderDialog->FileName.SubString(0, RootDirectory.Length()).UpperCase();
+            UnicodeString temp = OpenDialog->FileName.SubString(0, RootDirectory.Length()).UpperCase();
             if(!(temp.Compare(RootDirectory.UpperCase())))
             {
                 UnicodeString
@@ -2711,28 +2743,34 @@ void __fastcall TMainForm::AddRequiredFolderButtonClick(TObject *Sender)
 void __fastcall TMainForm::RequiredFilesSrcListViewSelectItem(TObject *Sender, TListItem *Item,
           bool Selected)
 {
-    RequiredFilesDstListView->ItemIndex = RequiredFilesSrcListView->ItemIndex;
-    if(RequiredFilesSrcListView->ItemIndex > -1)
+    if(RequiredFilesDstListView->ItemIndex != RequiredFilesSrcListView->ItemIndex)
     {
-        ListView_EnsureVisible(RequiredFilesDstListView->Handle, RequiredFilesSrcListView->ItemIndex, false);
-        RemoveRequiredFileFolderButton->Enabled = true;
+        RequiredFilesDstListView->ItemIndex = RequiredFilesSrcListView->ItemIndex;
+        if(RequiredFilesSrcListView->ItemIndex > -1)
+        {
+            ListView_EnsureVisible(RequiredFilesDstListView->Handle, RequiredFilesSrcListView->ItemIndex, false);
+            RemoveRequiredFileFolderButton->Enabled = true;
+        }
+        else
+            RemoveRequiredFileFolderButton->Enabled = false;
     }
-    else
-        RemoveRequiredFileFolderButton->Enabled = false;
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TMainForm::RequiredFilesDstListViewSelectItem(TObject *Sender, TListItem *Item,
           bool Selected)
 {
-    RequiredFilesSrcListView->ItemIndex = RequiredFilesDstListView->ItemIndex;
-    if(RequiredFilesSrcListView->ItemIndex > -1)
+    if(RequiredFilesSrcListView->ItemIndex != RequiredFilesDstListView->ItemIndex)
     {
-        ListView_EnsureVisible(RequiredFilesSrcListView->Handle, RequiredFilesDstListView->ItemIndex, false);
-        RemoveRequiredFileFolderButton->Enabled = true;
+        RequiredFilesSrcListView->ItemIndex = RequiredFilesDstListView->ItemIndex;
+        if(RequiredFilesSrcListView->ItemIndex > -1)
+        {
+            ListView_EnsureVisible(RequiredFilesSrcListView->Handle, RequiredFilesDstListView->ItemIndex, false);
+            RemoveRequiredFileFolderButton->Enabled = true;
+        }
+        else
+            RemoveRequiredFileFolderButton->Enabled = false;
     }
-    else
-        RemoveRequiredFileFolderButton->Enabled = false;
 }
 //---------------------------------------------------------------------------
 
@@ -2925,7 +2963,7 @@ void __fastcall TMainForm::CondFileAddFileButtonClick(TObject *Sender)
         OpenDialog->Filter = "";
         if(OpenDialog->Execute())
         {
-            UnicodeString temp = OpenFolderDialog->FileName.SubString(0, RootDirectory.Length()).UpperCase();
+            UnicodeString temp = OpenDialog->FileName.SubString(0, RootDirectory.Length()).UpperCase();
             if(!(temp.Compare(RootDirectory.UpperCase())))
             {
                 UnicodeString
@@ -3022,28 +3060,34 @@ void __fastcall TMainForm::CondFileRemoveFileFolderButtonClick(TObject *Sender)
 void __fastcall TMainForm::CondFilesSrcListViewSelectItem(TObject *Sender, TListItem *Item,
           bool Selected)
 {
-    CondFilesDstListView->ItemIndex = CondFilesSrcListView->ItemIndex;
-    if(CondFilesSrcListView->ItemIndex > -1)
+    if(CondFilesDstListView->ItemIndex != CondFilesSrcListView->ItemIndex)
     {
-        ListView_EnsureVisible(CondFilesDstListView->Handle, CondFilesSrcListView->ItemIndex, false);
-        CondFileRemoveFileFolderButton->Enabled = true;
+        CondFilesDstListView->ItemIndex = CondFilesSrcListView->ItemIndex;
+        if(CondFilesSrcListView->ItemIndex > -1)
+        {
+            ListView_EnsureVisible(CondFilesDstListView->Handle, CondFilesSrcListView->ItemIndex, false);
+            CondFileRemoveFileFolderButton->Enabled = true;
+        }
+        else
+            CondFileRemoveFileFolderButton->Enabled = false;
     }
-    else
-        CondFileRemoveFileFolderButton->Enabled = false;
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TMainForm::CondFilesDstListViewSelectItem(TObject *Sender, TListItem *Item,
           bool Selected)
 {
-    CondFilesSrcListView->ItemIndex = CondFilesDstListView->ItemIndex;
-    if(CondFilesDstListView->ItemIndex > -1)
+    if(CondFilesSrcListView->ItemIndex != CondFilesDstListView->ItemIndex)
     {
-        ListView_EnsureVisible(CondFilesSrcListView->Handle, CondFilesDstListView->ItemIndex, false);
-        CondFileRemoveFileFolderButton->Enabled = true;
+        CondFilesSrcListView->ItemIndex = CondFilesDstListView->ItemIndex;
+        if(CondFilesDstListView->ItemIndex > -1)
+        {
+            ListView_EnsureVisible(CondFilesSrcListView->Handle, CondFilesDstListView->ItemIndex, false);
+            CondFileRemoveFileFolderButton->Enabled = true;
+        }
+        else
+            CondFileRemoveFileFolderButton->Enabled = false;
     }
-    else
-        CondFileRemoveFileFolderButton->Enabled = false;
 }
 //---------------------------------------------------------------------------
 
@@ -3188,6 +3232,8 @@ void __fastcall TMainForm::RecentFileTemplateClick(TObject *Sender)
         ModDesccriptionMemo->Lines->Text = FOMOD.Description;
         ModCategoryComboBox->Text = FOMOD.ModCategory;
     }
+    else
+        MessageBox(NULL, _T("Uncnown error ocured while opening info.xml"), _T("FOMOD Creation Tool"),  MB_OK);
     if(module_config_xml_loaded)
     {
         for(int i = 1; i < FOMOD.Steps.size(); i++)
@@ -3216,6 +3262,8 @@ void __fastcall TMainForm::RecentFileTemplateClick(TObject *Sender)
 
         ManageRecentFiles(RootDirectory);
     }
+    else
+        MessageBox(NULL, _T("Uncnown error ocured while opening ModuleConfig.xml"), _T("FOMOD Creation Tool"),  MB_OK);
 
 
     StepCount = FOMOD.Steps.size();

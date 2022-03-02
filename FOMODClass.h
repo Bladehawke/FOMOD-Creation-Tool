@@ -83,6 +83,7 @@ class CStep
         ~CStep();
 
         UnicodeString Name;
+        UnicodeString VisibilityOperator;
         vector <CDependency>  VisibilityDependencies;
         vector <CPluginGroup> PluginGroups;
 };

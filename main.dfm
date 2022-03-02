@@ -14,7 +14,7 @@ object MainForm: TMainForm
   Font.Style = []
   Menu = MainMenu
   OldCreateOrder = False
-  Position = poDesktopCenter
+  Position = poScreenCenter
   OnClose = FormClose
   OnCreate = FormCreate
   OnResize = FormResize
@@ -29,10 +29,8 @@ object MainForm: TMainForm
     Align = alClient
     TabOrder = 0
     OnChange = StepsTabControlChange
-    ExplicitWidth = 1087
     object ModInfoTabSheet: TTabSheet
       Caption = 'Mod info'
-      ExplicitWidth = 1079
       object ModInfoGroupBox: TGroupBox
         Left = 0
         Top = 0
@@ -41,7 +39,6 @@ object MainForm: TMainForm
         Align = alClient
         Caption = 'Mod infornation'
         TabOrder = 0
-        ExplicitWidth = 1079
         object Panel5: TPanel
           Left = 2
           Top = 15
@@ -50,7 +47,6 @@ object MainForm: TMainForm
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitWidth = 1075
           object ModCategoryLabel: TLabel
             Left = 13
             Top = 125
@@ -93,6 +89,7 @@ object MainForm: TMainForm
             Height = 21
             ItemHeight = 13
             TabOrder = 0
+            OnChange = ModCategoryEditChange
             Items.Strings = (
               'Ammo'
               'Animation'
@@ -148,6 +145,7 @@ object MainForm: TMainForm
             Width = 346
             Height = 21
             TabOrder = 1
+            OnChange = ModAuthorEditChange
           end
           object ModNameEdit: TEdit
             Left = 159
@@ -155,6 +153,7 @@ object MainForm: TMainForm
             Width = 346
             Height = 21
             TabOrder = 2
+            OnChange = ModNameEditChange
           end
           object ModVersionEdit: TEdit
             Left = 159
@@ -162,6 +161,7 @@ object MainForm: TMainForm
             Width = 146
             Height = 21
             TabOrder = 3
+            OnChange = ModVersionEditChange
           end
           object ModURLEdit: TEdit
             Left = 159
@@ -169,6 +169,7 @@ object MainForm: TMainForm
             Width = 346
             Height = 21
             TabOrder = 4
+            OnChange = ModURLEditChange
           end
         end
         object Panel6: TPanel
@@ -183,7 +184,6 @@ object MainForm: TMainForm
           Padding.Right = 14
           Padding.Bottom = 14
           TabOrder = 1
-          ExplicitWidth = 1075
           object ModDescriptionLabel: TLabel
             Left = 14
             Top = 0
@@ -204,7 +204,6 @@ object MainForm: TMainForm
             ScrollBars = ssVertical
             TabOrder = 0
             OnChange = ModDesccriptionMemoChange
-            ExplicitWidth = 1047
           end
         end
       end
@@ -216,7 +215,6 @@ object MainForm: TMainForm
         Align = alBottom
         Caption = 'Workspace'
         TabOrder = 1
-        ExplicitWidth = 1079
         object RootDirLabel: TLabel
           Left = 15
           Top = 26
@@ -249,7 +247,6 @@ object MainForm: TMainForm
         Height = 48
         Align = alBottom
         TabOrder = 2
-        ExplicitWidth = 1079
         object Panel4: TPanel
           Left = 952
           Top = 1
@@ -277,7 +274,6 @@ object MainForm: TMainForm
       Caption = 'Steps'
       Enabled = False
       ImageIndex = 1
-      ExplicitWidth = 1079
       object Panel1: TPanel
         Left = 0
         Top = 731
@@ -285,7 +281,6 @@ object MainForm: TMainForm
         Height = 41
         Align = alBottom
         TabOrder = 0
-        ExplicitWidth = 1079
         object Panel2: TPanel
           Left = 533
           Top = 1
@@ -294,7 +289,6 @@ object MainForm: TMainForm
           Align = alRight
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitLeft = 512
           object DeleteStepButton: TButton
             Left = 315
             Top = 5
@@ -344,10 +338,8 @@ object MainForm: TMainForm
         ActivePage = GroupsFileTabSheet
         Align = alClient
         TabOrder = 1
-        ExplicitWidth = 1079
         object GroupsFileTabSheet: TTabSheet
           Caption = 'Groups and Files'
-          ExplicitWidth = 1071
           object ScrollBox1: TScrollBox
             Left = 0
             Top = 0
@@ -358,7 +350,6 @@ object MainForm: TMainForm
             Align = alClient
             AutoScroll = False
             TabOrder = 0
-            ExplicitWidth = 1071
             object FilesGroupBox: TGroupBox
               Left = 0
               Top = 497
@@ -367,7 +358,6 @@ object MainForm: TMainForm
               Align = alClient
               Caption = 'Files'
               TabOrder = 0
-              ExplicitWidth = 1067
               object FilesPanel: TPanel
                 Left = 2
                 Top = 15
@@ -376,7 +366,6 @@ object MainForm: TMainForm
                 Align = alClient
                 BevelOuter = bvNone
                 TabOrder = 0
-                ExplicitWidth = 1063
                 object CpyLabel: TLabel
                   Left = 16
                   Top = 7
@@ -477,7 +466,6 @@ object MainForm: TMainForm
               Align = alTop
               Caption = 'Groups && plugins'
               TabOrder = 1
-              ExplicitWidth = 1067
               object PageControl2: TPageControl
                 Left = 719
                 Top = 15
@@ -486,7 +474,6 @@ object MainForm: TMainForm
                 ActivePage = FlagSetTabSheet
                 Align = alRight
                 TabOrder = 0
-                ExplicitLeft = 698
                 object FlagSetTabSheet: TTabSheet
                   Caption = 'Flag set'
                   object AddVaribleButton: TButton
@@ -836,7 +823,6 @@ object MainForm: TMainForm
                 Align = alClient
                 BevelOuter = bvNone
                 TabOrder = 1
-                ExplicitWidth = 696
                 object Panel7: TPanel
                   Left = 0
                   Top = 281
@@ -845,7 +831,6 @@ object MainForm: TMainForm
                   Align = alBottom
                   BevelOuter = bvNone
                   TabOrder = 0
-                  ExplicitWidth = 696
                   object Shape3: TShape
                     Left = 486
                     Top = 12
@@ -912,7 +897,6 @@ object MainForm: TMainForm
                   Align = alTop
                   BevelOuter = bvNone
                   TabOrder = 1
-                  ExplicitWidth = 696
                   object GTypeLabel: TLabel
                     Left = 214
                     Top = 20
@@ -1105,7 +1089,6 @@ object MainForm: TMainForm
                   Padding.Left = 8
                   Padding.Right = 8
                   TabOrder = 2
-                  ExplicitWidth = 696
                   object PluginDescLabel: TLabel
                     Left = 8
                     Top = 0
@@ -1126,7 +1109,6 @@ object MainForm: TMainForm
                     ScrollBars = ssVertical
                     TabOrder = 0
                     OnChange = PluginDescriptionMemoChange
-                    ExplicitWidth = 680
                   end
                 end
               end
@@ -1139,7 +1121,6 @@ object MainForm: TMainForm
               Align = alTop
               Caption = 'Step settings'
               TabOrder = 2
-              ExplicitWidth = 1067
               object StepNameLabel: TLabel
                 Left = 18
                 Top = 24
@@ -1160,7 +1141,6 @@ object MainForm: TMainForm
         object ConditionsTabSheet: TTabSheet
           Caption = 'Conditions'
           ImageIndex = 1
-          ExplicitWidth = 1071
           object ScrollBox: TScrollBox
             Left = 0
             Top = 0
@@ -1168,7 +1148,6 @@ object MainForm: TMainForm
             Height = 676
             Align = alClient
             TabOrder = 0
-            ExplicitWidth = 1071
             object ConditionSetGroupBox: TGroupBox
               Left = 0
               Top = 0
@@ -1177,32 +1156,39 @@ object MainForm: TMainForm
               Align = alClient
               Caption = 'Condition set'
               TabOrder = 0
-              ExplicitWidth = 1067
               object IfLabel: TLabel
                 Left = 16
-                Top = 21
+                Top = 22
                 Width = 6
                 Height = 13
                 Caption = 'if'
               end
               object equalsLabel: TLabel
                 Left = 351
-                Top = 43
+                Top = 44
                 Width = 31
                 Height = 13
                 Caption = 'equals'
               end
               object typeLabel: TLabel
                 Left = 16
-                Top = 43
+                Top = 44
                 Width = 22
                 Height = 13
                 Alignment = taCenter
                 Caption = 'type'
               end
+              object visOperatorLabel: TLabel
+                Left = 504
+                Top = 22
+                Width = 44
+                Height = 13
+                Alignment = taCenter
+                Caption = 'Operator'
+              end
               object ConditionComboBox: TComboBox
                 Left = 120
-                Top = 40
+                Top = 41
                 Width = 225
                 Height = 21
                 ItemHeight = 13
@@ -1210,7 +1196,7 @@ object MainForm: TMainForm
               end
               object ConditionValueComboBox: TComboBox
                 Left = 399
-                Top = 40
+                Top = 41
                 Width = 87
                 Height = 21
                 ItemHeight = 13
@@ -1226,8 +1212,8 @@ object MainForm: TMainForm
               end
               object ConditionListView: TListView
                 Left = 16
-                Top = 67
-                Width = 521
+                Top = 68
+                Width = 569
                 Height = 510
                 Columns = <
                   item
@@ -1235,7 +1221,7 @@ object MainForm: TMainForm
                   end
                   item
                     Caption = 'File/Flag name'
-                    Width = 290
+                    Width = 340
                   end
                   item
                   end
@@ -1253,8 +1239,8 @@ object MainForm: TMainForm
                 OnSelectItem = ConditionListViewSelectItem
               end
               object AddConditionButton: TButton
-                Left = 543
-                Top = 36
+                Left = 599
+                Top = 39
                 Width = 75
                 Height = 25
                 Caption = 'Add'
@@ -1262,8 +1248,8 @@ object MainForm: TMainForm
                 OnClick = AddConditionButtonClick
               end
               object DeleteConditionButton: TButton
-                Left = 543
-                Top = 67
+                Left = 599
+                Top = 70
                 Width = 75
                 Height = 25
                 Caption = 'Delete'
@@ -1273,7 +1259,7 @@ object MainForm: TMainForm
               end
               object VisibilityTypeComboBox: TComboBox
                 Left = 52
-                Top = 40
+                Top = 41
                 Width = 51
                 Height = 21
                 Style = csDropDownList
@@ -1285,6 +1271,20 @@ object MainForm: TMainForm
                 Items.Strings = (
                   'file'
                   'flag')
+              end
+              object visOperatorComboBox: TComboBox
+                Left = 504
+                Top = 41
+                Width = 73
+                Height = 21
+                ItemHeight = 13
+                ItemIndex = 0
+                TabOrder = 6
+                Text = 'And'
+                OnChange = visOperatorComboBoxChange
+                Items.Strings = (
+                  'And'
+                  'Or')
               end
             end
           end
@@ -1299,10 +1299,8 @@ object MainForm: TMainForm
         Align = alTop
         TabOrder = 2
         OnChange = StepsTabControlChange
-        ExplicitWidth = 1079
         object Step1: TTabSheet
           Caption = 'Step1'
-          ExplicitWidth = 1071
         end
       end
     end
@@ -1310,7 +1308,6 @@ object MainForm: TMainForm
       Caption = 'Required installations'
       Enabled = False
       ImageIndex = 3
-      ExplicitWidth = 1079
       object Panel11: TPanel
         Left = 0
         Top = 0
@@ -1319,7 +1316,6 @@ object MainForm: TMainForm
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitWidth = 1079
         object CpyLabel2: TLabel
           Left = 16
           Top = 7
@@ -1414,7 +1410,6 @@ object MainForm: TMainForm
       Caption = 'Conditional installations'
       Enabled = False
       ImageIndex = 4
-      ExplicitWidth = 1079
       object ConiditionalFilesPageControl: TPageControl
         Left = 0
         Top = 0
@@ -1423,7 +1418,6 @@ object MainForm: TMainForm
         Align = alTop
         TabOrder = 0
         OnChange = ConiditionalFilesPageControlChange
-        ExplicitWidth = 1079
       end
       object Panel12: TPanel
         Left = 0
@@ -1432,7 +1426,6 @@ object MainForm: TMainForm
         Height = 41
         Align = alBottom
         TabOrder = 1
-        ExplicitWidth = 1079
         object Panel13: TPanel
           Left = 533
           Top = 1
@@ -1441,7 +1434,6 @@ object MainForm: TMainForm
           Align = alRight
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitLeft = 664
           object RemoveCondFilePatternButton: TButton
             Left = 315
             Top = 5
@@ -1496,7 +1488,6 @@ object MainForm: TMainForm
         Height = 208
         Align = alTop
         TabOrder = 2
-        ExplicitWidth = 1079
         object ciOperatorLabel: TLabel
           Left = 17
           Top = 23
@@ -1638,7 +1629,6 @@ object MainForm: TMainForm
         Height = 496
         Align = alClient
         TabOrder = 3
-        ExplicitWidth = 1079
         object DataLabel3: TLabel
           Left = 525
           Top = 6
@@ -1732,7 +1722,6 @@ object MainForm: TMainForm
     object InfoTabSheet: TTabSheet
       Caption = 'Info'
       ImageIndex = 2
-      ExplicitWidth = 1079
       object Memo1: TMemo
         Left = 0
         Top = 0
@@ -2030,7 +2019,6 @@ object MainForm: TMainForm
         ReadOnly = True
         ScrollBars = ssVertical
         TabOrder = 0
-        ExplicitWidth = 1079
       end
     end
   end

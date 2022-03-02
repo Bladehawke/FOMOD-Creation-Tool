@@ -220,6 +220,8 @@ __published:	// IDE-managed Components
     TLabel *StepNameLabel;
     TMenuItem *RecentMenu;
     TMenuItem *RecentFileTemplate;
+    TLabel *visOperatorLabel;
+    TComboBox *visOperatorComboBox;
     void __fastcall FormCreate(TObject *Sender);
     void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
     void __fastcall OpenRootDirButtonClick(TObject *Sender);
@@ -236,6 +238,7 @@ __published:	// IDE-managed Components
     void __fastcall DeleteConditionButtonClick(TObject *Sender);
     void __fastcall ConditionListViewSelectItem(TObject *Sender, TListItem *Item,
           bool Selected);
+    void __fastcall visOperatorComboBoxChange(TObject *Sender);
     void __fastcall AddGroupButtonClick(TObject *Sender);
     void __fastcall RemoveGroupButtonClick(TObject *Sender);
     void __fastcall GroupListViewEdited(TObject *Sender, TListItem *Item, UnicodeString &S);

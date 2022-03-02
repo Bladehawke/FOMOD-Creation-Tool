@@ -4,7 +4,7 @@ object ScriptForm1: TScriptForm1
   BorderStyle = bsDialog
   Caption = 'ScriptForm1'
   ClientHeight = 333
-  ClientWidth = 498
+  ClientWidth = 688
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,7 +18,7 @@ object ScriptForm1: TScriptForm1
   object Label1: TLabel
     Left = 8
     Top = 175
-    Width = 401
+    Width = 591
     Height = 146
     AutoSize = False
     WordWrap = True
@@ -26,12 +26,12 @@ object ScriptForm1: TScriptForm1
   object ScriptMemo: TMemo
     Left = 8
     Top = 8
-    Width = 401
+    Width = 591
     Height = 161
     TabOrder = 0
   end
   object SaveButton: TButton
-    Left = 415
+    Left = 605
     Top = 8
     Width = 75
     Height = 25
@@ -40,7 +40,7 @@ object ScriptForm1: TScriptForm1
     TabOrder = 1
   end
   object CancelButton: TButton
-    Left = 415
+    Left = 605
     Top = 39
     Width = 75
     Height = 25

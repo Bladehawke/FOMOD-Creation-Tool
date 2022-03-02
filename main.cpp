@@ -3,7 +3,11 @@
 #include <vcl.h>
 #include <jpeg.hpp>
 #include <pngimage.hpp>
-#include <fstream.h>
+#include <tchar.h>
+#include <fstream>
+#include <cstdio>
+#include <cstdlib>
+
 #pragma hdrstop
 
 #include "main.h"
@@ -18,8 +22,9 @@
 #define TEG_CLOSE       0x02
 #define TEG_WAITCLOSE   0x04
 #define TEG_INNERTEXT   0x08
+#define TEG_READY       0x10
 
-
+const wchar_t BOM = 0xFEFF;
 
 TMainForm *MainForm;
 
@@ -31,9 +36,9 @@ int CurrentStepIndx = 0;
 
 //---------------------------------------------------------------------------
 
-bool dirExists(AnsiString dirName_in)
+bool dirExists(UnicodeString dirName_in)
 {
-  DWORD ftyp = GetFileAttributesA(dirName_in.c_str());
+  DWORD ftyp = GetFileAttributes(dirName_in.c_str());
   if (ftyp == INVALID_FILE_ATTRIBUTES)
     return false;  //something is wrong with your path!
 
@@ -42,7 +47,7 @@ bool dirExists(AnsiString dirName_in)
 
   return false;    // this is not a directory!
 }
-AnsiString GetFileVersionOfApplication(LPTSTR lpszFilePath)
+UnicodeString GetFileVersionOfApplication(LPTSTR lpszFilePath)
 {
    DWORD dwDummy;
    DWORD dwFVISize = GetFileVersionInfoSize( lpszFilePath , &dwDummy );
@@ -72,24 +77,23 @@ AnsiString GetFileVersionOfApplication(LPTSTR lpszFilePath)
 
    _TCHAR str[128];
 
-   sprintf(str, "%d.%d.%d.%d\n" , dwLeftMost, dwSecondLeft,
+   _stprintf(str, _T("%d.%d.%d.%d\n") , dwLeftMost, dwSecondLeft,
       dwSecondRight, dwRightMost);
 
-   return AnsiString(str);
+   return UnicodeString(str);
 }
 //---------------------------------------------------------------------------
 
-int ParseXMLString(const _TCHAR *xml_string, AnsiString &tegname, AnsiString &teginner, vector < pair<AnsiString, AnsiString> > &tegprops)
+_TCHAR *ParseXMLString(_TCHAR *xml_string, UnicodeString &tegname, UnicodeString &teginner, vector < pair<UnicodeString, UnicodeString> > &tegprops, int &state)
 {
     _TCHAR w_letter;
     unsigned int str_len;
-    static int state = 0;
-    AnsiString ustr;
+    UnicodeString ustr;
+    int i;
+    int exit_cicle = 0;
 
-    ustr = "";
-    state = TEG_NONE;
     str_len = _tcslen(xml_string);
-    for(int i = 0; i < str_len; i++)
+    for(i = 0; i < str_len; i++)
     {
         w_letter = xml_string[i];
         switch(state)
@@ -98,16 +102,13 @@ int ParseXMLString(const _TCHAR *xml_string, AnsiString &tegname, AnsiString &te
                 if(w_letter == '<')
                 {
                     state = TEG_OPEN;
+                    tegprops.clear();
                     tegname = "";
                     teginner = "";
-                    tegprops.clear();
+                    ustr = "";
                 }
                 break;
             case TEG_OPEN:
-                if( ustr != "" && tegname == "" && (w_letter == ' ' || w_letter == '>') )
-                {
-                    tegname = AnsiString(ustr);
-                }
                 if( ustr != "" && tegname != "" && (w_letter == '"' || w_letter == '=' || w_letter == '>') )
                 {
                     if(tegprops.size() > 0)
@@ -116,7 +117,7 @@ int ParseXMLString(const _TCHAR *xml_string, AnsiString &tegname, AnsiString &te
                             (tegprops.end()-1)->second = ustr;
                         else
                         {
-                            pair <AnsiString, AnsiString> new_pair;
+                            pair <UnicodeString, UnicodeString> new_pair;
                             new_pair.first = ustr;
                             new_pair.second = "";
                             tegprops.push_back(new_pair);
@@ -124,52 +125,79 @@ int ParseXMLString(const _TCHAR *xml_string, AnsiString &tegname, AnsiString &te
                     }
                     else
                     {
-                        pair <AnsiString, AnsiString> new_pair;
+                        pair <UnicodeString, UnicodeString> new_pair;
                         new_pair.first = ustr;
                         new_pair.second = "";
                         tegprops.push_back(new_pair);
                     }
                     ustr = "";
                 }
+                if( ustr != "" && tegname == "" && (w_letter == ' ' || w_letter == '\t' || w_letter == '>') )
+                {
+                    tegname = UnicodeString(ustr);
+                    ustr = "";
+                }
 
                 if(w_letter == '/' || w_letter == '?')
                     state = TEG_CLOSE;
                 else if(w_letter == '>')
+                {
                     state = TEG_INNERTEXT;
+                    teginner = "";
+                    ustr = "";
+                }
                 else if(w_letter != '=' && w_letter != '"')
                     ustr = ustr + w_letter;
 
                 break;
             case TEG_CLOSE:
                 if(w_letter == '>')
-                    state = TEG_NONE;
-                else if(w_letter != ' ')
+                {
+                    state = TEG_READY;
+                    break;
+                }
+                else if(w_letter == '\t' || w_letter != ' ')
                     ustr = ustr + w_letter;
                 break;
             case TEG_INNERTEXT:
                 if(w_letter != '<')
-                    ustr = ustr + w_letter;
+                {
+                    if( !(ustr == "" && (w_letter == ' ' || w_letter == '\t' || w_letter == '\r' || w_letter == '\n')) )
+                        ustr = ustr + w_letter;
+                }
                 else
                 {
                     teginner = ustr;
-                    ustr = "";
-                    state = TEG_OPEN;
+                    state = TEG_READY;
                 }
                 break;
         }
+        if( state == TEG_READY )
+            break;
     }
+    if(state == TEG_INNERTEXT)
+        teginner = ustr;
 
-    return state;
+    return (&xml_string[i]);
 }
 
 void RunBatFile(_TCHAR *filename, CFOMOD &fomod)
 {
-    FILE *fp = fopen(filename, "r");
+    _TCHAR
+        t_bat_path[256],
+        str[512],
+        buf[16],
+        cmd[512];
+    unsigned int len, i, j;
+
+    FILE *fp = _tfopen(filename, _T("r"));
     if(fp)
     {
-        _TCHAR str[512], buf[16], cmd[512];
-        unsigned int len, i, j;
-        while(fgets(str, 512, fp))
+        _tcscpy(t_bat_path, filename);
+        _tcscat(t_bat_path, _T(".bat"));
+        FILE *fpbat = _tfopen(t_bat_path, _T("w"));
+
+        while(_fgetts(str, 512, fp))
         {
             cmd[0] = '\0';
             len = _tcslen(str);
@@ -179,48 +207,69 @@ void RunBatFile(_TCHAR *filename, CFOMOD &fomod)
                 {
                     j = i+1;
                     while(j < len && str[j] != '$') j++;
-                    memset(buf, 0, 16);
-                    if(j-i < 16);
+                    memset(buf, 0, 16*sizeof(_TCHAR));
+                    if(j-i < 16)
                         _tcsncpy(buf, &str[i], j-i+1);
-                    if(_tcscmp(buf, "$MODNAME$") == 0)
+                    if(_tcscmp(buf, _T("$MODNAME$")) == 0)
+                    {
                         _tcsncat(cmd, fomod.Name.c_str(), fomod.Name.Length());
-                    if(_tcscmp(buf, "$MODAUTHOR$") == 0)
+                        i = j;
+                    }
+                    if(_tcscmp(buf, _T("$MODAUTHOR$")) == 0)
+                    {
                         _tcsncat(cmd, fomod.AuthorName.c_str(), fomod.AuthorName.Length());
-                    if(_tcscmp(buf, "$MODVERSION$") == 0)
+                        i = j;
+                    }
+                    if(_tcscmp(buf, _T("$MODVERSION$")) == 0)
+                    {
                         _tcsncat(cmd, fomod.Version.c_str(), fomod.Version.Length());
-                    if(_tcscmp(buf, "$MODROOT$") == 0)
+                        i = j;
+                    }
+                    if(_tcscmp(buf, _T("$MODROOT$")) == 0)
+                    {
                         _tcsncat(cmd, RootDirectory.c_str(), RootDirectory.Length());
-                    if(_tcscmp(buf, "$DATE$") == 0)
+                        i = j;
+                    }
+                    if(_tcscmp(buf, _T("$DATE$")) == 0)
                     {
                         time_t t = time(NULL);
                         struct tm *now = localtime(&t);
-                        _stprintf(buf, "%02d-%02d-%04d", now->tm_mday, now->tm_mon+1, now->tm_year+1900);
+                        _stprintf(buf, _T("%02d-%02d-%04d"), now->tm_mday, now->tm_mon+1, now->tm_year+1900);
                         _tcsncat(cmd, buf, _tcslen(buf));
+                        i = j;
                     }
-                    if(_tcscmp(buf, "$TIME$") == 0)
+                    if(_tcscmp(buf, _T("$TIME$")) == 0)
                     {
                         time_t t = time(NULL);
                         struct tm *now = localtime(&t);
-                        _stprintf(buf, "%02d-%02d-%02d", now->tm_hour, now->tm_min, now->tm_sec);
+                        _stprintf(buf, _T("%02d-%02d-%02d"), now->tm_hour, now->tm_min, now->tm_sec);
                         _tcsncat(cmd, buf, _tcslen(buf));
+                        i = j;
                     }
-                    if(_tcscmp(buf, "$RANDOM$") == 0)
+                    if(_tcscmp(buf, _T("$RANDOM$")) == 0)
                     {
                         srand(time(NULL));
-                        _stprintf(buf, "%d", rand()%32767);
+                        _stprintf(buf, _T("%d"), rand()%32767);
                         _tcsncat(cmd, buf, _tcslen(buf));
+                        i = j;
                     }
-
-
-                    i = j;
                 }
                 else
                     _tcsncat(cmd, &str[i], 1);
-
             }
-            system(cmd);
+            if(fpbat)
+            {
+                _ftprintf(fpbat, _T("%s\n"), cmd);
+            }
         }
         fclose(fp);
+        fclose(fpbat);
+
+        _tcscpy( cmd, _T("cmd /c \"") );
+        _tcscat( cmd, t_bat_path);
+        _tcscat( cmd, _T("\""));
+        _tsystem(cmd);
+        _tremove( t_bat_path );
     }
 }
 
@@ -248,7 +297,7 @@ void __fastcall TMainForm::OpenRootDirButtonClick(TObject *Sender)
         }
         else
         {
-            if(MessageBox(NULL, "There is no 'fomod' catalog in specified directory. Create one?", "FOMOD Creation Tool",  MB_YESNO) == IDYES)
+            if(MessageBox(NULL, _T("There is no 'fomod' catalog in specified directory. Create one?"), _T("FOMOD Creation Tool"),  MB_YESNO) == IDYES)
             {
                 CreateDirectory((OpenFolderDialog->FileName + "\\fomod").c_str(), NULL);
                 RootDirEdit->Text = OpenFolderDialog->FileName;
@@ -298,9 +347,9 @@ void __fastcall TMainForm::ModURLEditChange(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TMainForm::ModDescEditChange(TObject *Sender)
+void __fastcall TMainForm::ModDesccriptionMemoChange(TObject *Sender)
 {
-    FOMOD.Description = ModDescEdit->Text;
+    FOMOD.Description = ModDesccriptionMemo->Lines->Text;
 }
 //---------------------------------------------------------------------------
 
@@ -335,7 +384,7 @@ void __fastcall TMainForm::StepsTabControlChange(TObject *Sender)
 
     ConditionListView->Clear();
     GroupListView->Clear();
-    PluginListBox->Clear();
+    PluginListView->Clear();
     VaribleSetListView->Clear();
     SrcFilesListView->Clear();
     DstFilesListView->Clear();
@@ -457,12 +506,18 @@ void __fastcall TMainForm::RemoveGroupButtonClick(TObject *Sender)
     {
         FOMOD.Steps[CurrentStepIndx].PluginGroups.erase(FOMOD.Steps[CurrentStepIndx].PluginGroups.begin()+GroupListView->ItemIndex);
         GroupListView->Items->Delete(GroupListView->ItemIndex);
-        PluginListBox->Clear();
+        PluginListView->Clear();
         VaribleSetListView->Clear();
         SrcFilesListView->Clear();
         DstFilesListView->Clear();
         GroupListViewClick(Sender);
     }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::GroupListViewEdited(TObject *Sender, TListItem *Item, UnicodeString &S)
+{
+    FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Name = S;
 }
 //---------------------------------------------------------------------------
 
@@ -490,42 +545,38 @@ void __fastcall TMainForm::GroupDownButtonClick(TObject *Sender)
 
 void __fastcall TMainForm::GroupListViewClick(TObject *Sender)
 {
-    PluginListBox->Clear();
+    PluginListView->Clear();
     VaribleSetListView->Clear();
     SrcFilesListView->Clear();
     DstFilesListView->Clear();
     PluginDescriptionMemo->Clear();
     PluginImageEdit->Text = "";
     PluginImage->Picture->Bitmap = NULL;
+    RemoveGroupButton->Enabled = false;
+    AddPluginButton->Enabled = false;
+    GroupUpButton->Enabled = false;
+    GroupDownButton->Enabled = false;
+
     if(FOMOD.Steps[CurrentStepIndx].PluginGroups.size() > 0 && GroupListView->ItemIndex > -1)
     {
         for(int i = 0; i < FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.size(); i++)
         {
-            PluginListBox->Items->Add(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[i].Name);
+            PluginListView->Items->Add()->Caption = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[i].Name;
         }
-        if(PluginListBox->Items->Count > 0)
+        if(PluginListView->Items->Count > 0)
         {
-            PluginListBox->ItemIndex = 0;
+            PluginListView->ItemIndex = 0;
         }
+
         RemoveGroupButton->Enabled = true;
         AddPluginButton->Enabled = true;
-        GroupUpButton->Enabled = true;
-        GroupDownButton->Enabled = true;
-        if(GroupListView->ItemIndex == 0)
-            GroupUpButton->Enabled = false;
-        if(GroupListView->ItemIndex == GroupListView->Items->Count - 1)
-            GroupDownButton->Enabled = false;
-
-
+        if(GroupListView->ItemIndex > 0)
+            GroupUpButton->Enabled = true;
+        if(GroupListView->ItemIndex < GroupListView->Items->Count - 1)
+            GroupDownButton->Enabled = true;
     }
-    else
-    {
-        RemoveGroupButton->Enabled = false;
-        AddPluginButton->Enabled = false;
-        GroupUpButton->Enabled = false;
-        GroupDownButton->Enabled = false;
-    }
-    PluginListBoxClick(Sender);
+
+    PluginListViewClick(Sender);
 }
 //---------------------------------------------------------------------------  
 
@@ -535,23 +586,23 @@ void __fastcall TMainForm::AddPluginButtonClick(TObject *Sender)
     {
         CPlugin new_plugin(PluginNameEdit->Text);
         FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.push_back(new_plugin);
-        PluginListBox->Items->Add(PluginNameEdit->Text);
-        PluginListBox->ItemIndex = PluginListBox->Items->Count-1;
-        PluginListBoxClick(Sender);
+        PluginListView->Items->Add()->Caption = PluginNameEdit->Text;
+        PluginListView->ItemIndex = PluginListView->Items->Count-1;
+        PluginListViewClick(Sender);
     }
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TMainForm::RemovePluginButtonClick(TObject *Sender)
 {
-    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.size() > 0 && PluginListBox->ItemIndex > -1)
+    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.size() > 0 && PluginListView->ItemIndex > -1)
     {
-        FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.erase(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.begin()+PluginListBox->ItemIndex);
-        PluginListBox->Items->Delete(PluginListBox->ItemIndex);
+        FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.erase(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.begin()+PluginListView->ItemIndex);
+        PluginListView->Items->Delete(PluginListView->ItemIndex);
         VaribleSetListView->Clear();
         SrcFilesListView->Clear();
         DstFilesListView->Clear();
-        PluginListBoxClick(Sender);
+        PluginListViewClick(Sender);
     }
 }
 //---------------------------------------------------------------------------
@@ -559,61 +610,71 @@ void __fastcall TMainForm::RemovePluginButtonClick(TObject *Sender)
 void __fastcall TMainForm::PluginUpButtonClick(TObject *Sender)
 {
 
-    unsigned int temp = PluginListBox->ItemIndex;
+    unsigned int temp = PluginListView->ItemIndex;
     std::iter_swap(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.begin()+temp,
                     FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.begin()+temp-1);
     GroupListViewClick(Sender);
-    PluginListBox->ItemIndex = temp - 1;
-    PluginListBoxClick(Sender);
+    PluginListView->ItemIndex = temp - 1;
+    PluginListViewClick(Sender);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TMainForm::PluginDownButtonClick(TObject *Sender)
 {
 
-    unsigned int temp = PluginListBox->ItemIndex;
+    unsigned int temp = PluginListView->ItemIndex;
     std::iter_swap(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.begin()+temp,
                     FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.begin()+temp+1);
     GroupListViewClick(Sender);
-    PluginListBox->ItemIndex = temp + 1;
-    PluginListBoxClick(Sender);
+    PluginListView->ItemIndex = temp + 1;
+    PluginListViewClick(Sender);
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TMainForm::PluginListBoxClick(TObject *Sender)
+void __fastcall TMainForm::PluginListViewClick(TObject *Sender)
 {
-    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.size() > 0 && PluginListBox->ItemIndex > -1)
-    {
-        VaribleSetListView->Clear();
-        SrcFilesListView->Clear();
-        DstFilesListView->Clear();
-        PluginDescriptionMemo->Clear();
-        PluginImageEdit->Text = "";
-        PluginImage->Picture->Bitmap = NULL;
+    RemovePluginButton->Enabled = false;
+    PluginDescriptionMemo->Enabled = false;
+    AddVaribleButton->Enabled = false;
+    ChoosePluginImageButton->Enabled = false;
+    ClearPluginImageButton->Enabled = false;
+    PluginImageEdit->Enabled = false;
+    AddFileButton->Enabled = false;
+    AddFolderButton->Enabled = false;
+    PluginUpButton->Enabled = false;
+    PluginDownButton->Enabled = false;
+    VaribleSetListView->Clear();
+    SrcFilesListView->Clear();
+    DstFilesListView->Clear();
+    PluginDescriptionMemo->Clear();
+    PluginImageEdit->Text = "";
+    PluginImage->Picture->Bitmap = NULL;
 
-        if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].ConditionSet.size() > 0)
+    if(PluginListView->ItemIndex > -1)
+    {
+        if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].ConditionSet.size() > 0)
         {
-            for(int i = 0; i < FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].ConditionSet.size(); i++)
+            for(int i = 0; i < FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].ConditionSet.size(); i++)
             {
                 TListItem *item = VaribleSetListView->Items->Add();
-                item->Caption = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].ConditionSet[i].Name;
+                item->Caption = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].ConditionSet[i].Name;
                 item->SubItems->Add(" =");
-                item->SubItems->Add(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].ConditionSet[i].Value);
+                item->SubItems->Add(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].ConditionSet[i].Value);
             }
         }
-        if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].Files.size() > 0)
+        if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].Files.size() > 0)
         {
-            for(int i = 0; i < FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].Files.size(); i++)
+            for(int i = 0; i < FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].Files.size(); i++)
             {
                 TListItem *item = SrcFilesListView->Items->Add();
-                item->Caption = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].Files[i].Type;
-                item->SubItems->Add(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].Files[i].SrcPath);
+                item->Caption = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].Files[i].Type;
+                item->SubItems->Add(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].Files[i].SrcPath);
                 item = DstFilesListView->Items->Add();
-                item->Caption = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].Files[i].DstPath;
+                item->Caption = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].Files[i].DstPath;
             }
         }
-        PluginDescriptionMemo->Lines->Add(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].Description);
-        PluginImageEdit->Text = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].ImagePath;
+        PluginDescriptionMemo->Lines->Text = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].Description;
+        PluginImageEdit->Text = FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].ImagePath;
         if(PluginImageEdit->Text != "")
             PluginImage->Picture->LoadFromFile(RootDirectory + "\\" + PluginImageEdit->Text);
 
@@ -625,37 +686,29 @@ void __fastcall TMainForm::PluginListBoxClick(TObject *Sender)
         PluginImageEdit->Enabled = true;
         AddFileButton->Enabled = true;
         AddFolderButton->Enabled = true;
-        PluginUpButton->Enabled = true;
-        PluginDownButton->Enabled = true;
-        if(PluginListBox->ItemIndex == 0)
-            PluginUpButton->Enabled = false;
-        if(PluginListBox->ItemIndex == PluginListBox->Items->Count-1)
-            PluginDownButton->Enabled = false;
+        if(PluginListView->ItemIndex > 0)
+            PluginUpButton->Enabled = true;
+        if(PluginListView->ItemIndex < PluginListView->Items->Count-1)
+            PluginDownButton->Enabled = true;
 
-    }
-    else
-    {
-        RemovePluginButton->Enabled = false;
-        PluginDescriptionMemo->Enabled = false;
-        AddVaribleButton->Enabled = false;
-        ChoosePluginImageButton->Enabled = false;
-        ClearPluginImageButton->Enabled = false;
-        PluginImageEdit->Enabled = false;
-        AddFileButton->Enabled = false;
-        AddFolderButton->Enabled = false;
-        PluginUpButton->Enabled = false;
-        PluginDownButton->Enabled = false;
     }
     SrcFilesListViewClick(Sender);
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TMainForm::PluginListViewEdited(TObject *Sender, TListItem *Item,
+          UnicodeString &S)
+{
+    FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].Name = S;
+}
+//---------------------------------------------------------------------------
+
 void __fastcall TMainForm::AddVaribleButtonClick(TObject *Sender)
 {
-    if(VaribleComboBox->Text != "" && PluginListBox->ItemIndex > -1)
+    if(VaribleComboBox->Text != "" && PluginListView->ItemIndex > -1)
     {
         CCondition new_condition(VaribleComboBox->Text, VaribleValueComboBox->Text);
-        FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].ConditionSet.push_back(new_condition);
+        FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].ConditionSet.push_back(new_condition);
 
         TListItem *item = VaribleSetListView->Items->Add();
         item->Caption = VaribleComboBox->Text;
@@ -667,9 +720,9 @@ void __fastcall TMainForm::AddVaribleButtonClick(TObject *Sender)
 
 void __fastcall TMainForm::DeleteVaribleButtonClick(TObject *Sender)
 {
-    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].ConditionSet.size() > 0 && VaribleSetListView->ItemIndex > -1)
+    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].ConditionSet.size() > 0 && VaribleSetListView->ItemIndex > -1)
     {
-        FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].ConditionSet.erase(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].ConditionSet.begin()+VaribleSetListView->ItemIndex);
+        FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].ConditionSet.erase(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].ConditionSet.begin()+VaribleSetListView->ItemIndex);
         VaribleSetListView->Items->Delete(VaribleSetListView->ItemIndex);
         VaribleSetListViewClick(Sender);
     }
@@ -678,7 +731,7 @@ void __fastcall TMainForm::DeleteVaribleButtonClick(TObject *Sender)
 
 void __fastcall TMainForm::VaribleSetListViewClick(TObject *Sender)
 {
-    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].ConditionSet.size() > 0 && VaribleSetListView->ItemIndex > -1)
+    if(VaribleSetListView->ItemIndex > -1)
         DeleteVaribleButton->Enabled = true;
     else
         DeleteVaribleButton->Enabled = false;
@@ -687,23 +740,18 @@ void __fastcall TMainForm::VaribleSetListViewClick(TObject *Sender)
 
 void __fastcall TMainForm::PluginDescriptionMemoChange(TObject *Sender)
 {
-    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.size() > 0 && PluginListBox->ItemIndex > -1)
+    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.size() > 0 && PluginListView->ItemIndex > -1)
     {
-        int len = strlen(PluginDescriptionMemo->Lines[0].Text.c_str());
-        _TCHAR *temp = new _TCHAR [len+1];
-        memset(temp, 0, len+1);
-        for(int i = 0; i < len && PluginDescriptionMemo->Lines[0].Text.c_str()[i] != '\r'; i++)
-            temp[i] = PluginDescriptionMemo->Lines[0].Text.c_str()[i];
-        FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].Description =
-            temp;
-        delete [] temp;
+        int len = _tcslen(PluginDescriptionMemo->Lines[0].Text.c_str());
+        FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].Description =
+            PluginDescriptionMemo->Lines->Text;
     }
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TMainForm::AddFileButtonClick(TObject *Sender)
 {
-    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.size() > 0 && PluginListBox->ItemIndex > -1)
+    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.size() > 0 && PluginListView->ItemIndex > -1)
     {
         OpenDialog->Filter = "";
         if(OpenDialog->Execute())
@@ -711,21 +759,75 @@ void __fastcall TMainForm::AddFileButtonClick(TObject *Sender)
             UnicodeString temp = OpenFolderDialog->FileName.SubString(0, RootDirectory.Length()).UpperCase();
             if(!(temp.Compare(RootDirectory.UpperCase())))
             {
+                UnicodeString
+                    src_path,
+                    dst_path,
+                    u_temp;
+
+                _TCHAR t_temp[256];
+                unsigned int t_len;
+
+                src_path = dst_path = OpenDialog->FileName.SubString(RootDirectory.Length()+2, OpenDialog->FileName.Length()-RootDirectory.Length()+2);
+                if(    !(dst_path.SubString(dst_path.Length()-3, 4).LowerCase().Compare(UnicodeString(".esp")))
+                    || !(dst_path.SubString(dst_path.Length()-3, 4).LowerCase().Compare(UnicodeString(".esm")))  )
+                {
+                    _tcscpy(t_temp, dst_path.c_str());
+                    for(int i = _tcslen(t_temp); i > 0; i--)
+                        if( t_temp[i] == _T('\\') )
+                        {
+                            dst_path = &t_temp[i+1];
+                            break;
+                        }
+                }
+                else
+                {
+                    _tcscpy(t_temp, dst_path.c_str());
+                    t_len = _tcslen(t_temp);
+                    for(int i = 0, start = 0; i < t_len; i++)
+                        if( t_temp[i] == _T('\\') )
+                        {
+                            t_temp[i] = _T('\0');
+                            u_temp = &t_temp[start];
+                            if(    !(u_temp.UpperCase().Compare(UnicodeString("STRINGS")))
+                                || !(u_temp.UpperCase().Compare(UnicodeString("TEXTURES")))
+                                || !(u_temp.UpperCase().Compare(UnicodeString("MUSIC")))
+                                || !(u_temp.UpperCase().Compare(UnicodeString("SOUND")))
+                                || !(u_temp.UpperCase().Compare(UnicodeString("INTERFACE")))
+                                || !(u_temp.UpperCase().Compare(UnicodeString("MESHES")))
+                                || !(u_temp.UpperCase().Compare(UnicodeString("PROGRAMS")))
+                                || !(u_temp.UpperCase().Compare(UnicodeString("MATERIALS")))
+                                || !(u_temp.UpperCase().Compare(UnicodeString("LODSETTINGS")))
+                                || !(u_temp.UpperCase().Compare(UnicodeString("VIS")))
+                                || !(u_temp.UpperCase().Compare(UnicodeString("MISC")))
+                                || !(u_temp.UpperCase().Compare(UnicodeString("SCRIPTS")))
+                                || !(u_temp.UpperCase().Compare(UnicodeString("SHADERSFX")))    )
+                            {
+                                t_temp[i] = _T('\\');
+                                dst_path = &t_temp[start];
+                                break;
+                            }
+                            else
+                                start = i+1;
+                        }
+                }
+
+
+
                 TListItem *item = SrcFilesListView->Items->Add();
                 item->Caption = "file";
-                item->SubItems->Add(OpenDialog->FileName.SubString(RootDirectory.Length()+2, OpenDialog->FileName.Length()-RootDirectory.Length()+2));
+                item->SubItems->Add(src_path);
                 item = DstFilesListView->Items->Add();
-                item->Caption = OpenDialog->FileName.SubString(RootDirectory.Length()+2, OpenDialog->FileName.Length()-RootDirectory.Length()+2);
+                item->Caption = dst_path;
 
                 CFile new_file;
                 new_file.Type = "file";
-                new_file.SrcPath = OpenDialog->FileName.SubString(RootDirectory.Length()+2, OpenDialog->FileName.Length()-RootDirectory.Length()+2);
-                new_file.DstPath = OpenDialog->FileName.SubString(RootDirectory.Length()+2, OpenDialog->FileName.Length()-RootDirectory.Length()+2);
-                FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].Files.push_back(new_file);
+                new_file.SrcPath = src_path;
+                new_file.DstPath = dst_path;
+                FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].Files.push_back(new_file);
             }
             else
             {
-                MessageBox(NULL, "File is out of root directory", "FOMOD Creation Tool",  MB_OK);
+                MessageBox(NULL, _T("File is out of root directory"), _T("FOMOD Creation Tool"),  MB_OK);
             }
         }
     }
@@ -734,7 +836,7 @@ void __fastcall TMainForm::AddFileButtonClick(TObject *Sender)
 
 void __fastcall TMainForm::AddFolderButtonClick(TObject *Sender)
 {
-    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.size() > 0 && PluginListBox->ItemIndex > -1)
+    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.size() > 0 && PluginListView->ItemIndex > -1)
     {
         if(OpenFolderDialog->Execute())
         {
@@ -751,11 +853,11 @@ void __fastcall TMainForm::AddFolderButtonClick(TObject *Sender)
                 new_file.Type = "folder";
                 new_file.SrcPath = OpenFolderDialog->FileName.SubString(RootDirectory.Length()+2, OpenFolderDialog->FileName.Length()-RootDirectory.Length()+2);
                 new_file.DstPath = OpenFolderDialog->FileName.SubString(RootDirectory.Length()+2, OpenFolderDialog->FileName.Length()-RootDirectory.Length()+2);
-                FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].Files.push_back(new_file);
+                FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].Files.push_back(new_file);
             }
             else
             {
-                MessageBox(NULL, "Folder is out of root directory", "FOMOD Creation Tool",  MB_OK);
+                MessageBox(NULL, _T("Folder is out of root directory"), _T("FOMOD Creation Tool"),  MB_OK);
             }
         }
     }
@@ -764,11 +866,11 @@ void __fastcall TMainForm::AddFolderButtonClick(TObject *Sender)
 
 void __fastcall TMainForm::RemoveFileFolderButtonClick(TObject *Sender)
 {
-    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].Files.size() > 0 &&
+    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].Files.size() > 0 &&
         SrcFilesListView->ItemIndex > -1)
     {
-        FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].Files.erase(
-            FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].Files.begin()+
+        FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].Files.erase(
+            FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].Files.begin()+
             SrcFilesListView->ItemIndex);
         DstFilesListView->Items->Delete(SrcFilesListView->ItemIndex);
         SrcFilesListView->Items->Delete(SrcFilesListView->ItemIndex);
@@ -800,13 +902,13 @@ void __fastcall TMainForm::DstFilesListViewClick(TObject *Sender)
 void __fastcall TMainForm::DstFilesListViewEdited(TObject *Sender, TListItem *Item,
           UnicodeString &S)
 {
-    FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].Files[SrcFilesListView->ItemIndex].DstPath = S;
+    FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].Files[SrcFilesListView->ItemIndex].DstPath = S;
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TMainForm::ChoosePluginImageButtonClick(TObject *Sender)
 {
-    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.size() > 0 && PluginListBox->ItemIndex > -1)
+    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.size() > 0 && PluginListView->ItemIndex > -1)
     {
         OpenDialog->Filter = "";
         if(OpenDialog->Execute())
@@ -815,7 +917,7 @@ void __fastcall TMainForm::ChoosePluginImageButtonClick(TObject *Sender)
             if(!(temp.Compare(RootDirectory.UpperCase())))
             {
                 PluginImageEdit->Text = OpenDialog->FileName.SubString(RootDirectory.Length()+2, OpenDialog->FileName.Length()-RootDirectory.Length()+2);
-                AnsiString ext = OpenDialog->FileName.SubString(OpenDialog->FileName.Length()-2, 3);
+                UnicodeString ext = OpenDialog->FileName.SubString(OpenDialog->FileName.Length()-2, 3);
                 if(ext == "jpg")
                 {
                     TJPEGImage *jpg = new TJPEGImage;
@@ -833,11 +935,11 @@ void __fastcall TMainForm::ChoosePluginImageButtonClick(TObject *Sender)
                 else
                     PluginImage->Picture->LoadFromFile(OpenDialog->FileName);
 
-                FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].ImagePath = PluginImageEdit->Text;
+                FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].ImagePath = PluginImageEdit->Text;
             }
             else
             {
-                MessageBox(NULL, "File is out of root directory", "FOMOD Creation Tool",  MB_OK);
+                MessageBox(NULL, _T("File is out of root directory"), _T("FOMOD Creation Tool"),  MB_OK);
             }
         }
     }
@@ -846,11 +948,11 @@ void __fastcall TMainForm::ChoosePluginImageButtonClick(TObject *Sender)
 
 void __fastcall TMainForm::ClearPluginImageButtonClick(TObject *Sender)
 {
-    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.size() > 0 && PluginListBox->ItemIndex > -1)
+    if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.size() > 0 && PluginListView->ItemIndex > -1)
     {
         PluginImageEdit->Text = "";
         PluginImage->Picture->Bitmap = NULL;
-        FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListBox->ItemIndex].ImagePath = "";
+        FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].ImagePath = "";
     }
 }
 //---------------------------------------------------------------------------
@@ -910,107 +1012,131 @@ void __fastcall TMainForm::MoveRightButtonClick(TObject *Sender)
 void __fastcall TMainForm::SaveMenuClick(TObject *Sender)
 {
     CFOMOD temp_fomod = FOMOD;
-    RunBatFile("runbefore.txt", temp_fomod);
-    FILE *fpinfoxml = fopen((RootDirectory+"\\fomod\\info.xml").c_str(), "w");
+    _TCHAR t_path[256];
+
+    _tcscpy(t_path, Application->ExeName.c_str());
+    for(int i = _tcslen(t_path); i > 0; i--)
+        if( t_path[i] == _T('\\') )
+        {
+            t_path[i+1] = _T('\0');
+            break;
+        }
+    _tcscat(t_path, _T("runbefore.txt"));
+    RunBatFile(t_path, temp_fomod);
+
+    FILE *fpinfoxml = _tfopen((RootDirectory+"\\fomod\\info.xml").c_str(), _T("wb"));
     if(fpinfoxml)
     {
-//        fprintf(fpinfoxml, "<!-- Created with FOMOD Creation Tool [%s] --> \n", "http://www.nexusmods.com");
+        // BOM
+        if(sizeof(_TCHAR) > 1)
+            fwrite(&BOM, sizeof(_TCHAR), 1, fpinfoxml);
 
-        fprintf(fpinfoxml, "<?xml version=\"1.0\" encoding=\"utf-16\"?> \n");
-        fprintf(fpinfoxml, "<fomod> \n");
-        fprintf(fpinfoxml, "\t<Name>%s</Name> \n", temp_fomod.Name.c_str());
-        fprintf(fpinfoxml, "\t<Author>%s</Author> \n", temp_fomod.AuthorName.c_str());
-        fprintf(fpinfoxml, "\t<Version>%s</Version> \n", temp_fomod.Version.c_str());
-        fprintf(fpinfoxml, "\t<Website>%s</Website> \n", temp_fomod.URL.c_str());
-        fprintf(fpinfoxml, "\t<Description>%s</Description> \n", temp_fomod.Description.c_str());
-        fprintf(fpinfoxml, "\t<Groups>\n\t\t<element>%s</element>\n\t</Groups> \n", temp_fomod.ModCategory.c_str());
-        fprintf(fpinfoxml, "</fomod> \n");
+        _ftprintf(fpinfoxml, _T("<fomod> \n"));
+        _ftprintf(fpinfoxml, _T("\t<Name>%s</Name> \n"), temp_fomod.Name.c_str());
+        _ftprintf(fpinfoxml, _T("\t<Author>%s</Author> \n"), temp_fomod.AuthorName.c_str());
+        _ftprintf(fpinfoxml, _T("\t<Version>%s</Version> \n"), temp_fomod.Version.c_str());
+        _ftprintf(fpinfoxml, _T("\t<Website>%s</Website> \n"), temp_fomod.URL.c_str());
+        _ftprintf(fpinfoxml, _T("\t<Description>%s</Description> \n"), temp_fomod.Description.c_str());
+        _ftprintf(fpinfoxml, _T("\t<Groups>\n\t\t<element>%s</element>\n\t</Groups> \n"), temp_fomod.ModCategory.c_str());
+        _ftprintf(fpinfoxml, _T("</fomod> \n"));
 
         fclose(fpinfoxml);
     }
     else
-        MessageBox(NULL, "Can't open 'fomod\\info.xml' for write", "temp_fomod Creation Tool",  MB_OK);
+        MessageBox(NULL, _T("Can't open 'fomod\\info.xml' for write"), _T("temp_fomod Creation Tool"),  MB_OK);
 
 
-    FILE *fpModuleConfigxml = fopen((RootDirectory+"\\fomod\\ModuleConfig.xml").c_str(), "w");
+    FILE *fpModuleConfigxml = _tfopen((RootDirectory+"\\fomod\\ModuleConfig.xml").c_str(), _T("wb"));
     if(fpModuleConfigxml)
     {
-        fprintf(fpModuleConfigxml, "<!-- Created with FOMOD Creation Tool [%s] --> \n", "http://www.nexusmods.com/fallout4/mods/6821");
+        // BOM
+        if(sizeof(_TCHAR) > 1)
+            fwrite(&BOM, sizeof(_TCHAR), 1, fpModuleConfigxml);
 
-        fprintf(fpModuleConfigxml, "<config xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"http://qconsulting.ca/fo3/ModConfig5.0.xsd\"> \n");
-        fprintf(fpModuleConfigxml, "\t<moduleName>%s</moduleName> \n", temp_fomod.Name.c_str());
+        _ftprintf(fpModuleConfigxml, _T("<!-- Created with FOMOD Creation Tool [%s] --> \n"), _T("http://www.nexusmods.com/fallout4/mods/6821"));
 
-        fprintf(fpModuleConfigxml, "\t<installSteps order=\"Explicit\"> \n");
+        _ftprintf(fpModuleConfigxml, _T("<config xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"http://qconsulting.ca/fo3/ModConfig5.0.xsd\"> \n"));
+        _ftprintf(fpModuleConfigxml, _T("\t<moduleName>%s</moduleName> \n"), temp_fomod.Name.c_str());
+
+        _ftprintf(fpModuleConfigxml, _T("\t<installSteps order=\"Explicit\"> \n"));
         for(int step_i = 0; step_i < temp_fomod.Steps.size(); step_i++)
         {
-            fprintf(fpModuleConfigxml, "\t\t<installStep name=\"%s\"> \n", temp_fomod.Steps[step_i].Name.c_str());
+            _ftprintf(fpModuleConfigxml, _T("\t\t<installStep name=\"%s\"> \n"), temp_fomod.Steps[step_i].Name.c_str());
             if(temp_fomod.Steps[step_i].ConditionSet.size() > 0)
             {
-                fprintf(fpModuleConfigxml, "\t\t\t<visible> \n");
+                _ftprintf(fpModuleConfigxml, _T("\t\t\t<visible> \n"));
                 for(int i = 0; i < temp_fomod.Steps[step_i].ConditionSet.size(); i++)
-                    fprintf(fpModuleConfigxml, "\t\t\t\t<flagDependency flag=\"%s\" value=\"%s\" /> \n",
+                    _ftprintf(fpModuleConfigxml, _T("\t\t\t\t<flagDependency flag=\"%s\" value=\"%s\" /> \n"),
                         temp_fomod.Steps[step_i].ConditionSet[i].Name.c_str(),
                         temp_fomod.Steps[step_i].ConditionSet[i].Value.c_str());
-                fprintf(fpModuleConfigxml, "\t\t\t</visible> \n");
+                _ftprintf(fpModuleConfigxml, _T("\t\t\t</visible> \n"));
             }
 
-            fprintf(fpModuleConfigxml, "\t\t\t<optionalFileGroups order=\"Explicit\"> \n");
+            _ftprintf(fpModuleConfigxml, _T("\t\t\t<optionalFileGroups order=\"Explicit\"> \n"));
             for(int group_i = 0; group_i < temp_fomod.Steps[step_i].PluginGroups.size(); group_i++)
             {
-                fprintf(fpModuleConfigxml, "\t\t\t\t<group name=\"%s\" type=\"%s\"> \n",
+                _ftprintf(fpModuleConfigxml, _T("\t\t\t\t<group name=\"%s\" type=\"%s\"> \n"),
                     temp_fomod.Steps[step_i].PluginGroups[group_i].Name.c_str(),
                     temp_fomod.Steps[step_i].PluginGroups[group_i].Type.c_str());
 
-                fprintf(fpModuleConfigxml, "\t\t\t\t\t<plugins order=\"Explicit\"> \n");
+                _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t<plugins order=\"Explicit\"> \n"));
                 for(int plugin_i = 0; plugin_i < temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins.size(); plugin_i++)
                 {
-                    fprintf(fpModuleConfigxml, "\t\t\t\t\t\t<plugin name=\"%s\"> \n",
+                    _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t<plugin name=\"%s\"> \n"),
                         temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].Name.c_str());
-                    fprintf(fpModuleConfigxml, "\t\t\t\t\t\t\t<description>%s</description> \n",
+                    _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t<description>%s</description> \n"),
                         temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].Description.c_str());
                     if(temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].ImagePath != "")
-                        fprintf(fpModuleConfigxml, "\t\t\t\t\t\t\t<image path=\"%s\" /> \n",
+                        _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t<image path=\"%s\" /> \n"),
                             temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].ImagePath.c_str());
                     if(temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].ConditionSet.size() > 0)
                     {
-                        fprintf(fpModuleConfigxml, "\t\t\t\t\t\t\t<conditionFlags> \n");
+                        _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t<conditionFlags> \n"));
                         for(int i = 0; i < temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].ConditionSet.size(); i++)
-                            fprintf(fpModuleConfigxml, "\t\t\t\t\t\t\t\t<flag name=\"%s\">%s</flag> \n",
+                            _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t\t<flag name=\"%s\">%s</flag> \n"),
                                 temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].ConditionSet[i].Name.c_str(),
                                 temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].ConditionSet[i].Value.c_str());
-                        fprintf(fpModuleConfigxml, "\t\t\t\t\t\t\t</conditionFlags> \n");
+                        _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t</conditionFlags> \n"));
                     }
                     if(temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].Files.size() > 0)
                     {
-                        fprintf(fpModuleConfigxml, "\t\t\t\t\t\t\t<files> \n");
+                        _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t<files> \n"));
                         for(int i = 0; i < temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].Files.size(); i++)
-                            fprintf(fpModuleConfigxml, "\t\t\t\t\t\t\t\t<%s source=\"%s\" destination=\"%s\" /> \n",
+                            _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t\t<%s source=\"%s\" destination=\"%s\" /> \n"),
                                 temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].Files[i].Type.c_str(),
                                 temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].Files[i].SrcPath.c_str(),
                                 temp_fomod.Steps[step_i].PluginGroups[group_i].Plugins[plugin_i].Files[i].DstPath.c_str());
-                        fprintf(fpModuleConfigxml, "\t\t\t\t\t\t\t</files> \n");
+                        _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t</files> \n"));
                     }
-                    fprintf(fpModuleConfigxml, "\t\t\t\t\t\t\t<typeDescriptor>\n\t\t\t\t\t\t\t\t<type name=\"Optional\"/>\n\t\t\t\t\t\t\t</typeDescriptor> \n");
-                    fprintf(fpModuleConfigxml, "\t\t\t\t\t\t</plugin> \n");
+                    _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t\t<typeDescriptor>\n\t\t\t\t\t\t\t\t<type name=\"Optional\"/>\n\t\t\t\t\t\t\t</typeDescriptor> \n"));
+                    _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t\t</plugin> \n"));
                 }
-                fprintf(fpModuleConfigxml, "\t\t\t\t\t</plugins> \n");
+                _ftprintf(fpModuleConfigxml, _T("\t\t\t\t\t</plugins> \n"));
 
-                fprintf(fpModuleConfigxml, "\t\t\t\t</group> \n");
+                _ftprintf(fpModuleConfigxml, _T("\t\t\t\t</group> \n"));
             }
-            fprintf(fpModuleConfigxml, "\t\t\t</optionalFileGroups> \n");
+            _ftprintf(fpModuleConfigxml, _T("\t\t\t</optionalFileGroups> \n"));
 
-            fprintf(fpModuleConfigxml, "\t\t</installStep> \n");
+            _ftprintf(fpModuleConfigxml, _T("\t\t</installStep> \n"));
         }
-        fprintf(fpModuleConfigxml, "\t</installSteps> \n");
+        _ftprintf(fpModuleConfigxml, _T("\t</installSteps> \n"));
 
-        fprintf(fpModuleConfigxml, "</config>");
+        _ftprintf(fpModuleConfigxml, _T("</config>"));
 
         fclose(fpModuleConfigxml);
 
-        RunBatFile("runafter.txt", temp_fomod);
+        _tcscpy(t_path, Application->ExeName.c_str());
+        for(int i = _tcslen(t_path); i > 0; i--)
+            if( t_path[i] == _T('\\') )
+            {
+                t_path[i+1] = _T('\0');
+                break;
+            }
+        _tcscat(t_path, _T("runafter.txt"));
+        RunBatFile(t_path, temp_fomod);
     }
     else
-        MessageBox(NULL, "Can't open 'fomod\\ModuleConfig.xml' for write", "FOMOD Creation Tool",  MB_OK);
+        MessageBox(NULL, _T("Can't open 'fomod\\ModuleConfig.xml' for write"), _T("FOMOD Creation Tool"),  MB_OK);
 }
 //---------------------------------------------------------------------------
 
@@ -1021,30 +1147,38 @@ void __fastcall TMainForm::OpenMenuClick(TObject *Sender)
         if(dirExists(OpenFolderDialog->FileName + "\\fomod"))
         {
             bool module_config_xml_loaded = false;
+            unsigned int fsize;
 
             _TCHAR
-                w_str[1024];
-            AnsiString
+                *t_str, *t_str_p;
+            UnicodeString
                 teginner;
-            AnsiString
+            UnicodeString
                 tegname;
-            vector < pair<AnsiString, AnsiString> > tegprops;
+            vector < pair<UnicodeString, UnicodeString> > tegprops;
 
-            int state;
+            int state = 0;
 
             NewMenuClick(Sender);
             RootDirEdit->Text = OpenFolderDialog->FileName;
             RootDirectory = OpenFolderDialog->FileName;
 
-            FILE *fpinfoxml = fopen((RootDirectory+"\\fomod\\info.xml").c_str(), "r");
+            FILE *fpinfoxml = _tfopen((RootDirectory+"\\fomod\\info.xml").c_str(), _T("rb"));
             if(fpinfoxml)
             {
-                while(fgets(w_str, 1024, fpinfoxml))
+                fseek(fpinfoxml, 0, SEEK_END);
+                fsize = ftell (fpinfoxml);
+                rewind(fpinfoxml);
+                t_str = new _TCHAR [(fsize/sizeof(_TCHAR))+1];
+                fread(t_str, sizeof(_TCHAR), fsize/sizeof(_TCHAR), fpinfoxml);
+                t_str[fsize] = _T('\0');
+
+                t_str_p = ParseXMLString(t_str, tegname, teginner, tegprops, state);
+                while( *t_str_p != _T('\0') )
                 {
-                    state = ParseXMLString(w_str, tegname, teginner, tegprops);
-                    if(state == TEG_NONE)
+                    if( state == TEG_READY )
                     {
-                        AnsiString tegname_l = tegname.LowerCase();
+                        UnicodeString tegname_l = tegname.LowerCase();
                         if(tegname_l == "name")
                             FOMOD.Name = teginner;
                         if(tegname_l == "author")
@@ -1059,23 +1193,41 @@ void __fastcall TMainForm::OpenMenuClick(TObject *Sender)
                             FOMOD.ModCategory = teginner;
                         tegname = "";
                     }
+                    state = TEG_NONE;
+                    t_str_p = ParseXMLString(t_str_p, tegname, teginner, tegprops, state);
                 }
                 fclose(fpinfoxml);
+                delete [] t_str;
             }
+            ModNameEdit->Text = FOMOD.Name;
+            ModAuthorEdit->Text = FOMOD.AuthorName;
+            ModVersionEdit->Text = FOMOD.Version;
+            ModURLEdit->Text = FOMOD.URL;
+            ModDesccriptionMemo->Lines->Text = FOMOD.Description;
+            ModCategoryEdit->Text = FOMOD.ModCategory;
 
 
-            FILE *fpModuleConfigxml = fopen((RootDirectory+"\\fomod\\ModuleConfig.xml").c_str(), "r");
-            if(fpinfoxml)
+            FILE *fpModuleConfigxml = _tfopen((RootDirectory+"\\fomod\\ModuleConfig.xml").c_str(), _T("rb"));
+            if(fpModuleConfigxml)
             {
+                fseek(fpModuleConfigxml, 0, SEEK_END);
+                fsize = ftell (fpModuleConfigxml);
+                rewind(fpModuleConfigxml);
+                t_str = new _TCHAR [(fsize/sizeof(_TCHAR))+1];
+                fread(t_str, sizeof(_TCHAR), fsize/sizeof(_TCHAR), fpModuleConfigxml);
+                t_str[fsize] = _T('\0');
+
+
+
                 int curr_step = -1;
                 int curr_group = -1;
                 int curr_plugin = -1;
-                while(fgets(w_str, 1024, fpModuleConfigxml))
+                t_str_p = ParseXMLString(t_str, tegname, teginner, tegprops, state);
+                while( *t_str_p != _T('\0') )
                 {
-                    state = ParseXMLString(w_str, tegname, teginner, tegprops);
-                    if(state == TEG_NONE || state == TEG_INNERTEXT)
+                    if(state == TEG_READY)
                     {
-                        AnsiString tegname_l = tegname.LowerCase();
+                        UnicodeString tegname_l = tegname.LowerCase();
                         if(tegname_l == "installstep")
                         {
                             CStep new_step;
@@ -1128,8 +1280,12 @@ void __fastcall TMainForm::OpenMenuClick(TObject *Sender)
                         }
                         if(tegname_l == "description")
                         {
-                            if(curr_step > -1 && curr_group > -1 && curr_plugin > -1)
-                                FOMOD.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].Description = teginner;
+                            if(curr_step > -1 && curr_group > -1 && curr_plugin > -1 && teginner != _T("\n"))
+                                if(FOMOD.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].Description == "")
+                                    FOMOD.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].Description = teginner;
+                                else
+                                    FOMOD.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].Description =
+                                    FOMOD.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].Description + teginner;
                         }
                         if(tegname_l == "image")
                         {
@@ -1176,14 +1332,13 @@ void __fastcall TMainForm::OpenMenuClick(TObject *Sender)
                                 FOMOD.Steps[curr_step].PluginGroups[curr_group].Plugins[curr_plugin].Files.push_back(new_file);
                             }
                         }
-
-
-
-                        tegname = "";
                     }
+                    state = TEG_NONE;
+                    t_str_p = ParseXMLString(t_str_p, tegname, teginner, tegprops, state);
                 }
                 module_config_xml_loaded = true;
                 fclose(fpModuleConfigxml);
+                delete [] t_str;
             }
 
 
@@ -1203,17 +1358,6 @@ void __fastcall TMainForm::OpenMenuClick(TObject *Sender)
             CurrentStepIndx = StepCount-1;
             StepsTabControlChange(Sender);
 
-
-
-
-            ModNameEdit->Text = FOMOD.Name;
-            ModAuthorEdit->Text = FOMOD.AuthorName;
-            ModVersionEdit->Text = FOMOD.Version;
-            ModURLEdit->Text = FOMOD.URL;
-            ModDescEdit->Text = FOMOD.Description;
-            ModCategoryEdit->Text = FOMOD.ModCategory;
-
-
             StepsTabSheet->TabVisible = true;
             StepsTabSheet->Show();
             ProceedButton->Enabled = false;
@@ -1223,7 +1367,7 @@ void __fastcall TMainForm::OpenMenuClick(TObject *Sender)
         }
         else
         {
-            MessageBox(NULL, "There is no 'fomod' catalog in specified directory. Choose root directory containing 'fomod' folder.", "FOMOD Creation Tool", MB_OK);
+            MessageBox(NULL, _T("There is no 'fomod' catalog in specified directory. Choose root directory containing 'fomod' folder."), _T("FOMOD Creation Tool"), MB_OK);
         }
     }
 }
@@ -1255,13 +1399,21 @@ void __fastcall TMainForm::NewMenuClick(TObject *Sender)
 
 void __fastcall TMainForm::RunBeforeSaveMenuClick(TObject *Sender)
 {
-    FILE *fp = fopen("runbefore.txt", "r");
-    _TCHAR str[1024];
+    _TCHAR t_path[256];
+    _tcscpy(t_path, Application->ExeName.c_str());
+    for(int i = _tcslen(t_path); i > 0; i--)
+        if( t_path[i] == _T('\\') )
+        {
+            t_path[i+1] = _T('\0');
+            break;
+        }
+    _tcscat(t_path, _T("runbefore.txt"));
+    FILE *fp = _tfopen(t_path, _T("r"));
     if(fp)
     {
         fclose(fp);
         ScriptForm1->ScriptMemo->Clear();
-        ScriptForm1->ScriptMemo->Lines->LoadFromFile("runbefore.txt");
+        ScriptForm1->ScriptMemo->Lines->LoadFromFile(t_path);
     }
     else
         ScriptForm1->ScriptMemo->Clear();
@@ -1269,7 +1421,7 @@ void __fastcall TMainForm::RunBeforeSaveMenuClick(TObject *Sender)
     ScriptForm1->ShowModal();
     if(ScriptForm1->ModalResult == mrOk)
     {
-        ScriptForm1->ScriptMemo->Lines->SaveToFile("runbefore.txt");
+        ScriptForm1->ScriptMemo->Lines->SaveToFile(t_path);
     }
 }
 //---------------------------------------------------------------------------
@@ -1277,13 +1429,21 @@ void __fastcall TMainForm::RunBeforeSaveMenuClick(TObject *Sender)
 
 void __fastcall TMainForm::RunAfterSaveMenuClick(TObject *Sender)
 {
-    FILE *fp = fopen("runafter.txt", "r");
-    _TCHAR str[1024];
+    _TCHAR t_path[256];
+    _tcscpy(t_path, Application->ExeName.c_str());
+    for(int i = _tcslen(t_path); i > 0; i--)
+        if( t_path[i] == _T('\\') )
+        {
+            t_path[i+1] = _T('\0');
+            break;
+        }
+    _tcscat(t_path, _T("runafter.txt"));
+    FILE *fp = _tfopen(t_path, _T("r"));
     if(fp)
     {
         fclose(fp);
         ScriptForm1->ScriptMemo->Clear();
-        ScriptForm1->ScriptMemo->Lines->LoadFromFile("runafter.txt");
+        ScriptForm1->ScriptMemo->Lines->LoadFromFile(t_path);
     }
     else
         ScriptForm1->ScriptMemo->Clear();
@@ -1291,9 +1451,15 @@ void __fastcall TMainForm::RunAfterSaveMenuClick(TObject *Sender)
     ScriptForm1->ShowModal();
     if(ScriptForm1->ModalResult == mrOk)
     {
-        ScriptForm1->ScriptMemo->Lines->SaveToFile("runafter.txt");
+        ScriptForm1->ScriptMemo->Lines->SaveToFile(t_path);
     }
 
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::ExitMenuClick(TObject *Sender)
+{
+    exit(0);
 }
 //---------------------------------------------------------------------------
 

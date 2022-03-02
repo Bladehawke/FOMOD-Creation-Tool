@@ -21,7 +21,7 @@ class CFile
     public:
         CFile();
 
-        AnsiString Type;
+        UnicodeString Type;
         UnicodeString SrcPath;
         UnicodeString DstPath;
 };
@@ -35,7 +35,7 @@ class CPlugin
 
         UnicodeString Name;
         UnicodeString Description;
-        AnsiString ImagePath;
+        UnicodeString ImagePath;
         vector <CCondition> ConditionSet;
         vector <CFile> Files;
 };
@@ -44,11 +44,11 @@ class CPluginGroup
 {
     public:
         CPluginGroup();
-        CPluginGroup(UnicodeString name, AnsiString type);
+        CPluginGroup(UnicodeString name, UnicodeString type);
         ~CPluginGroup();
 
         UnicodeString Name;
-        AnsiString Type;
+        UnicodeString Type;
         vector <CPlugin> Plugins;
 };
 
@@ -74,8 +74,8 @@ class CFOMOD
         UnicodeString Name;
         UnicodeString AuthorName;
         UnicodeString Version;
-        AnsiString ModCategory;
-        AnsiString URL;
+        UnicodeString ModCategory;
+        UnicodeString URL;
         UnicodeString Description;
         vector <CStep> Steps;
 };

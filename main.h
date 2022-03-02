@@ -22,7 +22,6 @@ __published:	// IDE-managed Components
     TLabeledEdit *ModAuthorEdit;
     TLabeledEdit *ModVersionEdit;
     TLabeledEdit *ModURLEdit;
-    TLabeledEdit *ModDescEdit;
     TGroupBox *WorkSpaceGroupBox;
     TLabeledEdit *RootDirEdit;
     TButton *OpenRootDirButton;
@@ -39,7 +38,6 @@ __published:	// IDE-managed Components
     TButton *AddConditionButton;
     TButton *DeleteConditionButton;
     TGroupBox *GroupsGroupBox;
-    TListBox *PluginListBox;
     TLabeledEdit *GroupNameEdit;
     TLabel *Label4;
     TComboBox *GroupTypeComboBox;
@@ -105,6 +103,11 @@ __published:	// IDE-managed Components
     TMenuItem *Script1;
     TMenuItem *RunBeforeSaveMenu;
     TMenuItem *RunAfterSaveMenu;
+    TMemo *ModDesccriptionMemo;
+    TLabel *Label10;
+    TListView *PluginListView;
+    TPanel *Panel5;
+    TPanel *Panel6;
     void __fastcall FormCreate(TObject *Sender);
     void __fastcall OpenRootDirButtonClick(TObject *Sender);
     void __fastcall RootDirEditChange(TObject *Sender);
@@ -113,13 +116,14 @@ __published:	// IDE-managed Components
     void __fastcall ModVersionEditChange(TObject *Sender);
     void __fastcall ModCategoryEditChange(TObject *Sender);
     void __fastcall ModURLEditChange(TObject *Sender);
-    void __fastcall ModDescEditChange(TObject *Sender);
+    void __fastcall ModDesccriptionMemoChange(TObject *Sender);
     void __fastcall ProceedButtonClick(TObject *Sender);
     void __fastcall StepNameEditChange(TObject *Sender);
     void __fastcall AddConditionButtonClick(TObject *Sender);
     void __fastcall DeleteConditionButtonClick(TObject *Sender);
     void __fastcall AddGroupButtonClick(TObject *Sender);
     void __fastcall RemoveGroupButtonClick(TObject *Sender);
+    void __fastcall GroupListViewEdited(TObject *Sender, TListItem *Item, UnicodeString &S);
     void __fastcall GroupUpButtonClick(TObject *Sender);
     void __fastcall GroupDownButtonClick(TObject *Sender);
     void __fastcall GroupListViewClick(TObject *Sender);
@@ -127,7 +131,8 @@ __published:	// IDE-managed Components
     void __fastcall RemovePluginButtonClick(TObject *Sender);
     void __fastcall PluginUpButtonClick(TObject *Sender);
     void __fastcall PluginDownButtonClick(TObject *Sender);
-    void __fastcall PluginListBoxClick(TObject *Sender);
+    void __fastcall PluginListViewClick(TObject *Sender);
+    void __fastcall PluginListViewEdited(TObject *Sender, TListItem *Item, UnicodeString &S);
     void __fastcall AddVaribleButtonClick(TObject *Sender);
     void __fastcall DeleteVaribleButtonClick(TObject *Sender);
     void __fastcall VaribleSetListViewClick(TObject *Sender);
@@ -150,6 +155,10 @@ __published:	// IDE-managed Components
     void __fastcall NewMenuClick(TObject *Sender);
     void __fastcall RunBeforeSaveMenuClick(TObject *Sender);
     void __fastcall RunAfterSaveMenuClick(TObject *Sender);
+    void __fastcall ExitMenuClick(TObject *Sender);
+
+
+
 
 
 

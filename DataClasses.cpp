@@ -24,7 +24,7 @@ CPlugin::~CPlugin()
 }
 
 CPluginGroup::CPluginGroup() {}
-CPluginGroup::CPluginGroup(UnicodeString name, AnsiString type) : Name(name), Type(type) {}
+CPluginGroup::CPluginGroup(UnicodeString name, UnicodeString type) : Name(name), Type(type) {}
 CPluginGroup::~CPluginGroup()
 {
     Plugins.clear();

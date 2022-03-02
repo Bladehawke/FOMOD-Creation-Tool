@@ -19,6 +19,7 @@
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
+			<_TCHARMapping>wchar_t</_TCHARMapping>
 			<OutputExt>exe</OutputExt>
 			<PackageImports>vclx.bpi;vcl.bpi;dbrtl.bpi;Rave76VCL.bpi;bdertl.bpi;rtl.bpi;bcbie.bpi;vclactnband.bpi;xmlrtl.bpi;bcbsmp.bpi;vcldb.bpi;vcldbx.bpi;dsnap.bpi;dsnapcon.bpi;TeeUI.bpi;TeeDB.bpi;Tee.bpi;adortl.bpi;vclib.bpi;ibxpress.bpi;IndyCore.bpi;IndySystem.bpi;IndyProtocols.bpi;inet.bpi;intrawebdb_100_120.bpi;Intraweb_100_120.bpi;vclie.bpi;soaprtl.bpi;vclribbon.bpi;dbexpress.bpi;DbxCommonDriver.bpi;DataSnapIndy10ServerTransport.bpi;DataSnapProviderClient.bpi;DataSnapServer.bpi;DBXSybaseASADriver.bpi;DBXInterBaseDriver.bpi;DBXMySQLDriver.bpi;dbxcds.bpi;DbxClientDriver.bpi;DBXSybaseASEDriver.bpi;DBXOracleDriver.bpi;DBXMSSQLDriver.bpi;DBXInformixDriver.bpi;DBXDb2Driver.bpi</PackageImports>
 			<LinkPackageStatics>rtl.lib;vcl.lib</LinkPackageStatics>
@@ -58,17 +59,6 @@
 			<TASM_Debugging>None</TASM_Debugging>
 		</PropertyGroup>
 		<ItemGroup>
-			<CppCompile Include="FOMODCreationTool.cpp">
-				<BuildOrder>0</BuildOrder>
-			</CppCompile>
-			<ResFiles Include="FOMODCreationTool.res">
-				<BuildOrder>1</BuildOrder>
-			</ResFiles>
-			<CppCompile Include="main.cpp">
-				<Form>MainForm</Form>
-				<DependentOn>main.h</DependentOn>
-				<BuildOrder>2</BuildOrder>
-			</CppCompile>
 			<CppCompile Include="DataClasses.cpp">
 				<DependentOn>DataClasses.h</DependentOn>
 				<BuildOrder>3</BuildOrder>
@@ -78,8 +68,19 @@
 				<DependentOn>ScriptForm.h</DependentOn>
 				<BuildOrder>4</BuildOrder>
 			</CppCompile>
-			<FormResources Include="main.dfm"/>
+			<CppCompile Include="main.cpp">
+				<Form>MainForm</Form>
+				<DependentOn>main.h</DependentOn>
+				<BuildOrder>2</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="FOMODCreationTool.cpp">
+				<BuildOrder>0</BuildOrder>
+			</CppCompile>
+			<ResFiles Include="FOMODCreationTool.res">
+				<BuildOrder>1</BuildOrder>
+			</ResFiles>
 			<FormResources Include="ScriptForm.dfm"/>
+			<FormResources Include="main.dfm"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
@@ -102,9 +103,9 @@
 						<VersionInfo Name="IncludeVerInfo">True</VersionInfo>
 						<VersionInfo Name="AutoIncBuild">True</VersionInfo>
 						<VersionInfo Name="MajorVer">1</VersionInfo>
-						<VersionInfo Name="MinorVer">1</VersionInfo>
+						<VersionInfo Name="MinorVer">2</VersionInfo>
 						<VersionInfo Name="Release">0</VersionInfo>
-						<VersionInfo Name="Build">8</VersionInfo>
+						<VersionInfo Name="Build">11</VersionInfo>
 						<VersionInfo Name="Debug">False</VersionInfo>
 						<VersionInfo Name="PreRelease">False</VersionInfo>
 						<VersionInfo Name="Special">False</VersionInfo>
@@ -116,7 +117,7 @@
 					<VersionInfoKeys>
 						<VersionInfoKeys Name="CompanyName"/>
 						<VersionInfoKeys Name="FileDescription"/>
-						<VersionInfoKeys Name="FileVersion">1.1.0.8</VersionInfoKeys>
+						<VersionInfoKeys Name="FileVersion">1.2.0.11</VersionInfoKeys>
 						<VersionInfoKeys Name="InternalName"/>
 						<VersionInfoKeys Name="LegalCopyright"/>
 						<VersionInfoKeys Name="LegalTrademarks"/>
@@ -161,7 +162,7 @@
 						<Source Name="MainSource">FOMODCreationTool.cpp</Source>
 					</Source>
 					<Language>
-						<Language Name="RootDir">D:\Куски кода\FOMOD Creation Tool\</Language>
+						<Language Name="RootDir">D:\FOMOD Creation Tool\</Language>
 					</Language>
 				</CPlusPlusBuilder.Personality>
 			</BorlandProject>

@@ -1134,6 +1134,7 @@ object MainForm: TMainForm
                 Width = 253
                 Height = 21
                 TabOrder = 0
+                OnChange = StepNameEditChange
               end
             end
           end
@@ -2163,12 +2164,12 @@ object MainForm: TMainForm
     Enabled = False
     Interval = 2000
     OnTimer = ShowConfirmationTimerTimer
-    Left = 592
+    Left = 624
     Top = 24
   end
   object PopupMenu: TPopupMenu
     OnPopup = PopupMenuPopup
-    Left = 960
+    Left = 952
     Top = 24
     object EditListElementCMenu: TMenuItem
       Caption = 'Edit'

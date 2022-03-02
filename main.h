@@ -19,6 +19,7 @@ typedef struct SSettings
     AnsiString langFile;
     bool hideOpenFolder;
     bool hideOpenFile;
+    bool replaceRN;
     int interfaceTextSize;
     int splashScreenSeconds;
     int MaxRecentFiles;

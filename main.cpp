@@ -157,7 +157,7 @@ _TCHAR *ParseXMLString(_TCHAR *xml_string, UnicodeString &tegname, UnicodeString
                     ustr = "";
                 }
 
-                if(w_letter == '/' || w_letter == '?')
+                if(w_letter == '/')
                     state = TEG_CLOSE;
                 else if(w_letter == '>')
                 {
@@ -671,6 +671,7 @@ void SaveConfig(TSettings Settings)
         fprintf(fp, "[General]\n");
         fprintf(fp, "bHideOpenFolder = %d\n", (int)Settings.hideOpenFolder);
         fprintf(fp, "bHideOpenFile = %d\n", (int)Settings.hideOpenFile);
+        fprintf(fp, "bReplaceRN = %d\n", (int)Settings.replaceRN);
         fprintf(fp, "iInterfaceTextSize = %d\n", Settings.interfaceTextSize);
         fprintf(fp, "iSplashScreenSec = %d\n", Settings.splashScreenSeconds);
         fprintf(fp, "sLanguage = %s\n", Settings.langFile.c_str());
@@ -726,6 +727,12 @@ bool LoadSettings(TSettings &settings)
                 while(cstr[i] == ' ' || cstr[i] == '=')
                     i++;
                 settings.hideOpenFile = bool(atoi(&cstr[i]));
+            }
+            else if(token1.LowerCase() == "breplacern")
+            {
+                while(cstr[i] == ' ' || cstr[i] == '=')
+                    i++;
+                settings.replaceRN = bool(atoi(&cstr[i]));
             }
             else if(token1.LowerCase() == "iinterfacetextsize")
             {
@@ -921,10 +928,13 @@ void ManageRecentFiles(UnicodeString path)
                 Settings.RecentFiles.erase(it);
                 break;
             }
-        while(Settings.RecentFiles.size() >= Settings.MaxRecentFiles)
-            Settings.RecentFiles.pop_back();
-        Settings.RecentFiles.push_front(path);
-        SaveConfig(Settings);
+        if(Settings.MaxRecentFiles > 0)
+        {
+            while(Settings.RecentFiles.size() >= Settings.MaxRecentFiles)
+                Settings.RecentFiles.pop_back();
+            Settings.RecentFiles.push_front(path);
+            SaveConfig(Settings);
+        }
     }
     while(MainForm->RecentMenu->Count > 1)
         if(MainForm->RecentMenu->Items[0]->Name != "RecentFileTemplate")
@@ -1029,6 +1039,42 @@ void __fastcall TMainForm::ModURLEditChange(TObject *Sender)
 
 void __fastcall TMainForm::ModDesccriptionMemoChange(TObject *Sender)
 {
+    UnicodeString u_temp;
+    int cursor = ModDesccriptionMemo->SelStart;
+    int text_l = ModDesccriptionMemo->Text.Length();
+    int pos;
+    u_temp = ModDesccriptionMemo->Lines->Text;
+
+    while( (pos = u_temp.Pos("<")) > 0 )
+    {
+        u_temp = StringReplace(u_temp, "<", "&#60;", TReplaceFlags());
+        if(pos <= cursor)
+            cursor += 4;
+    }
+    while( (pos = u_temp.Pos(">")) > 0 )
+    {
+        u_temp = StringReplace(u_temp, ">", "&#62;", TReplaceFlags());
+        if(pos <= cursor)
+            cursor += 4;
+    }
+//    if(Settings.replaceRN)
+//    {
+//        while( (pos = u_temp.Pos("&#13;&#10;\r\n")) > 0 )
+//        {
+//            u_temp = StringReplace(u_temp, "&#13;&#10;\r\n", "\r\n", TReplaceFlags());
+//            if(pos <= cursor)
+//                cursor -= 10;
+//        }
+//        while( (pos = u_temp.Pos("\r\n")) > 0 )
+//        {
+//            u_temp = StringReplace(u_temp, "\r\n", "&#13;&#10;\n", TReplaceFlags());
+//            if(pos <= cursor)
+//                cursor += 10;
+//        }
+//    }
+
+    ModDesccriptionMemo->Lines->Text = u_temp;
+    ModDesccriptionMemo->SelStart = cursor;
     FOMOD.Description = ModDesccriptionMemo->Lines->Text;
 }
 //---------------------------------------------------------------------------
@@ -1081,10 +1127,12 @@ void __fastcall TMainForm::StepsTabControlChange(TObject *Sender)
     CondFileDependValueComboBox->Clear();
     VaribleValueComboBox->Clear();
     pdFileFlagNameComboBox->Clear();
+    pdStateValueComboBox->Clear();
     PluginImageEdit->Text = "";
     PluginImage->Picture->Bitmap = NULL;
     MoveLeftButton->Enabled = false;
     MoveRightButton->Enabled = false;
+    DeleteStepButton->Enabled = false;
 
     CurrentStepIndx = StepsTabControl->ActivePageIndex;
     if(CurrentStepIndx < FOMOD.Steps.size())
@@ -1142,6 +1190,8 @@ void __fastcall TMainForm::StepsTabControlChange(TObject *Sender)
                                 TotalDependencySet.push_back(dependency_name);
                         }
             }
+    if(FOMOD.Steps.size() > 1)
+        DeleteStepButton->Enabled = true;
 
 
     if(TotalConditionSet.size() > 0)
@@ -1161,6 +1211,7 @@ void __fastcall TMainForm::StepsTabControlChange(TObject *Sender)
         ConditionValueComboBox->Items->Add(TotalValueSet[i]);
         VaribleValueComboBox->Items->Add(TotalValueSet[i]);
         CondFileDependValueComboBox->Items->Add(TotalValueSet[i]);
+        pdStateValueComboBox->Items->Add(TotalValueSet[i]);
     }
     for(int i = 0; i < TotalDependencySet.size(); i++)
     {
@@ -1555,7 +1606,43 @@ void __fastcall TMainForm::PluginDescriptionMemoChange(TObject *Sender)
 {
     if(FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins.size() > 0 && PluginListView->ItemIndex > -1)
     {
-        int len = _tcslen(PluginDescriptionMemo->Lines[0].Text.c_str());
+        UnicodeString u_temp;
+        int cursor = PluginDescriptionMemo->SelStart;
+        int text_l = PluginDescriptionMemo->Text.Length();
+        int pos;
+        u_temp = PluginDescriptionMemo->Lines->Text;
+
+        while( (pos = u_temp.Pos("<")) > 0 )
+        {
+            u_temp = StringReplace(u_temp, "<", "&#60;", TReplaceFlags());
+            if(pos <= cursor)
+                cursor += 4;
+        }
+        while( (pos = u_temp.Pos(">")) > 0 )
+        {
+            u_temp = StringReplace(u_temp, ">", "&#62;", TReplaceFlags());
+            if(pos <= cursor)
+                cursor += 4;
+        }
+        if(Settings.replaceRN)
+        {
+            while( (pos = u_temp.Pos("&#13;&#10;\r\n")) > 0 )
+            {
+                u_temp = StringReplace(u_temp, "&#13;&#10;\r\n", "\r\n", TReplaceFlags());
+                if(pos <= cursor)
+                    cursor -= 10;
+            }
+            while( (pos = u_temp.Pos("\r\n")) > 0 )
+            {
+                u_temp = StringReplace(u_temp, "\r\n", "&#13;&#10;\n", TReplaceFlags());
+                if(pos <= cursor)
+                    cursor += 10;
+            }
+        }
+
+        PluginDescriptionMemo->Lines->Text = u_temp;
+        PluginDescriptionMemo->SelStart = cursor;
+
         FOMOD.Steps[CurrentStepIndx].PluginGroups[GroupListView->ItemIndex].Plugins[PluginListView->ItemIndex].Description =
             PluginDescriptionMemo->Lines->Text;
     }
@@ -1843,12 +1930,18 @@ void __fastcall TMainForm::SaveMenuClick(TObject *Sender)
             fwrite(&BOM, sizeof(_TCHAR), 1, fpinfoxml);
 
         _ftprintf(fpinfoxml, _T("<fomod> \n"));
-        _ftprintf(fpinfoxml, _T("\t<Name>%s</Name> \n"), temp_fomod.Name.c_str());
-        _ftprintf(fpinfoxml, _T("\t<Author>%s</Author> \n"), temp_fomod.AuthorName.c_str());
-        _ftprintf(fpinfoxml, _T("\t<Version>%s</Version> \n"), temp_fomod.Version.c_str());
-        _ftprintf(fpinfoxml, _T("\t<Website>%s</Website> \n"), temp_fomod.URL.c_str());
-        _ftprintf(fpinfoxml, _T("\t<Description>%s</Description> \n"), temp_fomod.Description.c_str());
-        _ftprintf(fpinfoxml, _T("\t<Groups>\n\t\t<element>%s</element>\n\t</Groups> \n"), temp_fomod.ModCategory.c_str());
+        if(temp_fomod.Name != "")
+            _ftprintf(fpinfoxml, _T("\t<Name>%s</Name> \n"), temp_fomod.Name.c_str());
+        if(temp_fomod.AuthorName != "")
+            _ftprintf(fpinfoxml, _T("\t<Author>%s</Author> \n"), temp_fomod.AuthorName.c_str());
+        if(temp_fomod.Version != "")
+            _ftprintf(fpinfoxml, _T("\t<Version>%s</Version> \n"), temp_fomod.Version.c_str());
+        if(temp_fomod.URL != "")
+            _ftprintf(fpinfoxml, _T("\t<Website>%s</Website> \n"), temp_fomod.URL.c_str());
+        if(temp_fomod.Description != "")
+            _ftprintf(fpinfoxml, _T("\t<Description>%s</Description> \n"), temp_fomod.Description.c_str());
+        if(temp_fomod.ModCategory != "")
+            _ftprintf(fpinfoxml, _T("\t<Groups>\n\t\t<element>%s</element>\n\t</Groups> \n"), temp_fomod.ModCategory.c_str());
         _ftprintf(fpinfoxml, _T("</fomod> \n"));
 
         fclose(fpinfoxml);
@@ -2081,6 +2174,10 @@ void __fastcall TMainForm::NewMenuClick(TObject *Sender)
     StepCount = FOMOD.Steps.size();
     CurrentStepIndx = 0;
 
+    RequiredFilesSrcListView->Clear();
+    RequiredFilesDstListView->Clear();
+    CondFilesDstListView->Clear();
+    CondFilesSrcListView->Clear();
     StepsTabSheet->Enabled = false;
     RequiredInstallsTabSheet->Enabled = false;
     ConditionalInstallsTabSheet->Enabled = false;
@@ -3049,8 +3146,8 @@ void __fastcall TMainForm::CondFileRemoveFileFolderButtonClick(TObject *Sender)
         }
         else if( ind >= CondFilesSrcListView->Items->Count-1)
         {
-            CondFilesSrcListView->ItemIndex = RequiredFilesSrcListView->Items->Count-1;
-            CondFilesDstListView->ItemIndex = RequiredFilesSrcListView->Items->Count-1;
+            CondFilesSrcListView->ItemIndex = CondFilesSrcListView->Items->Count-1;
+            CondFilesDstListView->ItemIndex = CondFilesSrcListView->Items->Count-1;
         }
         RequiredFilesSrcListViewSelectItem(Sender, NULL, NULL);
     }
@@ -3133,6 +3230,7 @@ void __fastcall TMainForm::SettingsMenuClick(TObject *Sender)
 
         SettingsForm->HideOpenFolderCheckBox->Checked = Settings.hideOpenFolder;
         SettingsForm->HideOpenFileCheckBox->Checked = Settings.hideOpenFile;
+        SettingsForm->ReplaceRNCheckBox->Checked = Settings.replaceRN;
         SettingsForm->IntTextSizeComboBox->Text = Settings.interfaceTextSize;
         SettingsForm->MaxRecentEdit->Text = Settings.MaxRecentFiles;
 
@@ -3165,6 +3263,7 @@ void __fastcall TMainForm::SettingsMenuClick(TObject *Sender)
     {
         Settings.hideOpenFolder = SettingsForm->HideOpenFolderCheckBox->Checked;
         Settings.hideOpenFile = SettingsForm->HideOpenFileCheckBox->Checked;
+        Settings.replaceRN = SettingsForm->ReplaceRNCheckBox->Checked;
         Settings.interfaceTextSize = SettingsForm->IntTextSizeComboBox->Text.ToInt();
         Settings.langFile = SettingsForm->LanguagesComboBox->Text;
         Settings.MaxRecentFiles = SettingsForm->MaxRecentEdit->Text.ToInt();

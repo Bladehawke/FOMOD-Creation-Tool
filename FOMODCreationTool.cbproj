@@ -59,6 +59,22 @@
 			<TASM_Debugging>None</TASM_Debugging>
 		</PropertyGroup>
 		<ItemGroup>
+			<CppCompile Include="ScriptForm.cpp">
+				<Form>ScriptForm1</Form>
+				<DependentOn>ScriptForm.h</DependentOn>
+				<BuildOrder>4</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="FOMODCreationTool.cpp">
+				<BuildOrder>0</BuildOrder>
+			</CppCompile>
+			<ResFiles Include="FOMODCreationTool.res">
+				<BuildOrder>1</BuildOrder>
+			</ResFiles>
+			<CppCompile Include="main.cpp">
+				<Form>MainForm</Form>
+				<DependentOn>main.h</DependentOn>
+				<BuildOrder>2</BuildOrder>
+			</CppCompile>
 			<CppCompile Include="FOMODClass.cpp">
 				<DependentOn>FOMODClass.h</DependentOn>
 				<BuildOrder>3</BuildOrder>
@@ -73,26 +89,10 @@
 				<DependentOn>SplashScreen.h</DependentOn>
 				<BuildOrder>6</BuildOrder>
 			</CppCompile>
-			<CppCompile Include="main.cpp">
-				<Form>MainForm</Form>
-				<DependentOn>main.h</DependentOn>
-				<BuildOrder>2</BuildOrder>
-			</CppCompile>
-			<CppCompile Include="ScriptForm.cpp">
-				<Form>ScriptForm1</Form>
-				<DependentOn>ScriptForm.h</DependentOn>
-				<BuildOrder>4</BuildOrder>
-			</CppCompile>
-			<CppCompile Include="FOMODCreationTool.cpp">
-				<BuildOrder>0</BuildOrder>
-			</CppCompile>
-			<ResFiles Include="FOMODCreationTool.res">
-				<BuildOrder>1</BuildOrder>
-			</ResFiles>
+			<FormResources Include="ScriptForm.dfm"/>
+			<FormResources Include="main.dfm"/>
 			<FormResources Include="SettingsForm.dfm"/>
 			<FormResources Include="SplashScreen.dfm"/>
-			<FormResources Include="main.dfm"/>
-			<FormResources Include="ScriptForm.dfm"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
@@ -116,8 +116,8 @@
 						<VersionInfo Name="AutoIncBuild">True</VersionInfo>
 						<VersionInfo Name="MajorVer">1</VersionInfo>
 						<VersionInfo Name="MinorVer">5</VersionInfo>
-						<VersionInfo Name="Release">4</VersionInfo>
-						<VersionInfo Name="Build">20</VersionInfo>
+						<VersionInfo Name="Release">6</VersionInfo>
+						<VersionInfo Name="Build">22</VersionInfo>
 						<VersionInfo Name="Debug">False</VersionInfo>
 						<VersionInfo Name="PreRelease">False</VersionInfo>
 						<VersionInfo Name="Special">False</VersionInfo>
@@ -129,7 +129,7 @@
 					<VersionInfoKeys>
 						<VersionInfoKeys Name="CompanyName"/>
 						<VersionInfoKeys Name="FileDescription"/>
-						<VersionInfoKeys Name="FileVersion">1.5.4.20</VersionInfoKeys>
+						<VersionInfoKeys Name="FileVersion">1.5.6.22</VersionInfoKeys>
 						<VersionInfoKeys Name="InternalName"/>
 						<VersionInfoKeys Name="LegalCopyright"/>
 						<VersionInfoKeys Name="LegalTrademarks"/>
@@ -174,7 +174,7 @@
 						<Source Name="MainSource">FOMODCreationTool.cpp</Source>
 					</Source>
 					<Language>
-						<Language Name="RootDir">D:\FOMOD Creation Tool\</Language>
+						<Language Name="RootDir">..\Куски кода\FOMOD Creation Tool\</Language>
 					</Language>
 				</CPlusPlusBuilder.Personality>
 			</BorlandProject>

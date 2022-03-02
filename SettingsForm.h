@@ -34,6 +34,7 @@ __published:	// IDE-managed Components
     TButton *MoveUpButton;
     TButton *MoveDownButton;
     TButton *RemoveButton;
+    TCheckBox *ReplaceRNCheckBox;
     void __fastcall RecentListViewSelectItem(TObject *Sender, TListItem *Item, bool Selected);
     void __fastcall MoveUpButtonClick(TObject *Sender);
     void __fastcall MoveDownButtonClick(TObject *Sender);

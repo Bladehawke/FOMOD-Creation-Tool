@@ -84,12 +84,17 @@ void __fastcall TSplashForm::Timer1Timer(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TSplashForm::FormCreate(TObject *Sender)
 {
-    TJPEGImage *jpg = new TJPEGImage;
-    jpg->LoadFromFile("logo.jpg");
-    LogoImage->Picture->Bitmap->Assign(jpg);
-    delete jpg;
-    SplashForm->Height = LogoImage->Height;
-    SplashForm->Width = LogoImage->Width;
+    FILE *fp = fopen("logo.jpg", "r");
+    if(fp)
+    {
+        fclose(fp);
+        TJPEGImage *jpg = new TJPEGImage;
+        jpg->LoadFromFile("logo.jpg");
+        LogoImage->Picture->Bitmap->Assign(jpg);
+        delete jpg;
+        SplashForm->Height = LogoImage->Height;
+        SplashForm->Width = LogoImage->Width;
+    }
 }
 //---------------------------------------------------------------------------
 

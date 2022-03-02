@@ -22,7 +22,6 @@ object SettingsForm: TSettingsForm
     Height = 41
     Align = alBottom
     TabOrder = 0
-    ExplicitWidth = 487
     object Panel3: TPanel
       Left = 336
       Top = 1
@@ -31,7 +30,6 @@ object SettingsForm: TSettingsForm
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 0
-      ExplicitLeft = 310
       object CancelButton: TButton
         Left = 7
         Top = 6
@@ -60,13 +58,11 @@ object SettingsForm: TSettingsForm
     ActivePage = SettingsGeneralTabSheet
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 487
     object SettingsGeneralTabSheet: TTabSheet
       Caption = 'General'
-      ExplicitWidth = 479
       object IntTextSizeLabel: TLabel
         Left = 16
-        Top = 120
+        Top = 144
         Width = 89
         Height = 13
         Caption = 'Interface text size'
@@ -96,7 +92,7 @@ object SettingsForm: TSettingsForm
       end
       object IntTextSizeComboBox: TComboBox
         Left = 339
-        Top = 117
+        Top = 141
         Width = 145
         Height = 21
         ItemHeight = 13
@@ -120,11 +116,18 @@ object SettingsForm: TSettingsForm
         ItemHeight = 13
         TabOrder = 3
       end
+      object ReplaceRNCheckBox: TCheckBox
+        Left = 16
+        Top = 103
+        Width = 321
+        Height = 17
+        Caption = 'Replace new line code with &&#13;&&#10;'
+        TabOrder = 4
+      end
     end
     object SettingsRecentTabSheet: TTabSheet
       Caption = 'Recent files'
       ImageIndex = 1
-      ExplicitWidth = 479
       object MaxRecentLabel: TLabel
         Left = 16
         Top = 16

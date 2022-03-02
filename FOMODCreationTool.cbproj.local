@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2015.12.22 09:30:10.973.cpp,C:\Users\Alexander\Documents\RAD Studio\Projects\Unit1.cpp=D:\Куски кода\FOMOD Creation Tool\main.cpp</Transaction>
+    <Transaction>2015.12.22 09:30:10.974.h,C:\Users\Alexander\Documents\RAD Studio\Projects\Unit1.h=D:\Куски кода\FOMOD Creation Tool\main.h</Transaction>
+    <Transaction>2015.12.22 09:30:10.974.dfm,C:\Users\Alexander\Documents\RAD Studio\Projects\Unit1.dfm=D:\Куски кода\FOMOD Creation Tool\main.dfm</Transaction>
+    <Transaction>2015.12.22 09:30:32.027.cbproj,C:\Users\Alexander\Documents\RAD Studio\Projects\Project1.cbproj=D:\Куски кода\FOMOD Creation Tool\FOMODCreationTool.cbproj</Transaction>
+    <Transaction>2015.12.22 11:25:47.593.cpp,D:\Куски кода\FOMOD Creation Tool\Unit1.cpp=D:\Куски кода\FOMOD Creation Tool\DataClasses.cpp</Transaction>
+    <Transaction>2015.12.22 11:25:47.593.h,D:\Куски кода\FOMOD Creation Tool\Unit1.h=D:\Куски кода\FOMOD Creation Tool\DataClasses.h</Transaction>
+  </Transactions>
+</BorlandProject>

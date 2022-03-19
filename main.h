@@ -25,7 +25,7 @@ typedef struct SSettings
     int splashScreenSeconds;
     int MaxRecentFiles;
     int RecentFilesNum;
-	std::deque <AnsiString> RecentFiles;
+    std::deque <AnsiString> RecentFiles;
 } TSettings;
 
 typedef struct SLanguagePair

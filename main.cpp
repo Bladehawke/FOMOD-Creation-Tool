@@ -920,7 +920,7 @@ UnicodeString GetLangText(UnicodeString key, std::vector <TLanguagePair> &table)
     UnicodeString result = key;
 
     std::vector <TLanguagePair> :: iterator it;
-    for(it = table.begin(); it != table.end(); it++)
+    for(it = table.begin(); it != table.end(); ++it)
         if(it->Name.UpperCase() == key.UpperCase())
         {
             result = it->Text;
@@ -993,7 +993,7 @@ void ManageRecentFiles(UnicodeString path)
 
     if(path != NULL)
     {
-        for(it = Settings.RecentFiles.begin(); it != Settings.RecentFiles.end(); it++)
+        for(it = Settings.RecentFiles.begin(); it != Settings.RecentFiles.end(); ++it)
             if(path == *it)
             {
                 Settings.RecentFiles.erase(it);
@@ -2858,7 +2858,7 @@ void __fastcall TMainForm::pdAddButtonClick(TObject *Sender)
 			_TCHAR *tstr = new _TCHAR[pdFileFlagNameComboBox->Items[0].Text.Length()];
 			std::vector<UnicodeString> itemslist;
 			UnicodeString token1;
-            bool exist;
+            bool exist = false;
 			_tcscpy(tstr, pdFileFlagNameComboBox->Items[0].Text.c_str());
 			for(int i = 0; i < _tcslen(tstr); i++)
                 if(tstr[i] != _T('\r') && tstr[i] != _T('\n'))

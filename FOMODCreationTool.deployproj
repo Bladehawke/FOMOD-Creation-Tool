@@ -1,0 +1,133 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Condition="Exists('$(BDS)\bin\CodeGear.Deployment.targets')" Project="$(BDS)\bin\CodeGear.Deployment.targets"/>
+    <ProjectExtensions>
+        <ProjectFileVersion>12</ProjectFileVersion>
+    </ProjectExtensions>
+    <PropertyGroup>
+        <DeviceId Condition="'$(Platform)'=='iOSDevice64'"/>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(Platform)'=='Win32'">
+        <DeployFile Include="$(BDS)\bin\cc32270mt.dll" Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'=='true'">
+            <RemoteDir>FOMODCreationTool\</RemoteDir>
+            <RemoteName>cc32270mt.dll</RemoteName>
+            <DeployClass>DependencyModule</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\bin\cc32c270mt.dll" Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'=='true'">
+            <RemoteDir>FOMODCreationTool\</RemoteDir>
+            <RemoteName>cc32c270mt.dll</RemoteName>
+            <DeployClass>DependencyModule</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\bin\cc32270.dll" Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'!='true'">
+            <RemoteDir>FOMODCreationTool\</RemoteDir>
+            <RemoteName>cc32270.dll</RemoteName>
+            <DeployClass>DependencyModule</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\bin\borlndmm.dll" Condition="'$(UsingDelphiRTL)'=='true'">
+            <RemoteDir>FOMODCreationTool\</RemoteDir>
+            <RemoteName>borlndmm.dll</RemoteName>
+            <DeployClass>DependencyModule</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="..\..\..\..\Downloads\Logo150x150.png" Condition="'$(Config)'=='Release'">
+            <RemoteDir>FOMODCreationTool\Assets\</RemoteDir>
+            <RemoteName>Logo44x44.png</RemoteName>
+            <DeployClass>UWP_CppLogo44</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\bin\cc32c270.dll" Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'!='true'">
+            <RemoteDir>FOMODCreationTool\</RemoteDir>
+            <RemoteName>cc32c270.dll</RemoteName>
+            <DeployClass>DependencyModule</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+    </ItemGroup>
+    <ItemGroup Condition="'$(Platform)'=='iOSDevice64'"/>
+    <ItemGroup Condition="'$(Platform)'=='Win64'">
+        <DeployFile Include="$(BDS)\bin64\borlndmm.dll" Condition="'$(UsingDelphiRTL)'=='true'">
+            <RemoteDir>FOMODCreationTool\</RemoteDir>
+            <RemoteName>borlndmm.dll</RemoteName>
+            <DeployClass>DependencyModule</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="FOMODCreationTool.res" Condition="'$(Config)'=='Release'">
+            <RemoteDir>FOMODCreationTool\</RemoteDir>
+            <RemoteName>FOMODCreationTool.res</RemoteName>
+            <DeployClass>ProjectFile</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="Assets\Logo150x150.png" Condition="'$(Config)'=='Release'">
+            <RemoteDir>FOMODCreationTool\</RemoteDir>
+            <RemoteName>Logo150x150.png</RemoteName>
+            <DeployClass>ProjectFile</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\bin64\cc64270.dll" Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'!='true'">
+            <RemoteDir>FOMODCreationTool\</RemoteDir>
+            <RemoteName>cc64270.dll</RemoteName>
+            <DeployClass>DependencyModule</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\bin64\cc64270mt.dll" Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'=='true'">
+            <RemoteDir>FOMODCreationTool\</RemoteDir>
+            <RemoteName>cc64270mt.dll</RemoteName>
+            <DeployClass>DependencyModule</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="Release\FOMODCreationTool.exe" Condition="'$(Config)'=='Release'">
+            <RemoteDir>FOMODCreationTool\</RemoteDir>
+            <RemoteName>FOMODCreationTool.exe</RemoteName>
+            <DeployClass>ProjectOutput</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+            <Required>True</Required>
+        </DeployFile>
+        <DeployFile Include="Release\AppxManifest.xml" Condition="'$(Config)'=='Release'">
+            <RemoteDir>FOMODCreationTool\</RemoteDir>
+            <RemoteName>AppxManifest.xml</RemoteName>
+            <DeployClass>ProjectUWPManifest</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+    </ItemGroup>
+    <ItemGroup Condition="'$(Platform)'=='iOSSimulator'"/>
+</Project>

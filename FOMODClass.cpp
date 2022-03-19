@@ -29,11 +29,11 @@ CDependencyPattern::~CDependencyPattern()
 
 CPlugin::CPlugin()
 {
-    DefaultType = _T("Optional");
+    // DefaultType = _T("Optional");
 }
 CPlugin::CPlugin(UnicodeString name) : Name(name)
 {
-    DefaultType = _T("Optional");
+    // DefaultType = _T("Optional");
 }
 CPlugin::~CPlugin()
 {
@@ -51,11 +51,11 @@ CPluginGroup::~CPluginGroup()
 
 CStep::CStep()
 {
-    VisibilityOperator = _T("And");
+    // VisibilityOperator = _T("And");
 }
 CStep::CStep(UnicodeString name) : Name(name)
 {
-    VisibilityOperator = _T("And");
+    // VisibilityOperator = _T("And");
 }
 CStep::~CStep()
 {

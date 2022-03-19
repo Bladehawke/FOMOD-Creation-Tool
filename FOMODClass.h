@@ -52,13 +52,13 @@ class CPlugin
 {
     public:
         CPlugin();
-        CPlugin(UnicodeString name);
+        explicit CPlugin(UnicodeString name);
         ~CPlugin();
 
         UnicodeString Name;
         UnicodeString Description;
         UnicodeString ImagePath;
-        UnicodeString DefaultType;
+        UnicodeString DefaultType = _T("Optional");
         std::vector <CCondition> ConditionSet;
         std::vector <CFile> Files;
         std::vector <CDependencyPattern> DependencyPatterns;
@@ -80,11 +80,11 @@ class CStep
 {
     public:
         CStep();
-        CStep(UnicodeString name);
+        explicit CStep(UnicodeString name);
         ~CStep();
 
         UnicodeString Name;
-        UnicodeString VisibilityOperator;
+        UnicodeString VisibilityOperator = _T("And");
         std::vector <CDependency>  VisibilityDependencies;
         std::vector <CPluginGroup> PluginGroups;
 };
@@ -104,7 +104,7 @@ class CFOMOD
 {
     public:
         CFOMOD();
-        CFOMOD(UnicodeString name);
+        explicit CFOMOD(UnicodeString name);
         ~CFOMOD();
 
         UnicodeString Name;
